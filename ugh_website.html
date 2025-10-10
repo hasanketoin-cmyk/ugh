@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>United Global Holdings</title>
+  <!-- Tailwind CSS via CDN. This keeps the styling consistent with the design created in React. -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Lucide icons library via CDN. Icons are referenced via data‑lucide attributes. -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    /* Smooth scrolling between anchors */
+    html {
+      scroll-behavior: smooth;
+    }
+    /* Custom gradient used throughout the site */
+    .luxury-gradient {
+      background-image: linear-gradient(to bottom right, #C6A15B, #8C6A2F);
+    }
+    /* Preserve space for the logo placeholder; the uploaded logo will appear automatically */
+    .logo-placeholder {
+      width: 40px;
+      height: 40px;
+      display: grid;
+      place-items: center;
+      border-radius: 9999px;
+    }
+  </style>
+</head>
+<body class="min-h-screen bg-[#f9f8f6] text-[#1a1a1a] font-sans">
+  <!-- Header / Navigation -->
+  <header class="sticky top-0 z-40 backdrop-blur bg-white/80 border-b border-[#e6e1d8] shadow-sm">
+    <div class="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
+      <a href="#home" class="flex items-center gap-3">
+        <div class="logo-placeholder luxury-gradient shadow-md">
+          <i data-lucide="diamond" class="w-5 h-5 text-white"></i>
+        </div>
+        <div>
+          <div class="font-serif text-xl md:text-2xl tracking-tight leading-none">United Global Holdings</div>
+          <div class="text-xs text-[#7a7a7a] -mt-0.5">الشركة العالمية المتحدة القابضة</div>
+        </div>
+      </a>
+      <!-- Desktop navigation -->
+      <nav class="hidden md:flex items-center gap-6">
+        <a href="#about" class="text-sm text-[#1a1a1a] hover:text-[#C6A15B] transition">من نحن</a>
+        <a href="#sectors" class="text-sm text-[#1a1a1a] hover:text-[#C6A15B] transition">قطاعاتنا</a>
+        <a href="#projects" class="text-sm text-[#1a1a1a] hover:text-[#C6A15B] transition">المشاريع</a>
+        <a href="#heritage" class="text-sm text-[#1a1a1a] hover:text-[#C6A15B] transition">الإرث والرؤية</a>
+        <a href="#partners" class="text-sm text-[#1a1a1a] hover:text-[#C6A15B] transition">شركاؤنا</a>
+        <a href="#contact" class="inline-flex items-center rounded-full px-4 py-2 text-sm font-semibold text-white luxury-gradient hover:opacity-90 shadow-md">تواصل معنا</a>
+      </nav>
+      <!-- Mobile menu toggle button -->
+      <button id="nav-toggle" class="md:hidden inline-flex items-center justify-center w-10 h-10 rounded-xl border border-[#d9d4c9]">
+        <!-- Simple hamburger icon using Unicode character -->
+        <span class="text-xl">≡</span>
+      </button>
+    </div>
+    <!-- Mobile navigation panel -->
+    <div id="mobile-nav" class="hidden md:hidden border-t border-[#e6e1d8] bg-white">
+      <div class="max-w-7xl mx-auto px-4 py-3 flex flex-col gap-3">
+        <a href="#about" class="text-sm text-[#1a1a1a] hover:text-[#C6A15B]">من نحن</a>
+        <a href="#sectors" class="text-sm text-[#1a1a1a] hover:text-[#C6A15B]">قطاعاتنا</a>
+        <a href="#projects" class="text-sm text-[#1a1a1a] hover:text-[#C6A15B]">المشاريع</a>
+        <a href="#heritage" class="text-sm text-[#1a1a1a] hover:text-[#C6A15B]">الإرث والرؤية</a>
+        <a href="#partners" class="text-sm text-[#1a1a1a] hover:text-[#C6A15B]">شركاؤنا</a>
+        <a href="#contact" class="inline-flex items-center justify-center rounded-full px-4 py-2 text-sm font-semibold text-white luxury-gradient">تواصل معنا</a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <section id="home" class="relative overflow-hidden">
+    <div class="absolute inset-0 bg-gradient-to-b from-[#fff8ec] via-white to-[#f9f8f6]"></div>
+    <div class="max-w-7xl mx-auto px-4 py-20 md:py-28 relative">
+      <div class="grid md:grid-cols-2 gap-10 items-center">
+        <div>
+          <h1 class="text-3xl md:text-5xl font-extrabold leading-tight tracking-tight text-[#1a1a1a] font-serif">
+            أصالة تُجسّد الريادة
+            <span class="text-transparent bg-clip-text" style="background-image: linear-gradient(to right, #C6A15B, #8C6A2F);"> وتميّز في الاستثمار</span>
+          </h1>
+          <p class="mt-4 text-[#4a4a4a] md:text-lg">
+            مجموعة قابضة راسخة تُدير قطاعات الضيافة، البناء، المراكز التجارية، الرياضة، الدعاية والإعلان، سلاسل التوريد، واستيراد مواد البناء.
+          </p>
+          <div class="mt-6 flex flex-wrap gap-3">
+            <a href="#sectors" class="rounded-full px-5 py-3 text-sm font-semibold text-white luxury-gradient hover:opacity-90 shadow">اكتشف قطاعاتنا</a>
+            <a href="#projects" class="rounded-full px-5 py-3 text-sm font-semibold border border-[#d9d4c9] hover:border-[#C6A15B]">تصفّح المشاريع</a>
+          </div>
+          <!-- Statistics bar -->
+          <div class="mt-8 grid grid-cols-3 gap-4">
+            <div class="rounded-2xl border border-[#e6e1d8] bg-white p-5 text-center">
+              <div class="text-2xl font-extrabold text-[#C6A15B]">+30</div>
+              <div class="text-xs text-neutral-600">مشروع نشط</div>
+            </div>
+            <div class="rounded-2xl border border-[#e6e1d8] bg-white p-5 text-center">
+              <div class="text-2xl font-extrabold text-[#C6A15B]">+10</div>
+              <div class="text-xs text-neutral-600">قطاعات أعمال</div>
+            </div>
+            <div class="rounded-2xl border border-[#e6e1d8] bg-white p-5 text-center">
+              <div class="text-2xl font-extrabold text-[#C6A15B]">+15</div>
+              <div class="text-xs text-neutral-600">سنوات خبرة</div>
+            </div>
+          </div>
+        </div>
+        <!-- Hero illustration & reliability card -->
+        <div class="relative">
+          <div class="aspect-[4/3] rounded-3xl luxury-gradient shadow-xl"></div>
+          <div class="absolute -bottom-6 -left-6 md:-left-10 bg-white rounded-2xl shadow p-4 border border-[#e6e1d8]">
+            <div class="flex items-center gap-3">
+              <i data-lucide="shield-check" class="w-6 h-6 text-[#C6A15B]"></i>
+              <div>
+                <div class="text-sm font-semibold">موثوقية تشغيلية</div>
+                <div class="text-xs text-[#7a7a7a]">شراكات حكومية واستراتيجية</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- About Section -->
+  <section id="about" class="py-16 md:py-20">
+    <div class="max-w-7xl mx-auto px-4 grid md:grid-cols-12 gap-10 items-start">
+      <div class="md:col-span-5">
+        <div class="rounded-3xl bg-white border border-[#e6e1d8] p-6 shadow-sm">
+          <i data-lucide="building-2" class="w-7 h-7 text-[#C6A15B]"></i>
+          <h2 class="mt-3 text-2xl md:text-3xl font-extrabold font-serif">من نحن</h2>
+          <p class="mt-3 text-neutral-700 leading-8">
+            تدير United Global Holdings محفظة استثمارية واسعة داخل سوريا وخارجها. تعود ملكية الشركة إلى مجموعة من نخبة رجال الأعمال، ما يمنحنا قدرة تنفيذية وتمويلية عالية لمشاريع استراتيجية ذات أثر تنموي.
+          </p>
+          <ul class="mt-4 space-y-2 text-sm text-neutral-700 list-disc pr-5">
+            <li>ماروتا سيتي – دمشق ضمن مشاريع التطوير العمراني.</li>
+            <li>التزام بمعايير الجودة وسلامة الغذاء وسلاسل التوريد.</li>
+            <li>حضور قوي في الضيافة والمراكز التجارية والبنية التحتية.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="md:col-span-7 grid sm:grid-cols-2 gap-4">
+        <div class="rounded-2xl border border-[#e6e1d8] bg-white p-5 shadow-sm">
+          <div class="flex items-center gap-2 text-[#C6A15B]">
+            <i data-lucide="landmark" class="w-5 h-5"></i>
+            <span class="font-semibold">إدارة مؤسسية قابضة</span>
+          </div>
+          <div class="mt-2 text-sm text-neutral-700">حوكمة وتمويل وتنمية أعمال</div>
+        </div>
+        <div class="rounded-2xl border border-[#e6e1d8] bg-white p-5 shadow-sm">
+          <div class="flex items-center gap-2 text-[#C6A15B]">
+            <i data-lucide="diamond" class="w-5 h-5"></i>
+            <span class="font-semibold">هوية فاخرة</span>
+          </div>
+          <div class="mt-2 text-sm text-neutral-700">تصميم راقٍ وشراكات مميزة</div>
+        </div>
+        <div class="rounded-2xl border border-[#e6e1d8] bg-white p-5 shadow-sm">
+          <div class="flex items-center gap-2 text-[#C6A15B]">
+            <i data-lucide="shield-check" class="w-5 h-5"></i>
+            <span class="font-semibold">امتثال وثقة</span>
+          </div>
+          <div class="mt-2 text-sm text-neutral-700">تعاون مع جهات حكومية</div>
+        </div>
+        <div class="rounded-2xl border border-[#e6e1d8] bg-white p-5 shadow-sm">
+          <div class="flex items-center gap-2 text-[#C6A15B]">
+            <i data-lucide="warehouse" class="w-5 h-5"></i>
+            <span class="font-semibold">تشغيل متكامل</span>
+          </div>
+          <div class="mt-2 text-sm text-neutral-700">توريد، بناء، وتجزئة</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Sectors Section -->
+  <section id="sectors" class="py-16 md:py-20 bg-[#f3efe7] border-y border-[#e6e1d8]">
+    <div class="max-w-7xl mx-auto px-4">
+      <h2 class="text-2xl md:text-3xl font-extrabold font-serif">قطاعاتنا</h2>
+      <p class="mt-2 text-neutral-600">محفظة أعمال مختارة تعكس التكامل التشغيلي واستدامة النمو.</p>
+      <div class="mt-8 grid md:grid-cols-3 sm:grid-cols-2 gap-5">
+        <!-- Hospitality and restaurants -->
+        <div class="rounded-2xl bg-white border border-[#e6e1d8] p-5 shadow-sm hover:shadow-md transition">
+          <div class="flex items-center gap-3 text-[#C6A15B]">
+            <i data-lucide="utensils" class="w-6 h-6"></i>
+            <h3 class="font-bold text-[#1a1a1a]">الضيافة والمطاعم</h3>
+          </div>
+          <div class="mt-2 text-xs text-neutral-700 leading-relaxed">
+            عالم الدجاج • مطاعم الزين • دجاج كزتاكي • مرجان للمأكولات البحرية • لايك فريش • مركز بارتي سيرفس
+          </div>
+          <ul class="mt-3 text-sm text-neutral-700 space-y-2 list-disc pr-5">
+            <li>تشغيل سلاسل مطاعم وخدمات ضيافة</li>
+          </ul>
+        </div>
+        <!-- Construction -->
+        <div class="rounded-2xl bg-white border border-[#e6e1d8] p-5 shadow-sm hover:shadow-md transition">
+          <div class="flex items-center gap-3 text-[#C6A15B]">
+            <i data-lucide="factory" class="w-6 h-6"></i>
+            <h3 class="font-bold text-[#1a1a1a]">البناء والمقاولات</h3>
+          </div>
+          <ul class="mt-3 text-sm text-neutral-700 space-y-2 list-disc pr-5">
+            <li>معدات ثقيلة للبناء والتعهدات</li>
+            <li>أبراج سكنية وتجارية – ماروتا سيتي، دمشق</li>
+            <li>تطوير مجمعات ومراكز تجارية</li>
+          </ul>
+        </div>
+        <!-- Malls and centers -->
+        <div class="rounded-2xl bg-white border border-[#e6e1d8] p-5 shadow-sm hover:shadow-md transition">
+          <div class="flex items-center gap-3 text-[#C6A15B]">
+            <i data-lucide="shopping-bag" class="w-6 h-6"></i>
+            <h3 class="font-bold text-[#1a1a1a]">المولات والمراكز</h3>
+          </div>
+          <ul class="mt-3 text-sm text-neutral-700 space-y-2 list-disc pr-5">
+            <li>مول سيتي سايد – مشروع دمر</li>
+            <li>مول الدامسكينو – دمشق</li>
+          </ul>
+        </div>
+        <!-- Sports -->
+        <div class="rounded-2xl bg-white border border-[#e6e1d8] p-5 shadow-sm hover:shadow-md transition">
+          <div class="flex items-center gap-3 text-[#C6A15B]">
+            <i data-lucide="dumbbell" class="w-6 h-6"></i>
+            <h3 class="font-bold text-[#1a1a1a]">الرياضة والتدريب</h3>
+          </div>
+          <ul class="mt-3 text-sm text-neutral-700 space-y-2 list-disc pr-5">
+            <li>مراكز تدريب متقدمة وملاعب كرة قدم</li>
+            <li>أندية رياضية ومراكز سباحة</li>
+          </ul>
+        </div>
+        <!-- Advertising -->
+        <div class="rounded-2xl bg-white border border-[#e6e1d8] p-5 shadow-sm hover:shadow-md transition">
+          <div class="flex items-center gap-3 text-[#C6A15B]">
+            <i data-lucide="megaphone" class="w-6 h-6"></i>
+            <h3 class="font-bold text-[#1a1a1a]">الدعاية والإعلان</h3>
+          </div>
+          <ul class="mt-3 text-sm text-neutral-700 space-y-2 list-disc pr-5">
+            <li>حملات إعلانية شاملة وإدارة فعاليات</li>
+            <li>تصميم وإنتاج محتوى وتسويق رقمي</li>
+          </ul>
+        </div>
+        <!-- Supply Chain -->
+        <div class="rounded-2xl bg-white border border-[#e6e1d8] p-5 shadow-sm hover:shadow-md transition">
+          <div class="flex items-center gap-3 text-[#C6A15B]">
+            <i data-lucide="truck" class="w-6 h-6"></i>
+            <h3 class="font-bold text-[#1a1a1a]">سلاسل التوريد والغذائيات</h3>
+          </div>
+          <ul class="mt-3 text-sm text-neutral-700 space-y-2 list-disc pr-5">
+            <li>توريد وتوزيع المواد الغذائية الأساسية</li>
+            <li>تجارة مشتقات الدجاج وإدارة سلسلة التبريد</li>
+          </ul>
+        </div>
+        <!-- Import materials -->
+        <div class="rounded-2xl bg-white border border-[#e6e1d8] p-5 shadow-sm hover:shadow-md transition">
+          <div class="flex items-center gap-3 text-[#C6A15B]">
+            <i data-lucide="warehouse" class="w-6 h-6"></i>
+            <h3 class="font-bold text-[#1a1a1a]">استيراد مواد البناء</h3>
+          </div>
+          <ul class="mt-3 text-sm text-neutral-700 space-y-2 list-disc pr-5">
+            <li>الحديد الخام والحديد المدرفل</li>
+            <li>الأسمنت ومواد إنشائية أخرى</li>
+          </ul>
+        </div>
+        <!-- Packing and packaging -->
+        <div class="rounded-2xl bg-white border border-[#e6e1d8] p-5 shadow-sm hover:shadow-md transition">
+          <div class="flex items-center gap-3 text-[#C6A15B]">
+            <i data-lucide="package" class="w-6 h-6"></i>
+            <h3 class="font-bold text-[#1a1a1a]">التعبئة والتغليف</h3>
+          </div>
+          <ul class="mt-3 text-sm text-neutral-700 space-y-2 list-disc pr-5">
+            <li>حلول تغليف حديثة للمواد الغذائية</li>
+            <li>معايير جودة وسلامة إنتاج عالية</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Projects Section -->
+  <section id="projects" class="py-16 md:py-20">
+    <div class="max-w-7xl mx-auto px-4">
+      <h2 class="text-2xl md:text-3xl font-extrabold font-serif">المشاريع</h2>
+      <p class="mt-2 text-neutral-600">عينة مختارة تمثل استثمارات المجموعة في الأبراج والمولات والقطاع الرياضي.</p>
+      <div class="mt-6 grid md:grid-cols-3 sm:grid-cols-2 gap-5">
+        <!-- Each project card has a gradient placeholder image and details -->
+        <article class="rounded-2xl overflow-hidden border border-[#e6e1d8] bg-white shadow-sm">
+          <div class="aspect-[4/3] luxury-gradient"></div>
+          <div class="p-5 space-y-1">
+            <div class="flex items-center justify-between gap-3">
+              <h3 class="font-bold">برج سكني-تجاري A</h3>
+              <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium border border-[#e6e1d8] bg-white text-[#C6A15B]">أبراج</span>
+            </div>
+            <div class="text-sm text-neutral-700">ماروتا سيتي – دمشق</div>
+            <div class="text-xs text-neutral-600">الحجم: 56,000 م² • السنة: 2024 • الحالة: قيد الإنشاء</div>
+          </div>
+        </article>
+        <article class="rounded-2xl overflow-hidden border border-[#e6e1d8] bg-white shadow-sm">
+          <div class="aspect-[4/3] luxury-gradient"></div>
+          <div class="p-5 space-y-1">
+            <div class="flex items-center justify-between gap-3">
+              <h3 class="font-bold">برج الأعمال B</h3>
+              <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium border border-[#e6e1d8] bg-white text-[#C6A15B]">أبراج</span>
+            </div>
+            <div class="text-sm text-neutral-700">ماروتا سيتي – دمشق</div>
+            <div class="text-xs text-neutral-600">الحجم: 41,000 م² • السنة: 2025 • الحالة: تصميم</div>
+          </div>
+        </article>
+        <article class="rounded-2xl overflow-hidden border border-[#e6e1d8] bg-white shadow-sm">
+          <div class="aspect-[4/3] luxury-gradient"></div>
+          <div class="p-5 space-y-1">
+            <div class="flex items-center justify-between gap-3">
+              <h3 class="font-bold">مول سيتي سايد</h3>
+              <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium border border-[#e6e1d8] bg-white text-[#C6A15B]">مولات</span>
+            </div>
+            <div class="text-sm text-neutral-700">مشروع دمر</div>
+            <div class="text-xs text-neutral-600">الحجم: 38,000 م² • السنة: 2023 • الحالة: تشغيل</div>
+          </div>
+        </article>
+        <article class="rounded-2xl overflow-hidden border border-[#e6e1d8] bg-white shadow-sm">
+          <div class="aspect-[4/3] luxury-gradient"></div>
+          <div class="p-5 space-y-1">
+            <div class="flex items-center justify-between gap-3">
+              <h3 class="font-bold">مول الدامسكينو</h3>
+              <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium border border-[#e6e1d8] bg-white text-[#C6A15B]">مولات</span>
+            </div>
+            <div class="text-sm text-neutral-700">دمشق</div>
+            <div class="text-xs text-neutral-600">الحجم: 52,000 م² • السنة: 2022 • الحالة: تشغيل</div>
+          </div>
+        </article>
+        <article class="rounded-2xl overflow-hidden border border-[#e6e1d8] bg-white shadow-sm">
+          <div class="aspect-[4/3] luxury-gradient"></div>
+          <div class="p-5 space-y-1">
+            <div class="flex items-center justify-between gap-3">
+              <h3 class="font-bold">مجمّع رياضي متكامل</h3>
+              <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium border border-[#e6e1d8] bg-white text-[#C6A15B]">رياضي</span>
+            </div>
+            <div class="text-sm text-neutral-700">دمشق</div>
+            <div class="text-xs text-neutral-600">الحجم: ملعب + نادي + مسبح • السنة: 2023 • الحالة: تشغيل</div>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- Heritage and Vision Section -->
+  <section id="heritage" class="py-16 md:py-20 bg-[#f3efe7] border-y border-[#e6e1d8]">
+    <div class="max-w-7xl mx-auto px-4 grid md:grid-cols-12 gap-10 items-start">
+      <div class="md:col-span-5">
+        <div class="rounded-3xl bg-white border border-[#e6e1d8] p-6 shadow-sm">
+          <div class="w-10 h-10 rounded-full luxury-gradient grid place-items-center">
+            <i data-lucide="diamond" class="w-5 h-5 text-white"></i>
+          </div>
+          <h2 class="mt-3 text-2xl md:text-3xl font-extrabold font-serif">إرث متجذّر ورؤية مستقبلية</h2>
+          <p class="mt-3 text-neutral-700 leading-8">
+            أصالة التأسيس تمتزج مع الابتكار والتقنية الحديثة لتقديم مشاريع نوعية ذات أثر اقتصادي ومستدام. تركيزنا على الحوكمة والجودة يعكس هوية مجموعة كبيرة ذات جذور عميقة.
+          </p>
+        </div>
+      </div>
+      <div class="md:col-span-7 grid sm:grid-cols-3 gap-4">
+        <div class="rounded-2xl border border-[#e6e1d8] bg-white p-5 text-center">
+          <div class="text-xl font-extrabold text-[#C6A15B]">+100 شريك</div>
+          <div class="text-sm text-neutral-700 mt-1">شبكة علاقات واسعة</div>
+        </div>
+        <div class="rounded-2xl border border-[#e6e1d8] bg-white p-5 text-center">
+          <div class="text-xl font-extrabold text-[#C6A15B]">+500 موظف</div>
+          <div class="text-sm text-neutral-700 mt-1">فِرَق تشغيل محترفة</div>
+        </div>
+        <div class="rounded-2xl border border-[#e6e1d8] bg-white p-5 text-center">
+          <div class="text-xl font-extrabold text-[#C6A15B]">+1M زائر/سنة</div>
+          <div class="text-sm text-neutral-700 mt-1">حركة نشطة في المراكز</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Partners Section -->
+  <section id="partners" class="py-16 md:py-20">
+    <div class="max-w-7xl mx-auto px-4">
+      <h2 class="text-2xl md:text-3xl font-extrabold font-serif">شركاؤنا</h2>
+      <p class="mt-2 text-neutral-600">تفخر المجموعة بالتعاون مع جهات حكومية ومؤسسات وطنية.</p>
+      <div class="mt-6 grid sm:grid-cols-2 md:grid-cols-3 gap-4">
+        <div class="rounded-2xl border border-[#e6e1d8] bg-white p-4 shadow-sm flex items-center gap-3">
+          <i data-lucide="shield-check" class="w-5 h-5 text-[#C6A15B]"></i>
+          <span class="text-sm font-medium">وزارة الداخلية</span>
+        </div>
+        <div class="rounded-2xl border border-[#e6e1d8] bg-white p-4 shadow-sm flex items-center gap-3">
+          <i data-lucide="shield-check" class="w-5 h-5 text-[#C6A15B]"></i>
+          <span class="text-sm font-medium">وزارة التجارة</span>
+        </div>
+        <div class="rounded-2xl border border-[#e6e1d8] bg-white p-4 shadow-sm flex items-center gap-3">
+          <i data-lucide="shield-check" class="w-5 h-5 text-[#C6A15B]"></i>
+          <span class="text-sm font-medium">وزارة السياحة</span>
+        </div>
+        <div class="rounded-2xl border border-[#e6e1d8] bg-white p-4 shadow-sm flex items-center gap-3">
+          <i data-lucide="shield-check" class="w-5 h-5 text-[#C6A15B]"></i>
+          <span class="text-sm font-medium">وزارة النقل</span>
+        </div>
+        <div class="rounded-2xl border border-[#e6e1d8] bg-white p-4 shadow-sm flex items-center gap-3">
+          <i data-lucide="shield-check" class="w-5 h-5 text-[#C6A15B]"></i>
+          <span class="text-sm font-medium">السورية للمعادن</span>
+        </div>
+        <div class="rounded-2xl border border-[#e6e1d8] bg-white p-4 shadow-sm flex items-center gap-3">
+          <i data-lucide="shield-check" class="w-5 h-5 text-[#C6A15B]"></i>
+          <span class="text-sm font-medium">السورية للحبوب</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Contact Section -->
+  <section id="contact" class="py-16 md:py-20">
+    <div class="max-w-7xl mx-auto px-4 grid md:grid-cols-2 gap-10">
+      <div>
+        <h2 class="text-2xl md:text-3xl font-extrabold font-serif">تواصل معنا</h2>
+        <p class="mt-2 text-neutral-700">للاستفسارات والشراكات وفرص الاستثمار، يسعدنا تواصلكم.</p>
+        <div class="mt-6 space-y-3 text-sm text-neutral-700">
+          <div class="flex items-center gap-2"><i data-lucide="phone" class="w-4 h-4 text-[#C6A15B]"></i><span>+963 XX XXX XXXX</span></div>
+          <div class="flex items-center gap-2"><i data-lucide="mail" class="w-4 h-4 text-[#C6A15B]"></i><span>info@ugh-group.com</span></div>
+          <div class="flex items-center gap-2"><i data-lucide="map-pin" class="w-4 h-4 text-[#C6A15B]"></i><span>دمشق – سوريا</span></div>
+        </div>
+      </div>
+      <form class="rounded-2xl border border-[#e6e1d8] bg-white p-6 shadow-sm grid gap-4" onsubmit="return false;">
+        <div class="grid gap-1">
+          <label class="text-sm">الاسم الكامل</label>
+          <input class="border border-[#e6e1d8] rounded-xl px-3 py-2 outline-none focus:ring-2 focus:ring-[#C6A15B]" placeholder="مثال: أحمد خالد" />
+        </div>
+        <div class="grid gap-1">
+          <label class="text-sm">البريد الإلكتروني</label>
+          <input type="email" class="border border-[#e6e1d8] rounded-xl px-3 py-2 outline-none focus:ring-2 focus:ring-[#C6A15B]" placeholder="example@email.com" />
+        </div>
+        <div class="grid gap-1">
+          <label class="text-sm">الموضوع</label>
+          <input class="border border-[#e6e1d8] rounded-xl px-3 py-2 outline-none focus:ring-2 focus:ring-[#C6A15B]" placeholder="نص قصير" />
+        </div>
+        <div class="grid gap-1">
+          <label class="text-sm">الرسالة</label>
+          <textarea rows="4" class="border border-[#e6e1d8] rounded-xl px-3 py-2 outline-none focus:ring-2 focus:ring-[#C6A15B]" placeholder="اكتب رسالتك هنا"></textarea>
+        </div>
+        <button type="submit" class="rounded-full px-5 py-3 text-sm font-semibold text-white luxury-gradient hover:opacity-90">إرسال</button>
+      </form>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="border-t border-[#e6e1d8] bg-white">
+    <div class="max-w-7xl mx-auto px-4 py-8 flex flex-col md:flex-row items-center justify-between gap-4">
+      <div class="flex items-center gap-2">
+        <div class="w-8 h-8 rounded-xl luxury-gradient grid place-items-center shadow-sm">
+          <i data-lucide="diamond" class="w-4 h-4 text-white"></i>
+        </div>
+        <span class="text-sm font-semibold">United Global Holdings</span>
+      </div>
+      <div class="text-xs text-neutral-500">© <span id="year"></span> جميع الحقوق محفوظة. United Global Holdings</div>
+    </div>
+  </footer>
+
+  <!-- Scripts: icon initialization and nav toggle -->
+  <script>
+    // Initialize lucide icons after the DOM has loaded
+    document.addEventListener('DOMContentLoaded', function() {
+      lucide.createIcons();
+      // Toggle mobile navigation
+      const toggleBtn = document.getElementById('nav-toggle');
+      const mobileNav = document.getElementById('mobile-nav');
+      if (toggleBtn && mobileNav) {
+        toggleBtn.addEventListener('click', function() {
+          mobileNav.classList.toggle('hidden');
+        });
+      }
+      // Set current year in footer
+      const yearSpan = document.getElementById('year');
+      if (yearSpan) {
+        yearSpan.textContent = new Date().getFullYear();
+      }
+    });
+  </script>
+</body>
+</html>
