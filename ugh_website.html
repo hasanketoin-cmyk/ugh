@@ -1,471 +1,528 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>United Global Holdings</title>
-  <!-- Tailwind CSS via CDN. This keeps the styling consistent with the design created in React. -->
-  <script src="https://cdn.tailwindcss.com"></script>
-  <!-- Lucide icons library via CDN. Icons are referenced via data‑lucide attributes. -->
-  <script src="https://unpkg.com/lucide@latest"></script>
-  <style>
-    /* Smooth scrolling between anchors */
-    html {
-      scroll-behavior: smooth;
-    }
-    /* Custom gradient used throughout the site */
-    .luxury-gradient {
-      background-image: linear-gradient(to bottom right, #C6A15B, #8C6A2F);
-    }
-    /* Preserve space for the logo placeholder; the uploaded logo will appear automatically */
-    .logo-placeholder {
-      width: 40px;
-      height: 40px;
-      display: grid;
-      place-items: center;
-      border-radius: 9999px;
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>نظام حضور طلاب النادي الصيفي</title>
+
+<style>
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Tahoma,sans-serif;
+}
+
+body{
+background:#f3f4f6;
+padding:20px;
+}
+
+.container{
+max-width:1200px;
+margin:auto;
+}
+
+.header{
+background:#1f2937;
+color:#fff;
+padding:20px;
+border-radius:10px;
+margin-bottom:20px;
+}
+
+.card{
+background:#fff;
+padding:20px;
+border-radius:10px;
+margin-bottom:20px;
+box-shadow:0 2px 8px rgba(0,0,0,.1);
+}
+
+.form-group{
+display:flex;
+gap:10px;
+flex-wrap:wrap;
+}
+
+input{
+padding:10px;
+border:1px solid #ddd;
+border-radius:8px;
+}
+
+button{
+padding:10px 15px;
+border:none;
+border-radius:8px;
+cursor:pointer;
+color:white;
+}
+
+.add{background:#22c55e;}
+.search{background:#3b82f6;}
+.delete{background:#ef4444;}
+.reset{background:#f59e0b;}
+.export{background:#8b5cf6;}
+
+table{
+width:100%;
+border-collapse:collapse;
+margin-top:15px;
+}
+
+th,td{
+padding:12px;
+border-bottom:1px solid #ddd;
+text-align:center;
+}
+
+th{
+background:#f8fafc;
+}
+
+.present{
+background:#22c55e;
+color:white;
+padding:5px 10px;
+border-radius:20px;
+display:inline-block;
+min-width:80px;
+}
+
+.absent{
+background:#ef4444;
+color:white;
+padding:5px 10px;
+border-radius:20px;
+display:inline-block;
+min-width:80px;
+}
+
+.stats{
+display:flex;
+gap:15px;
+margin-top:20px;
+flex-wrap:wrap;
+}
+
+.stat{
+background:#f8fafc;
+padding:15px;
+border-radius:10px;
+min-width:140px;
+text-align:center;
+font-weight:bold;
+}
+
+.checkbox{
+width:20px;
+height:20px;
+}
+
+h2{
+margin-bottom:15px;
+}
+</style>
 </head>
-<body class="min-h-screen bg-[#f9f8f6] text-[#1a1a1a] font-sans">
-  <!-- Header / Navigation -->
-  <header class="sticky top-0 z-40 backdrop-blur bg-white/80 border-b border-[#e6e1d8] shadow-sm">
-    <div class="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
-      <a href="#home" class="flex items-center gap-3">
-        <!-- Use the uploaded logo image (embedded as base64) instead of a plain icon. The circle remains gold with the image centered inside. -->
-        <div class="logo-placeholder luxury-gradient shadow-md overflow-hidden">
-          <img src="data:image/png;base64,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" alt="شعار United Global Holdings" class="w-full h-full object-cover" />
-        </div>
-        <div>
-          <div class="font-serif text-xl md:text-2xl tracking-tight leading-none">United Global Holdings</div>
-          <div class="text-xs text-[#7a7a7a] -mt-0.5">الشركة العالمية المتحدة القابضة</div>
-        </div>
-      </a>
-      <!-- Desktop navigation -->
-      <nav class="hidden md:flex items-center gap-6">
-        <a href="#about" class="text-sm text-[#1a1a1a] hover:text-[#C6A15B] transition">من نحن</a>
-        <a href="#sectors" class="text-sm text-[#1a1a1a] hover:text-[#C6A15B] transition">قطاعاتنا</a>
-        <a href="#projects" class="text-sm text-[#1a1a1a] hover:text-[#C6A15B] transition">المشاريع</a>
-        <a href="#heritage" class="text-sm text-[#1a1a1a] hover:text-[#C6A15B] transition">الإرث والرؤية</a>
-        <a href="#partners" class="text-sm text-[#1a1a1a] hover:text-[#C6A15B] transition">شركاؤنا</a>
-        <a href="#contact" class="inline-flex items-center rounded-full px-4 py-2 text-sm font-semibold text-white luxury-gradient hover:opacity-90 shadow-md">تواصل معنا</a>
-      </nav>
-      <!-- Mobile menu toggle button -->
-      <button id="nav-toggle" class="md:hidden inline-flex items-center justify-center w-10 h-10 rounded-xl border border-[#d9d4c9]">
-        <!-- Simple hamburger icon using Unicode character -->
-        <span class="text-xl">≡</span>
-      </button>
-    </div>
-    <!-- Mobile navigation panel -->
-    <div id="mobile-nav" class="hidden md:hidden border-t border-[#e6e1d8] bg-white">
-      <div class="max-w-7xl mx-auto px-4 py-3 flex flex-col gap-3">
-        <a href="#about" class="text-sm text-[#1a1a1a] hover:text-[#C6A15B]">من نحن</a>
-        <a href="#sectors" class="text-sm text-[#1a1a1a] hover:text-[#C6A15B]">قطاعاتنا</a>
-        <a href="#projects" class="text-sm text-[#1a1a1a] hover:text-[#C6A15B]">المشاريع</a>
-        <a href="#heritage" class="text-sm text-[#1a1a1a] hover:text-[#C6A15B]">الإرث والرؤية</a>
-        <a href="#partners" class="text-sm text-[#1a1a1a] hover:text-[#C6A15B]">شركاؤنا</a>
-        <a href="#contact" class="inline-flex items-center justify-center rounded-full px-4 py-2 text-sm font-semibold text-white luxury-gradient">تواصل معنا</a>
-      </div>
-    </div>
-  </header>
 
-  <!-- Hero Section -->
-  <section id="home" class="relative overflow-hidden">
-    <div class="absolute inset-0 bg-gradient-to-b from-[#fff8ec] via-white to-[#f9f8f6]"></div>
-    <div class="max-w-7xl mx-auto px-4 py-20 md:py-28 relative">
-      <div class="grid md:grid-cols-2 gap-10 items-center">
-        <div>
-          <h1 class="text-3xl md:text-5xl font-extrabold leading-tight tracking-tight text-[#1a1a1a] font-serif">
-            أصالة تُجسّد الريادة
-            <span class="text-transparent bg-clip-text" style="background-image: linear-gradient(to right, #C6A15B, #8C6A2F);"> وتميّز في الاستثمار</span>
-          </h1>
-          <p class="mt-4 text-[#4a4a4a] md:text-lg">
-            مجموعة قابضة راسخة تُدير قطاعات الضيافة، البناء، المراكز التجارية، الرياضة، الدعاية والإعلان، سلاسل التوريد، واستيراد مواد البناء.
-          </p>
-          <div class="mt-6 flex flex-wrap gap-3">
-            <a href="#sectors" class="rounded-full px-5 py-3 text-sm font-semibold text-white luxury-gradient hover:opacity-90 shadow">اكتشف قطاعاتنا</a>
-            <a href="#projects" class="rounded-full px-5 py-3 text-sm font-semibold border border-[#d9d4c9] hover:border-[#C6A15B]">تصفّح المشاريع</a>
-          </div>
-          <!-- Statistics bar -->
-          <div class="mt-8 grid grid-cols-3 gap-4">
-            <div class="rounded-2xl border border-[#e6e1d8] bg-white p-5 text-center">
-              <div class="text-2xl font-extrabold text-[#C6A15B]">+30</div>
-              <div class="text-xs text-neutral-600">مشروع نشط</div>
-            </div>
-            <div class="rounded-2xl border border-[#e6e1d8] bg-white p-5 text-center">
-              <div class="text-2xl font-extrabold text-[#C6A15B]">+10</div>
-              <div class="text-xs text-neutral-600">قطاعات أعمال</div>
-            </div>
-            <div class="rounded-2xl border border-[#e6e1d8] bg-white p-5 text-center">
-              <div class="text-2xl font-extrabold text-[#C6A15B]">+15</div>
-              <div class="text-xs text-neutral-600">سنوات خبرة</div>
-            </div>
-          </div>
-        </div>
-        <!-- Hero illustration & reliability card -->
-        <div class="relative">
-          <div class="aspect-[4/3] rounded-3xl luxury-gradient shadow-xl"></div>
-          <div class="absolute -bottom-6 -left-6 md:-left-10 bg-white rounded-2xl shadow p-4 border border-[#e6e1d8]">
-            <div class="flex items-center gap-3">
-              <i data-lucide="shield-check" class="w-6 h-6 text-[#C6A15B]"></i>
-              <div>
-                <div class="text-sm font-semibold">موثوقية تشغيلية</div>
-                <div class="text-xs text-[#7a7a7a]">شراكات حكومية واستراتيجية</div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
+<body>
 
-  <!-- About Section -->
-  <section id="about" class="py-16 md:py-20">
-    <div class="max-w-7xl mx-auto px-4 grid md:grid-cols-12 gap-10 items-start">
-      <div class="md:col-span-5">
-        <div class="rounded-3xl bg-white border border-[#e6e1d8] p-6 shadow-sm">
-          <i data-lucide="building-2" class="w-7 h-7 text-[#C6A15B]"></i>
-          <h2 class="mt-3 text-2xl md:text-3xl font-extrabold font-serif">من نحن</h2>
-          <p class="mt-3 text-neutral-700 leading-8">
-            تدير United Global Holdings محفظة استثمارية واسعة داخل سوريا وخارجها. تعود ملكية الشركة إلى مجموعة من نخبة رجال الأعمال، ما يمنحنا قدرة تنفيذية وتمويلية عالية لمشاريع استراتيجية ذات أثر تنموي.
-          </p>
-          <ul class="mt-4 space-y-2 text-sm text-neutral-700 list-disc pr-5">
-            <li>ماروتا سيتي – دمشق ضمن مشاريع التطوير العمراني.</li>
-            <li>التزام بمعايير الجودة وسلامة الغذاء وسلاسل التوريد.</li>
-            <li>حضور قوي في الضيافة والمراكز التجارية والبنية التحتية.</li>
-          </ul>
-        </div>
-      </div>
-      <div class="md:col-span-7 grid sm:grid-cols-2 gap-4">
-        <div class="rounded-2xl border border-[#e6e1d8] bg-white p-5 shadow-sm">
-          <div class="flex items-center gap-2 text-[#C6A15B]">
-            <i data-lucide="landmark" class="w-5 h-5"></i>
-            <span class="font-semibold">إدارة مؤسسية قابضة</span>
-          </div>
-          <div class="mt-2 text-sm text-neutral-700">حوكمة وتمويل وتنمية أعمال</div>
-        </div>
-        <div class="rounded-2xl border border-[#e6e1d8] bg-white p-5 shadow-sm">
-          <div class="flex items-center gap-2 text-[#C6A15B]">
-            <i data-lucide="diamond" class="w-5 h-5"></i>
-            <span class="font-semibold">هوية فاخرة</span>
-          </div>
-          <div class="mt-2 text-sm text-neutral-700">تصميم راقٍ وشراكات مميزة</div>
-        </div>
-        <div class="rounded-2xl border border-[#e6e1d8] bg-white p-5 shadow-sm">
-          <div class="flex items-center gap-2 text-[#C6A15B]">
-            <i data-lucide="shield-check" class="w-5 h-5"></i>
-            <span class="font-semibold">امتثال وثقة</span>
-          </div>
-          <div class="mt-2 text-sm text-neutral-700">تعاون مع جهات حكومية</div>
-        </div>
-        <div class="rounded-2xl border border-[#e6e1d8] bg-white p-5 shadow-sm">
-          <div class="flex items-center gap-2 text-[#C6A15B]">
-            <i data-lucide="warehouse" class="w-5 h-5"></i>
-            <span class="font-semibold">تشغيل متكامل</span>
-          </div>
-          <div class="mt-2 text-sm text-neutral-700">توريد، بناء، وتجزئة</div>
-        </div>
-      </div>
-    </div>
-  </section>
+<div class="container">
 
-  <!-- Sectors Section -->
-  <section id="sectors" class="py-16 md:py-20 bg-[#f3efe7] border-y border-[#e6e1d8]">
-    <div class="max-w-7xl mx-auto px-4">
-      <h2 class="text-2xl md:text-3xl font-extrabold font-serif">قطاعاتنا</h2>
-      <p class="mt-2 text-neutral-600">محفظة أعمال مختارة تعكس التكامل التشغيلي واستدامة النمو.</p>
-      <div class="mt-8 grid md:grid-cols-3 sm:grid-cols-2 gap-5">
-        <!-- Hospitality and restaurants -->
-        <div class="rounded-2xl bg-white border border-[#e6e1d8] p-5 shadow-sm hover:shadow-md transition">
-          <div class="flex items-center gap-3 text-[#C6A15B]">
-            <i data-lucide="utensils" class="w-6 h-6"></i>
-            <h3 class="font-bold text-[#1a1a1a]">الضيافة والمطاعم</h3>
-          </div>
-          <div class="mt-2 text-xs text-neutral-700 leading-relaxed">
-            عالم الدجاج • مطاعم الزين • دجاج كزتاكي • مرجان للمأكولات البحرية • لايك فريش • مركز بارتي سيرفس
-          </div>
-          <ul class="mt-3 text-sm text-neutral-700 space-y-2 list-disc pr-5">
-            <li>تشغيل سلاسل مطاعم وخدمات ضيافة</li>
-          </ul>
-        </div>
-        <!-- Construction -->
-        <div class="rounded-2xl bg-white border border-[#e6e1d8] p-5 shadow-sm hover:shadow-md transition">
-          <div class="flex items-center gap-3 text-[#C6A15B]">
-            <i data-lucide="factory" class="w-6 h-6"></i>
-            <h3 class="font-bold text-[#1a1a1a]">البناء والمقاولات</h3>
-          </div>
-          <ul class="mt-3 text-sm text-neutral-700 space-y-2 list-disc pr-5">
-            <li>معدات ثقيلة للبناء والتعهدات</li>
-            <li>أبراج سكنية وتجارية – ماروتا سيتي، دمشق</li>
-            <li>تطوير مجمعات ومراكز تجارية</li>
-          </ul>
-        </div>
-        <!-- Malls and centers -->
-        <div class="rounded-2xl bg-white border border-[#e6e1d8] p-5 shadow-sm hover:shadow-md transition">
-          <div class="flex items-center gap-3 text-[#C6A15B]">
-            <i data-lucide="shopping-bag" class="w-6 h-6"></i>
-            <h3 class="font-bold text-[#1a1a1a]">المولات والمراكز</h3>
-          </div>
-          <ul class="mt-3 text-sm text-neutral-700 space-y-2 list-disc pr-5">
-            <li>مول سيتي سايد – مشروع دمر</li>
-            <li>مول الدامسكينو – دمشق</li>
-          </ul>
-        </div>
-        <!-- Sports -->
-        <div class="rounded-2xl bg-white border border-[#e6e1d8] p-5 shadow-sm hover:shadow-md transition">
-          <div class="flex items-center gap-3 text-[#C6A15B]">
-            <i data-lucide="dumbbell" class="w-6 h-6"></i>
-            <h3 class="font-bold text-[#1a1a1a]">الرياضة والتدريب</h3>
-          </div>
-          <ul class="mt-3 text-sm text-neutral-700 space-y-2 list-disc pr-5">
-            <li>مراكز تدريب متقدمة وملاعب كرة قدم</li>
-            <li>أندية رياضية ومراكز سباحة</li>
-          </ul>
-        </div>
-        <!-- Advertising -->
-        <div class="rounded-2xl bg-white border border-[#e6e1d8] p-5 shadow-sm hover:shadow-md transition">
-          <div class="flex items-center gap-3 text-[#C6A15B]">
-            <i data-lucide="megaphone" class="w-6 h-6"></i>
-            <h3 class="font-bold text-[#1a1a1a]">الدعاية والإعلان</h3>
-          </div>
-          <ul class="mt-3 text-sm text-neutral-700 space-y-2 list-disc pr-5">
-            <li>حملات إعلانية شاملة وإدارة فعاليات</li>
-            <li>تصميم وإنتاج محتوى وتسويق رقمي</li>
-          </ul>
-        </div>
-        <!-- Supply Chain -->
-        <div class="rounded-2xl bg-white border border-[#e6e1d8] p-5 shadow-sm hover:shadow-md transition">
-          <div class="flex items-center gap-3 text-[#C6A15B]">
-            <i data-lucide="truck" class="w-6 h-6"></i>
-            <h3 class="font-bold text-[#1a1a1a]">سلاسل التوريد والغذائيات</h3>
-          </div>
-          <ul class="mt-3 text-sm text-neutral-700 space-y-2 list-disc pr-5">
-            <li>توريد وتوزيع المواد الغذائية الأساسية</li>
-            <li>تجارة مشتقات الدجاج وإدارة سلسلة التبريد</li>
-          </ul>
-        </div>
-        <!-- Import materials -->
-        <div class="rounded-2xl bg-white border border-[#e6e1d8] p-5 shadow-sm hover:shadow-md transition">
-          <div class="flex items-center gap-3 text-[#C6A15B]">
-            <i data-lucide="warehouse" class="w-6 h-6"></i>
-            <h3 class="font-bold text-[#1a1a1a]">استيراد مواد البناء</h3>
-          </div>
-          <ul class="mt-3 text-sm text-neutral-700 space-y-2 list-disc pr-5">
-            <li>الحديد الخام والحديد المدرفل</li>
-            <li>الأسمنت ومواد إنشائية أخرى</li>
-          </ul>
-        </div>
-        <!-- Packing and packaging -->
-        <div class="rounded-2xl bg-white border border-[#e6e1d8] p-5 shadow-sm hover:shadow-md transition">
-          <div class="flex items-center gap-3 text-[#C6A15B]">
-            <i data-lucide="package" class="w-6 h-6"></i>
-            <h3 class="font-bold text-[#1a1a1a]">التعبئة والتغليف</h3>
-          </div>
-          <ul class="mt-3 text-sm text-neutral-700 space-y-2 list-disc pr-5">
-            <li>حلول تغليف حديثة للمواد الغذائية</li>
-            <li>معايير جودة وسلامة إنتاج عالية</li>
-          </ul>
-        </div>
-      </div>
-    </div>
-  </section>
+<div class="header">
+<h1>📋 نظام حضور الأطفال</h1>
+</div>
 
-  <!-- Projects Section -->
-  <section id="projects" class="py-16 md:py-20">
-    <div class="max-w-7xl mx-auto px-4">
-      <h2 class="text-2xl md:text-3xl font-extrabold font-serif">المشاريع</h2>
-      <p class="mt-2 text-neutral-600">عينة مختارة تمثل استثمارات المجموعة في الأبراج والمولات والقطاع الرياضي.</p>
-      <div class="mt-6 grid md:grid-cols-3 sm:grid-cols-2 gap-5">
-        <!-- Each project card has a gradient placeholder image and details -->
-        <article class="rounded-2xl overflow-hidden border border-[#e6e1d8] bg-white shadow-sm">
-          <div class="aspect-[4/3] luxury-gradient"></div>
-          <div class="p-5 space-y-1">
-            <div class="flex items-center justify-between gap-3">
-              <h3 class="font-bold">برج سكني-تجاري A</h3>
-              <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium border border-[#e6e1d8] bg-white text-[#C6A15B]">أبراج</span>
-            </div>
-            <div class="text-sm text-neutral-700">ماروتا سيتي – دمشق</div>
-            <div class="text-xs text-neutral-600">الحجم: 56,000 م² • السنة: 2024 • الحالة: قيد الإنشاء</div>
-          </div>
-        </article>
-        <article class="rounded-2xl overflow-hidden border border-[#e6e1d8] bg-white shadow-sm">
-          <div class="aspect-[4/3] luxury-gradient"></div>
-          <div class="p-5 space-y-1">
-            <div class="flex items-center justify-between gap-3">
-              <h3 class="font-bold">برج الأعمال B</h3>
-              <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium border border-[#e6e1d8] bg-white text-[#C6A15B]">أبراج</span>
-            </div>
-            <div class="text-sm text-neutral-700">ماروتا سيتي – دمشق</div>
-            <div class="text-xs text-neutral-600">الحجم: 41,000 م² • السنة: 2025 • الحالة: تصميم</div>
-          </div>
-        </article>
-        <article class="rounded-2xl overflow-hidden border border-[#e6e1d8] bg-white shadow-sm">
-          <div class="aspect-[4/3] luxury-gradient"></div>
-          <div class="p-5 space-y-1">
-            <div class="flex items-center justify-between gap-3">
-              <h3 class="font-bold">مول سيتي سايد</h3>
-              <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium border border-[#e6e1d8] bg-white text-[#C6A15B]">مولات</span>
-            </div>
-            <div class="text-sm text-neutral-700">مشروع دمر</div>
-            <div class="text-xs text-neutral-600">الحجم: 38,000 م² • السنة: 2023 • الحالة: تشغيل</div>
-          </div>
-        </article>
-        <article class="rounded-2xl overflow-hidden border border-[#e6e1d8] bg-white shadow-sm">
-          <div class="aspect-[4/3] luxury-gradient"></div>
-          <div class="p-5 space-y-1">
-            <div class="flex items-center justify-between gap-3">
-              <h3 class="font-bold">مول الدامسكينو</h3>
-              <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium border border-[#e6e1d8] bg-white text-[#C6A15B]">مولات</span>
-            </div>
-            <div class="text-sm text-neutral-700">دمشق</div>
-            <div class="text-xs text-neutral-600">الحجم: 52,000 م² • السنة: 2022 • الحالة: تشغيل</div>
-          </div>
-        </article>
-        <article class="rounded-2xl overflow-hidden border border-[#e6e1d8] bg-white shadow-sm">
-          <div class="aspect-[4/3] luxury-gradient"></div>
-          <div class="p-5 space-y-1">
-            <div class="flex items-center justify-between gap-3">
-              <h3 class="font-bold">مجمّع رياضي متكامل</h3>
-              <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium border border-[#e6e1d8] bg-white text-[#C6A15B]">رياضي</span>
-            </div>
-            <div class="text-sm text-neutral-700">دمشق</div>
-            <div class="text-xs text-neutral-600">الحجم: ملعب + نادي + مسبح • السنة: 2023 • الحالة: تشغيل</div>
-          </div>
-        </article>
-      </div>
-    </div>
-  </section>
+<div class="card">
+<h2>➕ إضافة طفل</h2>
 
-  <!-- Heritage and Vision Section -->
-  <section id="heritage" class="py-16 md:py-20 bg-[#f3efe7] border-y border-[#e6e1d8]">
-    <div class="max-w-7xl mx-auto px-4 grid md:grid-cols-12 gap-10 items-start">
-      <div class="md:col-span-5">
-        <div class="rounded-3xl bg-white border border-[#e6e1d8] p-6 shadow-sm">
-          <div class="w-10 h-10 rounded-full luxury-gradient grid place-items-center">
-            <i data-lucide="diamond" class="w-5 h-5 text-white"></i>
-          </div>
-          <h2 class="mt-3 text-2xl md:text-3xl font-extrabold font-serif">إرث متجذّر ورؤية مستقبلية</h2>
-          <p class="mt-3 text-neutral-700 leading-8">
-            أصالة التأسيس تمتزج مع الابتكار والتقنية الحديثة لتقديم مشاريع نوعية ذات أثر اقتصادي ومستدام. تركيزنا على الحوكمة والجودة يعكس هوية مجموعة كبيرة ذات جذور عميقة.
-          </p>
-        </div>
-      </div>
-      <div class="md:col-span-7 grid sm:grid-cols-3 gap-4">
-        <div class="rounded-2xl border border-[#e6e1d8] bg-white p-5 text-center">
-          <div class="text-xl font-extrabold text-[#C6A15B]">+100 شريك</div>
-          <div class="text-sm text-neutral-700 mt-1">شبكة علاقات واسعة</div>
-        </div>
-        <div class="rounded-2xl border border-[#e6e1d8] bg-white p-5 text-center">
-          <div class="text-xl font-extrabold text-[#C6A15B]">+500 موظف</div>
-          <div class="text-sm text-neutral-700 mt-1">فِرَق تشغيل محترفة</div>
-        </div>
-        <div class="rounded-2xl border border-[#e6e1d8] bg-white p-5 text-center">
-          <div class="text-xl font-extrabold text-[#C6A15B]">+1M زائر/سنة</div>
-          <div class="text-sm text-neutral-700 mt-1">حركة نشطة في المراكز</div>
-        </div>
-      </div>
-    </div>
-  </section>
+<div class="form-group">
+<input type="text" id="childName" placeholder="اسم الطفل">
+<input type="number" id="childId" placeholder="رقم الطفل">
+<button class="add" onclick="addChild()">إضافة</button>
+</div>
+</div>
 
-  <!-- Partners Section -->
-  <section id="partners" class="py-16 md:py-20">
-    <div class="max-w-7xl mx-auto px-4">
-      <h2 class="text-2xl md:text-3xl font-extrabold font-serif">شركاؤنا</h2>
-      <p class="mt-2 text-neutral-600">تفخر المجموعة بالتعاون مع جهات حكومية ومؤسسات وطنية.</p>
-      <div class="mt-6 grid sm:grid-cols-2 md:grid-cols-3 gap-4">
-        <div class="rounded-2xl border border-[#e6e1d8] bg-white p-4 shadow-sm flex items-center gap-3">
-          <i data-lucide="shield-check" class="w-5 h-5 text-[#C6A15B]"></i>
-          <span class="text-sm font-medium">وزارة الداخلية</span>
-        </div>
-        <div class="rounded-2xl border border-[#e6e1d8] bg-white p-4 shadow-sm flex items-center gap-3">
-          <i data-lucide="shield-check" class="w-5 h-5 text-[#C6A15B]"></i>
-          <span class="text-sm font-medium">وزارة التجارة</span>
-        </div>
-        <div class="rounded-2xl border border-[#e6e1d8] bg-white p-4 shadow-sm flex items-center gap-3">
-          <i data-lucide="shield-check" class="w-5 h-5 text-[#C6A15B]"></i>
-          <span class="text-sm font-medium">وزارة السياحة</span>
-        </div>
-        <div class="rounded-2xl border border-[#e6e1d8] bg-white p-4 shadow-sm flex items-center gap-3">
-          <i data-lucide="shield-check" class="w-5 h-5 text-[#C6A15B]"></i>
-          <span class="text-sm font-medium">وزارة النقل</span>
-        </div>
-        <div class="rounded-2xl border border-[#e6e1d8] bg-white p-4 shadow-sm flex items-center gap-3">
-          <i data-lucide="shield-check" class="w-5 h-5 text-[#C6A15B]"></i>
-          <span class="text-sm font-medium">السورية للمعادن</span>
-        </div>
-        <div class="rounded-2xl border border-[#e6e1d8] bg-white p-4 shadow-sm flex items-center gap-3">
-          <i data-lucide="shield-check" class="w-5 h-5 text-[#C6A15B]"></i>
-          <span class="text-sm font-medium">السورية للحبوب</span>
-        </div>
-      </div>
-    </div>
-  </section>
+<div class="card">
+<h2>🔍 البحث</h2>
 
-  <!-- Contact Section -->
-  <section id="contact" class="py-16 md:py-20">
-    <div class="max-w-7xl mx-auto px-4 grid md:grid-cols-2 gap-10">
-      <div>
-        <h2 class="text-2xl md:text-3xl font-extrabold font-serif">تواصل معنا</h2>
-        <p class="mt-2 text-neutral-700">للاستفسارات والشراكات وفرص الاستثمار، يسعدنا تواصلكم.</p>
-        <div class="mt-6 space-y-3 text-sm text-neutral-700">
-          <div class="flex items-center gap-2"><i data-lucide="phone" class="w-4 h-4 text-[#C6A15B]"></i><span>+963 XX XXX XXXX</span></div>
-          <div class="flex items-center gap-2"><i data-lucide="mail" class="w-4 h-4 text-[#C6A15B]"></i><span>info@ugh-group.com</span></div>
-          <div class="flex items-center gap-2"><i data-lucide="map-pin" class="w-4 h-4 text-[#C6A15B]"></i><span>دمشق – سوريا</span></div>
-        </div>
-      </div>
-      <form class="rounded-2xl border border-[#e6e1d8] bg-white p-6 shadow-sm grid gap-4" onsubmit="return false;">
-        <div class="grid gap-1">
-          <label class="text-sm">الاسم الكامل</label>
-          <input class="border border-[#e6e1d8] rounded-xl px-3 py-2 outline-none focus:ring-2 focus:ring-[#C6A15B]" placeholder="مثال: أحمد خالد" />
-        </div>
-        <div class="grid gap-1">
-          <label class="text-sm">البريد الإلكتروني</label>
-          <input type="email" class="border border-[#e6e1d8] rounded-xl px-3 py-2 outline-none focus:ring-2 focus:ring-[#C6A15B]" placeholder="example@email.com" />
-        </div>
-        <div class="grid gap-1">
-          <label class="text-sm">الموضوع</label>
-          <input class="border border-[#e6e1d8] rounded-xl px-3 py-2 outline-none focus:ring-2 focus:ring-[#C6A15B]" placeholder="نص قصير" />
-        </div>
-        <div class="grid gap-1">
-          <label class="text-sm">الرسالة</label>
-          <textarea rows="4" class="border border-[#e6e1d8] rounded-xl px-3 py-2 outline-none focus:ring-2 focus:ring-[#C6A15B]" placeholder="اكتب رسالتك هنا"></textarea>
-        </div>
-        <button type="submit" class="rounded-full px-5 py-3 text-sm font-semibold text-white luxury-gradient hover:opacity-90">إرسال</button>
-      </form>
-    </div>
-  </section>
+<div class="form-group">
+<input type="number" id="searchInput" placeholder="رقم الطفل">
+<button class="search" onclick="searchChild()">بحث</button>
+<button onclick="renderTable()">إظهار الكل</button>
+</div>
+</div>
 
-  <!-- Footer -->
-  <footer class="border-t border-[#e6e1d8] bg-white">
-    <div class="max-w-7xl mx-auto px-4 py-8 flex flex-col md:flex-row items-center justify-between gap-4">
-      <div class="flex items-center gap-2">
-        <!-- Logo in the footer: embed the uploaded logo as base64 for portability -->
-        <img src="data:image/png;base64,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" alt="شعار United Global Holdings" class="w-8 h-8 rounded-xl shadow-sm object-cover" />
-        <span class="text-sm font-semibold">United Global Holdings</span>
-      </div>
-      <div class="text-xs text-neutral-500">© <span id="year"></span> جميع الحقوق محفوظة. United Global Holdings</div>
-    </div>
-  </footer>
+<div class="card">
+<h2>📷 تسجيل الحضور</h2>
 
-  <!-- Scripts: icon initialization and nav toggle -->
-  <script>
-    // Initialize lucide icons after the DOM has loaded
-    document.addEventListener('DOMContentLoaded', function() {
-      lucide.createIcons();
-      // Toggle mobile navigation
-      const toggleBtn = document.getElementById('nav-toggle');
-      const mobileNav = document.getElementById('mobile-nav');
-      if (toggleBtn && mobileNav) {
-        toggleBtn.addEventListener('click', function() {
-          mobileNav.classList.toggle('hidden');
-        });
-      }
-      // Set current year in footer
-      const yearSpan = document.getElementById('year');
-      if (yearSpan) {
-        yearSpan.textContent = new Date().getFullYear();
-      }
-    });
-  </script>
+<input
+type="text"
+id="qrInput"
+placeholder="امسح QR أو أدخل رقم الطفل ثم Enter"
+style="width:350px;">
+</div>
+
+<div class="card">
+
+<h2>👶 الأطفال</h2>
+
+<table>
+
+<thead>
+<tr>
+<th>رقم الطفل</th>
+<th>الاسم</th>
+<th>الحالة</th>
+<th>التفقد</th>
+<th>حذف</th>
+</tr>
+</thead>
+
+<tbody id="tableBody"></tbody>
+
+</table>
+
+<div style="margin-top:15px;">
+<button class="reset" onclick="resetAttendance()">إعادة الحضور</button>
+<button class="export" onclick="exportCSV()">تصدير Excel</button>
+</div>
+
+<div class="stats">
+
+<div class="stat">
+الحضور
+<div id="presentCount">0</div>
+</div>
+
+<div class="stat">
+الغياب
+<div id="absentCount">0</div>
+</div>
+
+<div class="stat">
+الإجمالي
+<div id="totalCount">0</div>
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+<script>
+
+let children = JSON.parse(
+localStorage.getItem("children")
+) || [
+
+{
+id:1001,
+name:"أحمد محمد",
+present:false
+},
+
+{
+id:1002,
+name:"سارة علي",
+present:false
+}
+
+];
+
+function saveData(){
+
+localStorage.setItem(
+"children",
+JSON.stringify(children)
+);
+
+}
+
+function renderTable(data = children){
+
+let html = "";
+
+data.forEach(child=>{
+
+html += `
+<tr>
+
+<td>${child.id}</td>
+
+<td>${child.name}</td>
+
+<td>
+<span class="${
+child.present
+? 'present'
+: 'absent'
+}">
+${child.present ? 'حاضر' : 'غائب'}
+</span>
+</td>
+
+<td>
+<input
+type="checkbox"
+class="checkbox"
+${child.present ? 'checked' : ''}
+onchange="toggleAttendance(${child.id})">
+</td>
+
+<td>
+<button
+class="delete"
+onclick="deleteChild(${child.id})">
+حذف
+</button>
+</td>
+
+</tr>
+`;
+
+});
+
+document.getElementById(
+"tableBody"
+).innerHTML = html;
+
+updateStats();
+
+}
+
+function addChild(){
+
+let name =
+document.getElementById(
+"childName"
+).value.trim();
+
+let id =
+document.getElementById(
+"childId"
+).value.trim();
+
+if(!name || !id){
+
+alert("أدخل البيانات");
+
+return;
+}
+
+if(children.find(c=>c.id==id)){
+
+alert("الرقم موجود");
+
+return;
+}
+
+children.push({
+
+id:Number(id),
+name:name,
+present:false
+
+});
+
+saveData();
+
+document.getElementById(
+"childName"
+).value = "";
+
+document.getElementById(
+"childId"
+).value = "";
+
+renderTable();
+
+}
+
+function deleteChild(id){
+
+if(confirm("هل تريد الحذف؟")){
+
+children =
+children.filter(
+c=>c.id!==id
+);
+
+saveData();
+
+renderTable();
+
+}
+
+}
+
+function searchChild(){
+
+let value =
+document.getElementById(
+"searchInput"
+).value;
+
+if(value===""){
+
+renderTable();
+
+return;
+}
+
+let result =
+children.filter(c=>
+c.id.toString()
+.includes(value)
+);
+
+renderTable(result);
+
+}
+
+function toggleAttendance(id){
+
+let child =
+children.find(
+c=>c.id===id
+);
+
+child.present =
+!child.present;
+
+saveData();
+
+renderTable();
+
+}
+
+function updateStats(){
+
+let present =
+children.filter(
+c=>c.present
+).length;
+
+let absent =
+children.length - present;
+
+document.getElementById(
+"presentCount"
+).innerText = present;
+
+document.getElementById(
+"absentCount"
+).innerText = absent;
+
+document.getElementById(
+"totalCount"
+).innerText = children.length;
+
+}
+
+function resetAttendance(){
+
+if(confirm(
+"إعادة تعيين الحضور؟"
+)){
+
+children.forEach(c=>{
+
+c.present = false;
+
+});
+
+saveData();
+
+renderTable();
+
+}
+
+}
+
+function exportCSV(){
+
+let csv =
+"رقم الطفل,الاسم,الحالة\n";
+
+children.forEach(c=>{
+
+csv +=
+c.id + "," +
+c.name + "," +
+(c.present ?
+"حاضر" :
+"غائب") +
+"\n";
+
+});
+
+let blob =
+new Blob(
+[csv],
+{
+type:'text/csv'
+}
+);
+
+let link =
+document.createElement("a");
+
+link.href =
+URL.createObjectURL(blob);
+
+link.download =
+"attendance.csv";
+
+link.click();
+
+}
+
+document
+.getElementById("qrInput")
+.addEventListener(
+"change",
+function(){
+
+let qr =
+this.value.trim();
+
+let child =
+children.find(
+c=>c.id == qr
+);
+
+if(child){
+
+child.present = true;
+
+saveData();
+
+renderTable();
+
+alert(
+"تم تسجيل حضور: "
++ child.name
+);
+
+}else{
+
+alert(
+"الطفل غير موجود"
+);
+
+}
+
+this.value = "";
+
+}
+);
+
+renderTable();
+
+</script>
+
 </body>
 </html>
