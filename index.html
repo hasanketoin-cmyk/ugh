@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<head>
+<html lang="ar" dir="rtl">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
@@ -294,7 +294,10 @@ appId:
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
-
+window.addEventListener("error", e => {
+  console.error("ERROR:", e.message);
+  alert("خطأ: " + e.message);
+});
 let buses=[];
 let currentBusId=null;
   async function loadBuses(){
@@ -1009,12 +1012,14 @@ ${absent}`
   
 }
 
-document.addEventListener(
-"DOMContentLoaded",
-async ()=>{
-
-await loadBuses();
-
+window.onload = async () => {
+  try{
+    await loadBuses();
+  }catch(error){
+    console.error(error);
+    alert(error.message);
+  }
+};
 }
 );
   </script>
