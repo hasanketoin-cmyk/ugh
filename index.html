@@ -1,4 +1,3 @@
-```html
 <div class="card">
 
 <h2>🚌 إدارة خطوط الباصات</h2>
@@ -19,7 +18,6 @@ onclick="addBus()">
 
 <div id="allBusesContainer"></div>
 ```
-```javascript
 import { initializeApp }
 from "https://www.gstatic.com/firebasejs/11.8.1/firebase-app.js";
 
@@ -35,49 +33,27 @@ onSnapshot
 from "https://www.gstatic.com/firebasejs/11.8.1/firebase-firestore.js";
 
 const firebaseConfig = {
-
 apiKey: "AIzaSyA-aV5qGj27Vj0e8dtrXkz9Ckt5Tp-reyY",
-
-authDomain:
-"score-summer-camp.firebaseapp.com",
-
-projectId:
-"score-summer-camp",
-
-storageBucket:
-"score-summer-camp.firebasestorage.app",
-
-messagingSenderId:
-"836117896870",
-
-appId:
-"1:836117896870:web:730a652b3a8ab015105e67"
-
+authDomain: "score-summer-camp.firebaseapp.com",
+projectId: "score-summer-camp",
+storageBucket: "score-summer-camp.firebasestorage.app",
+messagingSenderId: "836117896870",
+appId: "1:836117896870:web:730a652b3a8ab015105e67"
 };
 
-const app =
-initializeApp(firebaseConfig);
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
 
-const db =
-getFirestore(app);
-
-const busesCollection =
-collection(db,"buses");
-
-const busChildrenCollection =
-collection(db,"busChildren");
+const busesCollection = collection(db,"buses");
+const busChildrenCollection = collection(db,"busChildren");
 
 let buses = [];
 let children = [];
 
-window.addBus =
-async function(){
+window.addBus = async function(){
 
 const name =
-document
-.getElementById("busName")
-.value
-.trim();
+document.getElementById("busName").value.trim();
 
 if(!name) return;
 
@@ -88,107 +64,84 @@ name:name
 }
 );
 
-document
-.getElementById("busName")
-.value="";
+document.getElementById("busName").value = "";
 
 };
 
-window.addChildToBus =
-async function(busName){
+window.addChildToBus = async function(busName){
 
-const childName =
-prompt("اسم الطفل");
+const childName = prompt("اسم الطفل");
 
 if(!childName) return;
 
 await addDoc(
 busChildrenCollection,
 {
-name:childName,
-busLine:busName,
-attendance:false
+name: childName,
+busLine: busName,
+attendance: false
 }
 );
 
 };
 
-window.toggleAttendance =
-async function(docId){
+window.toggleAttendance = async function(docId){
 
 const child =
-children.find(
-c=>c.docId===docId
-);
+children.find(c => c.docId === docId);
+
+if(!child) return;
 
 await updateDoc(
-doc(
-db,
-"busChildren",
-docId
-),
+doc(db,"busChildren",docId),
 {
-attendance:
-!child.attendance
+attendance: !child.attendance
 }
 );
 
 };
 
-window.deleteChild =
-async function(docId){
+window.deleteChild = async function(docId){
 
 if(!confirm("حذف الطفل؟"))
 return;
 
 await deleteDoc(
-doc(
-db,
-"busChildren",
-docId
-)
+doc(db,"busChildren",docId)
 );
 
 };
 
 function renderAllBuses(){
 
-let html="";
+let html = "";
 
 buses.forEach(bus=>{
 
 const kids =
 children.filter(
-c=>c.busLine===bus.name
+c => c.busLine === bus.name
 );
 
 html += `
 
 <div class="card">
 
-<h2>
-🚌 ${bus.name}
-</h2>
+<h2>🚌 ${bus.name}</h2>
 
 <button
+class="present"
 onclick="addChildToBus('${bus.name}')">
-
 ➕ إضافة طفل
-
 </button>
 
 <table>
 
 <tr>
-
 <th>الاسم</th>
-
 <th>الحالة</th>
-
 <th>تفقد</th>
-
 <th>حذف</th>
-
 </tr>
 
 `;
@@ -208,9 +161,10 @@ ${child.attendance ? "🟢 حاضر" : "🔴 غائب"}
 <td>
 
 <button
+class="${child.attendance ? 'present' : 'absent'}"
 onclick="toggleAttendance('${child.docId}')">
 
-${child.attendance ? "حاضر" : "غائب"}
+${child.attendance ? 'حاضر' : 'غائب'}
 
 </button>
 
@@ -219,6 +173,7 @@ ${child.attendance ? "حاضر" : "غائب"}
 <td>
 
 <button
+class="delete"
 onclick="deleteChild('${child.docId}')">
 
 🗑️ حذف
@@ -240,11 +195,9 @@ html += `
 
 });
 
-document
-.getElementById(
+document.getElementById(
 "allBusesContainer"
-)
-.innerHTML = html;
+).innerHTML = html;
 
 }
 
@@ -252,12 +205,12 @@ onSnapshot(
 busesCollection,
 (snapshot)=>{
 
-buses=[];
+buses = [];
 
 snapshot.forEach(docu=>{
 
 buses.push({
-docId:docu.id,
+docId: docu.id,
 ...docu.data()
 });
 
@@ -272,12 +225,12 @@ onSnapshot(
 busChildrenCollection,
 (snapshot)=>{
 
-children=[];
+children = [];
 
 snapshot.forEach(docu=>{
 
 children.push({
-docId:docu.id,
+docId: docu.id,
 ...docu.data()
 });
 
@@ -287,4 +240,3 @@ renderAllBuses();
 
 }
 );
-```
