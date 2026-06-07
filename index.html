@@ -1,6 +1,6 @@
 <div class="card">
 
-<h2>🚌 إدارة خطوط الباصات</h2>
+<h2>🚌  إدارة خطوط باصات النادي الصيفي Score </h2>
 
 <input
 type="text"
@@ -58,13 +58,16 @@ document.getElementById("busName").value.trim();
 
 if(!name) return;
 
+const supervisor =
+prompt("اسم المشرف");
+
 await addDoc(
 busesCollection,
 {
-name:name
+name:name,
+supervisor: supervisor || ""
 }
 );
-
 document.getElementById("busName").value = "";
 
 };
@@ -129,6 +132,11 @@ html += `
 <div class="card">
 
 <h2>🚌 ${bus.name}</h2>
+
+<p>
+👨‍✈️ المشرف:
+<b>${bus.supervisor || "-"}</b>
+</p>
 
 <button
 class="present"
