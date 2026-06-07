@@ -137,11 +137,19 @@ newName.trim()
 );
 
 };
+```javascript
+window.deleteChild =
+async function(docId){
+
 if(!confirm("حذف الطفل؟"))
 return;
 
 await deleteDoc(
-doc(db,"busChildren",docId)
+doc(
+db,
+"busChildren",
+docId
+)
 );
 
 };
@@ -221,6 +229,9 @@ ${child.attendance ? 'حاضر' : 'غائب'}
 
 <td>
 
+```javascript
+<td>
+
 <button
 class="delete"
 onclick="deleteChild('${child.docId}')">
@@ -231,10 +242,6 @@ onclick="deleteChild('${child.docId}')">
 
 </td>
 
-const bus =
-buses.find(
-b => b.docId === docId
-);
 
 if(!bus) return;
 
@@ -259,8 +266,6 @@ newName.trim()
 }
 );
 
-};
-🗑️ حذف
 
 </button>
 
