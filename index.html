@@ -510,8 +510,7 @@ childRef,
 present:!current.present,
 attendanceDate:
 new Date()
-.toISOString()
-.slice(0,10)
+.toLocaleString("ar-EG")
 }
 );
 
@@ -742,10 +741,9 @@ ${absent}
 <tr>
 
 <th>#</th>
-<th>اسم الطفل</th>
 <th>الحالة</th>
+<th>تاريخ الحضور</th>
 <th>الإجراءات</th>
-
 </tr>
 
 </thead>
@@ -760,13 +758,9 @@ ${filteredChildren.map((child,index)=>`
 
 <td>${child.name}</td>
 
-<td class="${
-child.present
-?
-'present'
-:
-'absent'
-}">
+<td>
+${child.attendanceDate || "-"}
+</td>
 
 ${
 child.present
