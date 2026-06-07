@@ -1,12 +1,16 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
+
 <head>
+
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>
-🚌 إدارة خطوط باصات النادي الصيفي
-</title>
+<title>🚌 إدارة خطوط باصات النادي الصيفي</title>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
 <style>
 
@@ -22,18 +26,33 @@ color:#2c3e50;
 }
 
 .card{
-background:white;
+background:#fff;
 padding:15px;
 border-radius:10px;
 box-shadow:0 2px 8px rgba(0,0,0,.1);
 margin-bottom:20px;
 }
 
-input{
+.dashboard{
+background:#fff;
+padding:15px;
+margin-bottom:15px;
+border-radius:10px;
+box-shadow:0 2px 8px rgba(0,0,0,.1);
+font-size:18px;
+font-weight:bold;
+}
+
+input,textarea{
 padding:10px;
 margin:5px;
 border:1px solid #ccc;
 border-radius:6px;
+}
+
+textarea{
+width:100%;
+height:200px;
 }
 
 button{
@@ -104,15 +123,6 @@ border-radius:6px;
 font-weight:bold;
 }
 
-textarea{
-width:100%;
-height:200px;
-padding:10px;
-margin-top:10px;
-border:1px solid #ccc;
-border-radius:6px;
-}
-
 .modal{
 display:none;
 position:fixed;
@@ -133,29 +143,13 @@ padding:20px;
 border-radius:10px;
 }
 
-.dashboard{
-background:white;
-padding:15px;
-margin-bottom:15px;
-border-radius:10px;
-box-shadow:0 2px 8px rgba(0,0,0,.1);
-font-size:18px;
-font-weight:bold;
-}
-
 </style>
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
 </head>
 
 <body>
 
-<h1>
-🚌 إدارة خطوط باصات النادي الصيفي
-</h1>
+<h1>🚌 إدارة خطوط باصات النادي الصيفي</h1>
 
 <div class="dashboard">
 
@@ -225,9 +219,7 @@ onclick="exportPDF()">
 
 <div class="modal-content">
 
-<h3>
-📋 إضافة مجموعة أطفال
-</h3>
+<h3>📋 إضافة مجموعة أطفال</h3>
 
 <textarea
 id="bulkNames"
@@ -295,13 +287,12 @@ appId:
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
-window.addEventListener("error", e => {
-  console.error("ERROR:", e.message);
-  alert("خطأ: " + e.message);
-});
-let buses=[];
-let currentBusId=null;
+
+let buses = [];
+let currentBusId = null;
   async function loadBuses(){
+
+try{
 
 buses=[];
 
@@ -337,8 +328,8 @@ id:childDoc.id,
 
 buses.push({
 id:busDoc.id,
-name:busData.name,
-supervisor:busData.supervisor,
+name:busData.name || "",
+supervisor:busData.supervisor || "",
 children:children
 });
 
@@ -346,9 +337,18 @@ children:children
 
 render();
 
+}catch(error){
+
+console.error(error);
+alert(error.message);
+
+}
+
 }
 
 async function addBus(){
+
+try{
 
 const name=
 document.getElementById("busName")
@@ -363,7 +363,6 @@ document.getElementById("supervisorName")
 if(!name){
 
 alert("أدخل اسم خط الباص");
-
 return;
 
 }
@@ -381,14 +380,22 @@ document.getElementById("busName").value="";
 document.getElementById("supervisorName").value="";
 
 await loadBuses();
+
+}catch(error){
+
+console.error(error);
+alert(error.message);
+
+}
+
 }
 
 async function deleteBus(busId){
 
+try{
+
 if(
-!confirm(
-"هل تريد حذف خط الباص؟"
-)
+!confirm("هل تريد حذف الخط؟")
 ){
 return;
 }
@@ -402,9 +409,19 @@ busId
 );
 
 await loadBuses();
+
+}catch(error){
+
+console.error(error);
+alert(error.message);
+
+}
+
 }
 
 async function addChild(busId){
+
+try{
 
 const childName=
 prompt("اسم الطفل");
@@ -427,12 +444,22 @@ createdAt:new Date()
 );
 
 await loadBuses();
+
+}catch(error){
+
+console.error(error);
+alert(error.message);
+
+}
+
 }
 
 async function deleteChild(
 busId,
 childId
 ){
+
+try{
 
 await deleteDoc(
 doc(
@@ -445,12 +472,22 @@ childId
 );
 
 await loadBuses();
+
+}catch(error){
+
+console.error(error);
+alert(error.message);
+
+}
+
 }
 
 async function toggleAttendance(
 busId,
 childId
 ){
+
+try{
 
 const childRef=
 doc(
@@ -462,9 +499,7 @@ childId
 );
 
 const childSnap=
-await getDoc(
-childRef
-);
+await getDoc(childRef);
 
 const current=
 childSnap.data();
@@ -481,59 +516,56 @@ new Date()
 );
 
 await loadBuses();
+
+}catch(error){
+
+console.error(error);
+alert(error.message);
+
 }
 
-function openBulkModal(
-busId
-){
+}
+  function openBulkModal(busId){
 
 currentBusId=busId;
 
-document
-.getElementById(
+document.getElementById(
 "bulkNames"
-)
-.value="";
+).value="";
 
-document
-.getElementById(
+document.getElementById(
 "bulkModal"
-)
-.style.display="flex";
+).style.display="flex";
 
 }
 
 function closeBulkModal(){
 
-document
-.getElementById(
+document.getElementById(
 "bulkModal"
-)
-.style.display="none";
+).style.display="none";
 
 }
 
 async function saveBulkNames(){
 
-const namesText=
-document
-.getElementById(
-"bulkNames"
-)
-.value;
+try{
 
-if(!namesText)
+const namesText=
+document.getElementById(
+"bulkNames"
+).value;
+
+if(!namesText){
+alert("أدخل أسماء الأطفال");
 return;
+}
 
 const names=
 namesText
 .split("\n")
-.map(
-name=>name.trim()
-)
-.filter(
-name=>name!=""
-);
+.map(name=>name.trim())
+.filter(name=>name!="");
 
 for(const name of names){
 
@@ -558,17 +590,25 @@ closeBulkModal();
 
 await loadBuses();
 
+}catch(error){
+
+console.error(error);
+alert(error.message);
+
 }
-  function updateDashboard(){
+
+}
+
+function updateDashboard(){
 
 let totalChildren=0;
 let totalPresent=0;
 
 buses.forEach(bus=>{
 
-totalChildren+=bus.children.length;
+totalChildren += bus.children.length;
 
-totalPresent+=
+totalPresent +=
 bus.children.filter(
 c=>c.present
 ).length;
@@ -592,31 +632,36 @@ document.getElementById(
 
 }
 
-function render(){
+document.addEventListener(
+"DOMContentLoaded",
+()=>{
+
+document
+.getElementById("searchInput")
+.addEventListener(
+"keyup",
+render
+);
+
+}
+);
+  function render(){
 
 updateDashboard();
 
-const container=
+const container =
 document.getElementById(
 "allBusesContainer"
 );
 
-const search=
+const search =
 document.getElementById(
 "searchInput"
-)?.value
-?.toLowerCase() || "";
+).value.toLowerCase();
 
 container.innerHTML="";
 
 buses.forEach(bus=>{
-
-const filteredChildren=
-bus.children.filter(child=>
-child.name
-.toLowerCase()
-.includes(search)
-);
 
 const total=
 bus.children.length;
@@ -629,7 +674,14 @@ c=>c.present
 const absent=
 total-present;
 
-container.innerHTML+=`
+const filteredChildren=
+bus.children.filter(child=>
+child.name
+.toLowerCase()
+.includes(search)
+);
+
+container.innerHTML += `
 
 <div class="bus">
 
@@ -638,13 +690,8 @@ container.innerHTML+=`
 </h2>
 
 <p>
-
 👨‍✈️ المشرف:
-
-<b>
-${bus.supervisor || "-"}
-</b>
-
+<b>${bus.supervisor || "-"}</b>
 </p>
 
 <button
@@ -676,16 +723,12 @@ onclick="deleteBus('${bus.id}')">
 👦 العدد الكلي:
 ${total}
 
-&nbsp;&nbsp;|
-
-&nbsp;&nbsp;
+|
 
 🟢 الحاضرون:
 ${present}
 
-&nbsp;&nbsp;|
-
-&nbsp;&nbsp;
+|
 
 🔴 الغائبون:
 ${absent}
@@ -694,38 +737,30 @@ ${absent}
 
 <table>
 
+<thead>
+
 <tr>
 
 <th>#</th>
-
-<th>
-اسم الطفل
-</th>
-
-<th>
-الحالة
-</th>
-
-<th>
-الإجراءات
-</th>
+<th>اسم الطفل</th>
+<th>الحالة</th>
+<th>الإجراءات</th>
 
 </tr>
+
+</thead>
+
+<tbody>
 
 ${filteredChildren.map((child,index)=>`
 
 <tr>
 
-<td>
-${index+1}
-</td>
+<td>${index+1}</td>
 
-<td>
-${child.name}
-</td>
+<td>${child.name}</td>
 
-<td
-class="${
+<td class="${
 child.present
 ?
 'present'
@@ -773,6 +808,8 @@ onclick="deleteChild(
 
 `).join("")}
 
+</tbody>
+
 </table>
 
 </div>
@@ -782,13 +819,8 @@ onclick="deleteChild(
 });
 
 }
-  document
-.getElementById("searchInput")
-.addEventListener(
-"keyup",
-render
-);
-  function exportExcel(){
+  
+function exportExcel(){
 
 const rows=[];
 
@@ -808,7 +840,7 @@ child.present
 :
 "غائب",
 
-"آخر تفقد":
+"تاريخ التفقد":
 child.attendanceDate || ""
 
 });
@@ -817,10 +849,10 @@ child.attendanceDate || ""
 
 });
 
-const worksheet=
+const worksheet =
 XLSX.utils.json_to_sheet(rows);
 
-const workbook=
+const workbook =
 XLSX.utils.book_new();
 
 XLSX.utils.book_append_sheet(
@@ -831,7 +863,7 @@ worksheet,
 
 XLSX.writeFile(
 workbook,
-"summer-camp-attendance.xlsx"
+"attendance.xlsx"
 );
 
 }
@@ -840,10 +872,9 @@ async function exportPDF(){
 
 const { jsPDF } = window.jspdf;
 
-const pdf =
-new jsPDF();
+const pdf = new jsPDF();
 
-let y=20;
+let y = 20;
 
 pdf.setFontSize(16);
 
@@ -863,7 +894,7 @@ pdf.text(
 y
 );
 
-y+=8;
+y += 10;
 
 bus.children.forEach(child=>{
 
@@ -882,145 +913,58 @@ y
 
 );
 
-y+=7;
+y += 7;
 
-if(y>270){
+if(y > 270){
 
 pdf.addPage();
 
-y=20;
+y = 20;
 
 }
 
 });
 
-y+=10;
+y += 10;
 
 });
 
 pdf.save(
-"attendance-report.pdf"
+"attendance.pdf"
 );
 
 }
 
-function dailyReport(){
+window.addBus = addBus;
+window.addChild = addChild;
+window.deleteBus = deleteBus;
+window.deleteChild = deleteChild;
+window.toggleAttendance = toggleAttendance;
+window.openBulkModal = openBulkModal;
+window.closeBulkModal = closeBulkModal;
+window.saveBulkNames = saveBulkNames;
+window.exportExcel = exportExcel;
+window.exportPDF = exportPDF;
 
-const today=
-new Date()
-.toISOString()
-.slice(0,10);
+window.onload = async ()=>{
 
-let total=0;
-let present=0;
+try{
 
-buses.forEach(bus=>{
+await loadBuses();
 
-bus.children.forEach(child=>{
+}catch(error){
 
-if(
-child.attendanceDate===today
-){
-
-total++;
-
-if(child.present){
-
-present++;
-
-}
-
-}
-
-});
-
-});
-
-const absent=
-total-present;
+console.error(error);
 
 alert(
-
-`تقرير اليوم
-
-إجمالي التفقد:
-${total}
-
-الحاضرون:
-${present}
-
-الغائبون:
-${absent}`
-
+"Firebase Error: " +
+error.message
 );
 
 }
 
-function monthlyReport(){
-
-const currentMonth=
-new Date()
-.toISOString()
-.slice(0,7);
-
-let total=0;
-let present=0;
-
-buses.forEach(bus=>{
-
-bus.children.forEach(child=>{
-
-if(
-child.attendanceDate &&
-child.attendanceDate.startsWith(
-currentMonth
-)
-){
-
-total++;
-
-if(child.present){
-
-present++;
-
-}
-
-}
-
-});
-
-});
-
-const absent=
-total-present;
-
-alert(
-
-`التقرير الشهري
-
-إجمالي السجلات:
-${total}
-
-الحاضرون:
-${present}
-
-الغائبون:
-${absent}`
-
-);
-
-}
-  
-}
-
-window.onload = async () => {
-  try{
-    await loadBuses();
-  }catch(error){
-    console.error(error);
-    alert(error.message);
-  }
 };
+
 </script>
 
 </body>
