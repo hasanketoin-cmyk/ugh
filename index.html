@@ -1,34 +1,3 @@
-
-<script type="module">
-import { initializeApp }
-from "https://www.gstatic.com/firebasejs/11.8.1/firebase-app.js";
-
-import {
-getFirestore,
-collection,
-addDoc,
-deleteDoc,
-doc,
-updateDoc,
-onSnapshot
-}
-from "https://www.gstatic.com/firebasejs/11.8.1/firebase-firestore.js";
-
-const firebaseConfig = {
-apiKey: "AIzaSyA-aV5qGj27Vj0e8dtrXkz9Ckt5Tp-reyY",
-authDomain: "score-summer-camp.firebaseapp.com",
-projectId: "score-summer-camp",
-storageBucket: "score-summer-camp.firebasestorage.app",
-messagingSenderId: "836117896870",
-appId: "1:836117896870:web:730a652b3a8ab015105e67"
-};
-
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
-
-const busesCollection = collection(db,"buses");
-const busChildrenCollection = collection(db,"busChildren");
-
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 
