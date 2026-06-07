@@ -205,14 +205,30 @@ onclick="addChildToBus('${bus.name}')">
 <th>حذف</th>
 </tr>
 
-`;
 
+kids.forEach(child=>{
+
+html += `
+
+<tr>
+
+<td>${child.name}</td>
+
+<td>
+${child.attendance ? "🟢 حاضر" : "🔴 غائب"}
 </td>
 
-
 <td>
 
-<td>
+<button
+class="${child.attendance ? 'present' : 'absent'}"
+onclick="toggleAttendance('${child.docId}')">
+
+${child.attendance ? 'حاضر' : 'غائب'}
+
+</button>
+
+</td>
 
 <td>
 
@@ -226,37 +242,12 @@ onclick="deleteChild('${child.docId}')">
 
 </td>
 
-const newName =
-prompt(
-"اسم المشرف الجديد",
-bus.supervisor || ""
-);
-
-if(newName === null)
-return;
-
-await updateDoc(
-doc(
-db,
-"buses",
-docId
-),
-{
-supervisor:
-newName.trim()
-}
-);
-
-
-</button>
-
-</td>
-
 </tr>
 
 `;
 
 });
+
 
 html += `
 </table>
