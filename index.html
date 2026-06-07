@@ -123,13 +123,7 @@ font-weight:bold;
 🚌 نظام تفقد الباصات
 </h1>
 
-<select id="busSelect">
-
-<option value="">
-اختر خط الباص
-</option>
-
-</select>
+<div id="allBusesContainer"></div>
 
 </div>
 
@@ -289,14 +283,14 @@ fillBusSelect();
 );
 
 onSnapshot(
-childrenCollection,
+busesCollection,
 (snapshot)=>{
 
-children = [];
+buses = [];
 
 snapshot.forEach(docu=>{
 
-children.push({
+buses.push({
 
 docId:docu.id,
 ...docu.data()
@@ -305,18 +299,8 @@ docId:docu.id,
 
 });
 
-}
-);
-function renderChildren(){
+renderAllBuses();
 
-const busId =
-document.getElementById(
-"busSelect"
-).value;
-
-const kids =
-children.filter(
-c => c.busId === busId
 );
 
 let html = "";
@@ -466,15 +450,11 @@ docId
 );
 
 };
-
-document
-.getElementById(
-"busSelect"
-)
-.addEventListener(
-"change",
-renderChildren
-);
+<div id="allBusesContainer"></div>
+    function renderAllBuses(){
+...
+}
+    
   </script>
 
 </body>
