@@ -1,18 +1,34 @@
 <!DOCTYPE html>
-<html dir="rtl">
+<html dir="rtl" lang="ar">
 
 <head>
 
 <meta charset="UTF-8">
 
-<title>تفقد الباصات</title>
+<meta name="viewport"
+content="width=device-width, initial-scale=1.0">
+
+<title>
+🚌 تفقد الباصات
+</title>
 
 <style>
 
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Tahoma,sans-serif;
+}
+
 body{
-font-family:Tahoma;
 background:#f3f4f6;
 padding:20px;
+}
+
+.container{
+max-width:1200px;
+margin:auto;
 }
 
 .card{
@@ -23,14 +39,26 @@ margin-bottom:20px;
 box-shadow:0 2px 8px rgba(0,0,0,.1);
 }
 
+h1,h2{
+margin-bottom:15px;
+}
+
+select{
+padding:10px;
+border:1px solid #ddd;
+border-radius:8px;
+width:300px;
+}
+
 table{
 width:100%;
 border-collapse:collapse;
+margin-top:15px;
 }
 
 th,td{
 padding:12px;
-border:1px solid #ddd;
+border-bottom:1px solid #ddd;
 text-align:center;
 }
 
@@ -41,7 +69,7 @@ background:#f8fafc;
 .present{
 background:#22c55e;
 color:white;
-padding:8px 15px;
+padding:6px 12px;
 border:none;
 border-radius:8px;
 cursor:pointer;
@@ -50,23 +78,34 @@ cursor:pointer;
 .absent{
 background:#ef4444;
 color:white;
-padding:8px 15px;
+padding:6px 12px;
 border:none;
 border-radius:8px;
 cursor:pointer;
 }
 
-select{
-padding:10px;
-width:300px;
+.delete{
+background:#dc2626;
+color:white;
+padding:6px 12px;
+border:none;
+border-radius:8px;
+cursor:pointer;
+}
+
+.stats{
+display:flex;
+gap:10px;
+flex-wrap:wrap;
+margin-top:15px;
 }
 
 .stat{
-display:inline-block;
-background:white;
+background:#f8fafc;
 padding:15px;
-margin:10px;
 border-radius:10px;
+min-width:120px;
+text-align:center;
 font-weight:bold;
 }
 
@@ -76,11 +115,13 @@ font-weight:bold;
 
 <body>
 
+<div class="container">
+
 <div class="card">
 
-<h2>
-🚌 تفقد الباصات
-</h2>
+<h1>
+🚌 نظام تفقد الباصات
+</h1>
 
 <select id="busSelect">
 
@@ -92,26 +133,30 @@ font-weight:bold;
 
 </div>
 
-<div>
+<div class="stats">
 
 <div class="stat">
-الحضور:
-<span id="presentCount">0</span>
+الحضور
+<div id="presentCount">0</div>
 </div>
 
 <div class="stat">
-الغياب:
-<span id="absentCount">0</span>
+الغياب
+<div id="absentCount">0</div>
 </div>
 
 <div class="stat">
-الإجمالي:
-<span id="totalCount">0</span>
+الإجمالي
+<div id="totalCount">0</div>
 </div>
 
 </div>
 
 <div class="card">
+
+<h2>
+أطفال خط الباص
+</h2>
 
 <table>
 
@@ -123,21 +168,40 @@ font-weight:bold;
 
 <th>الاسم</th>
 
-<th>الحضور بالباص</th>
+<th>الحالة</th>
+
+<th>تفقد</th>
+
+<th>حذف</th>
 
 </tr>
 
 </thead>
 
-...
 <tbody id="childrenTable">
+
 </tbody>
 
 </table>
 
 </div>
 
-<script type="module">
+</div>
+
+  <script type="module">
+
+import { initializeApp }
+from "https://www.gstatic.com/firebasejs/11.8.1/firebase-app.js";
+
+import {
+getFirestore,
+collection,
+doc,
+deleteDoc,
+updateDoc,
+onSnapshot
+}
+from "https://www.gstatic.com/firebasejs/11.8.1/firebase-firestore.js";
 
 const firebaseConfig = {
 
@@ -159,7 +223,260 @@ appId:
 "1:836117896870:web:730a652b3a8ab015105e67"
 
 };
+
+const app =
+initializeApp(firebaseConfig);
+
+const db =
+getFirestore(app);
+
+const busesCollection =
+collection(
+db,
+"buses"
+);
+
+const childrenCollection =
+collection(
+db,
+"children"
+);
+
+let buses = [];
+let children = [];
+
 </script>
+function fillBusSelect(){
+
+let html =
+'<option value="">اختر خط الباص</option>';
+
+buses.forEach(bus=>{
+
+html += `
+<option value="${bus.docId}">
+${bus.name}
+</option>
+`;
+
+});
+
+document.getElementById(
+"busSelect"
+).innerHTML = html;
+
+}
+
+onSnapshot(
+busesCollection,
+(snapshot)=>{
+
+buses = [];
+
+snapshot.forEach(docu=>{
+
+buses.push({
+
+docId:docu.id,
+...docu.data()
+
+});
+
+});
+
+fillBusSelect();
+
+}
+);
+
+onSnapshot(
+childrenCollection,
+(snapshot)=>{
+
+children = [];
+
+snapshot.forEach(docu=>{
+
+children.push({
+
+docId:docu.id,
+...docu.data()
+
+});
+
+});
+
+}
+);
+function renderChildren(){
+
+const busId =
+document.getElementById(
+"busSelect"
+).value;
+
+const kids =
+children.filter(
+c => c.busId === busId
+);
+
+let html = "";
+let present = 0;
+
+kids.forEach(child=>{
+
+if(child.busAttendance)
+present++;
+
+html += `
+
+<tr>
+
+<td>
+${child.childId || "-"}
+</td>
+
+<td>
+${child.name || "-"}
+</td>
+
+<td>
+
+<span class="${
+child.busAttendance
+?
+'present'
+:
+'absent'
+}">
+
+${
+child.busAttendance
+?
+'حاضر'
+:
+'غائب'
+}
+
+</span>
+
+</td>
+
+<td>
+
+<button
+class="${
+child.busAttendance
+?
+'present'
+:
+'absent'
+}"
+onclick="toggleBusAttendance('${child.docId}')">
+
+${
+child.busAttendance
+?
+'🟢 حاضر'
+:
+'🔴 غائب'
+}
+
+</button>
+
+</td>
+
+<td>
+
+<button
+class="delete"
+onclick="deleteChild('${child.docId}')">
+
+🗑️ حذف
+
+</button>
+
+</td>
+
+</tr>
+
+`;
+
+});
+
+document.getElementById(
+"childrenTable"
+).innerHTML = html;
+
+document.getElementById(
+"presentCount"
+).innerText = present;
+
+document.getElementById(
+"absentCount"
+).innerText =
+kids.length - present;
+
+document.getElementById(
+"totalCount"
+).innerText =
+kids.length;
+
+}
+
+window.toggleBusAttendance =
+async function(docId){
+
+const child =
+children.find(
+c => c.docId === docId
+);
+
+if(!child) return;
+
+await updateDoc(
+doc(
+db,
+"children",
+docId
+),
+{
+busAttendance:
+!child.busAttendance
+}
+);
+
+};
+
+window.deleteChild =
+async function(docId){
+
+if(
+!confirm(
+"حذف الطفل؟"
+)
+)
+return;
+
+await deleteDoc(
+doc(
+db,
+"children",
+docId
+)
+);
+
+};
+
+document
+.getElementById(
+"busSelect"
+)
+.addEventListener(
+"change",
+renderChildren
+);
+  </script>
 
 </body>
 </html>
