@@ -1,83 +1,290 @@
-<!DOCTYPE html>
-<html dir="rtl">
+```html
+<div class="card">
 
-<head>
+<h2>🚌 إدارة خطوط الباصات</h2>
 
-<meta charset="UTF-8">
+<input
+type="text"
+id="busName"
+placeholder="اسم خط الباص">
 
-<title>تفقد الباصات</title>
+<button
+onclick="addBus()">
 
-<style>
+➕ إضافة خط
 
-body{
-font-family:Tahoma;
-background:#f3f4f6;
-padding:20px;
+</button>
+
+</div>
+
+<div id="allBusesContainer"></div>
+```
+```javascript
+import { initializeApp }
+from "https://www.gstatic.com/firebasejs/11.8.1/firebase-app.js";
+
+import {
+getFirestore,
+collection,
+addDoc,
+deleteDoc,
+doc,
+updateDoc,
+onSnapshot
 }
+from "https://www.gstatic.com/firebasejs/11.8.1/firebase-firestore.js";
 
-.card{
-background:white;
-padding:20px;
-border-radius:10px;
-margin-bottom:20px;
-box-shadow:0 2px 8px rgba(0,0,0,.1);
+const firebaseConfig = {
+
+apiKey: "AIzaSyA-aV5qGj27Vj0e8dtrXkz9Ckt5Tp-reyY",
+
+authDomain:
+"score-summer-camp.firebaseapp.com",
+
+projectId:
+"score-summer-camp",
+
+storageBucket:
+"score-summer-camp.firebasestorage.app",
+
+messagingSenderId:
+"836117896870",
+
+appId:
+"1:836117896870:web:730a652b3a8ab015105e67"
+
+};
+
+const app =
+initializeApp(firebaseConfig);
+
+const db =
+getFirestore(app);
+
+const busesCollection =
+collection(db,"buses");
+
+const busChildrenCollection =
+collection(db,"busChildren");
+
+let buses = [];
+let children = [];
+
+window.addBus =
+async function(){
+
+const name =
+document
+.getElementById("busName")
+.value
+.trim();
+
+if(!name) return;
+
+await addDoc(
+busesCollection,
+{
+name:name
 }
+);
 
-table{
-width:100%;
-border-collapse:collapse;
+document
+.getElementById("busName")
+.value="";
+
+};
+
+window.addChildToBus =
+async function(busName){
+
+const childName =
+prompt("اسم الطفل");
+
+if(!childName) return;
+
+await addDoc(
+busChildrenCollection,
+{
+name:childName,
+busLine:busName,
+attendance:false
 }
+);
 
-th,td{
-padding:12px;
-border:1px solid #ddd;
-text-align:center;
+};
+
+window.toggleAttendance =
+async function(docId){
+
+const child =
+children.find(
+c=>c.docId===docId
+);
+
+await updateDoc(
+doc(
+db,
+"busChildren",
+docId
+),
+{
+attendance:
+!child.attendance
 }
+);
 
-th{
-background:#f8fafc;
-}
+};
 
-.present{
-background:#22c55e;
-color:white;
-padding:8px 15px;
-border:none;
-border-radius:8px;
-cursor:pointer;
-}
+window.deleteChild =
+async function(docId){
 
-.absent{
-background:#ef4444;
-color:white;
-padding:8px 15px;
-border:none;
-border-radius:8px;
-cursor:pointer;
-}
+if(!confirm("حذف الطفل؟"))
+return;
 
-select{
-padding:10px;
-width:300px;
-}
+await deleteDoc(
+doc(
+db,
+"busChildren",
+docId
+)
+);
 
-.stat{
-display:inline-block;
-background:white;
-padding:15px;
-margin:10px;
-border-radius:10px;
-font-weight:bold;
-}
+};
 
-</style>
+function renderAllBuses(){
 
-</head>
+let html="";
 
-<body>
+buses.forEach(bus=>{
+
+const kids =
+children.filter(
+c=>c.busLine===bus.name
+);
+
+html += `
 
 <div class="card">
 
 <h2>
-🚌 تفقد الباصات
+🚌 ${bus.name}
 </h2>
+
+<button
+onclick="addChildToBus('${bus.name}')">
+
+➕ إضافة طفل
+
+</button>
+
+<table>
+
+<tr>
+
+<th>الاسم</th>
+
+<th>الحالة</th>
+
+<th>تفقد</th>
+
+<th>حذف</th>
+
+</tr>
+
+`;
+
+kids.forEach(child=>{
+
+html += `
+
+<tr>
+
+<td>${child.name}</td>
+
+<td>
+${child.attendance ? "🟢 حاضر" : "🔴 غائب"}
+</td>
+
+<td>
+
+<button
+onclick="toggleAttendance('${child.docId}')">
+
+${child.attendance ? "حاضر" : "غائب"}
+
+</button>
+
+</td>
+
+<td>
+
+<button
+onclick="deleteChild('${child.docId}')">
+
+🗑️ حذف
+
+</button>
+
+</td>
+
+</tr>
+
+`;
+
+});
+
+html += `
+</table>
+</div>
+`;
+
+});
+
+document
+.getElementById(
+"allBusesContainer"
+)
+.innerHTML = html;
+
+}
+
+onSnapshot(
+busesCollection,
+(snapshot)=>{
+
+buses=[];
+
+snapshot.forEach(docu=>{
+
+buses.push({
+docId:docu.id,
+...docu.data()
+});
+
+});
+
+renderAllBuses();
+
+}
+);
+
+onSnapshot(
+busChildrenCollection,
+(snapshot)=>{
+
+children=[];
+
+snapshot.forEach(docu=>{
+
+children.push({
+docId:docu.id,
+...docu.data()
+});
+
+});
+
+renderAllBuses();
+
+}
+);
+```
