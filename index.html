@@ -135,7 +135,18 @@ html += `
 
 <p>
 👨‍✈️ المشرف:
-<b>${bus.supervisor || "-"}</b>
+<td>
+
+${bus.supervisor || "-"}
+
+<button
+onclick="editSupervisor('${bus.docId}')">
+
+✏️ تعديل
+
+</button>
+
+</td>
 </p>
 
 <button
@@ -184,7 +195,38 @@ ${child.attendance ? 'حاضر' : 'غائب'}
 <button
 class="delete"
 onclick="deleteChild('${child.docId}')">
+window.editSupervisor =
+async function(docId){
 
+const bus =
+buses.find(
+b => b.docId === docId
+);
+
+if(!bus) return;
+
+const newName =
+prompt(
+"اسم المشرف الجديد",
+bus.supervisor || ""
+);
+
+if(newName === null)
+return;
+
+await updateDoc(
+doc(
+db,
+"buses",
+docId
+),
+{
+supervisor:
+newName.trim()
+}
+);
+
+};
 🗑️ حذف
 
 </button>
