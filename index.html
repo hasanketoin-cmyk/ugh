@@ -4,7 +4,17 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>إدارة خطوط باصات النادي الصيفي</title>
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>
+🚌 إدارة خطوط باصات النادي الصيفي
+</title>
 
 <style>
 
@@ -131,13 +141,55 @@ padding:20px;
 border-radius:10px;
 }
 
+.dashboard{
+background:white;
+padding:15px;
+margin-bottom:15px;
+border-radius:10px;
+box-shadow:0 2px 8px rgba(0,0,0,.1);
+font-size:18px;
+font-weight:bold;
+}
+
 </style>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
 </head>
+
 <body>
 
-<h1>🚌 إدارة خطوط باصات النادي الصيفي</h1>
+<h1>
+🚌 إدارة خطوط باصات النادي الصيفي
+</h1>
+
+<div class="dashboard">
+
+📊 إجمالي الأطفال:
+<span id="totalChildren">0</span>
+
+|
+
+🟢 الحاضرون:
+<span id="totalPresent">0</span>
+
+|
+
+🔴 الغائبون:
+<span id="totalAbsent">0</span>
+
+</div>
 
 <div class="card">
+
+<input
+type="text"
+id="searchInput"
+placeholder="🔍 البحث عن طفل">
+
+<br>
 
 <input
 type="text"
@@ -157,6 +209,22 @@ onclick="addBus()">
 
 </button>
 
+<button
+class="bulk"
+onclick="exportExcel()">
+
+📊 Excel
+
+</button>
+
+<button
+class="bulk"
+onclick="exportPDF()">
+
+📄 PDF
+
+</button>
+
 </div>
 
 <div id="allBusesContainer"></div>
@@ -165,7 +233,9 @@ onclick="addBus()">
 
 <div class="modal-content">
 
-<h3>📋 إضافة مجموعة أطفال</h3>
+<h3>
+📋 إضافة مجموعة أطفال
+</h3>
 
 <textarea
 id="bulkNames"
@@ -193,169 +263,403 @@ onclick="closeBulkModal()">
 
 </div>
 
-<script>
+<script type="module">
+
+import { initializeApp }
+from "https://www.gstatic.com/firebasejs/11.9.1/firebase-app.js";
+
+import {
+getFirestore,
+collection,
+addDoc,
+getDocs,
+deleteDoc,
+doc,
+updateDoc,
+getDoc
+}
+from "https://www.gstatic.com/firebasejs/11.9.1/firebase-firestore.js";
+
+const firebaseConfig = {
+
+apiKey: "AIzaSyA-aV5qGj27Vj0e8dtrXkz9Ckt5Tp-reyY",
+
+authDomain:
+"score-summer-camp.firebaseapp.com",
+
+projectId:
+"score-summer-camp",
+
+storageBucket:
+"score-summer-camp.firebasestorage.app",
+
+messagingSenderId:
+"836117896870",
+
+appId:
+"1:836117896870:web:730a652b3a8ab015105e67"
+
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
 
 let buses=[];
 let currentBusId=null;
+  async function loadBuses(){
 
-function addBus(){
+buses=[];
 
-const name=document.getElementById("busName").value.trim();
-const supervisor=document.getElementById("supervisorName").value.trim();
+const busesSnapshot=
+await getDocs(
+collection(db,"buses")
+);
 
-if(!name){
-alert("أدخل اسم الخط");
-return;
-}
+for(const busDoc of busesSnapshot.docs){
+
+const busData=busDoc.data();
+
+const children=[];
+
+const childrenSnapshot=
+await getDocs(
+collection(
+db,
+"buses",
+busDoc.id,
+"children"
+)
+);
+
+childrenSnapshot.forEach(childDoc=>{
+
+children.push({
+id:childDoc.id,
+...childDoc.data()
+});
+
+});
 
 buses.push({
-id:Date.now(),
+id:busDoc.id,
+name:busData.name,
+supervisor:busData.supervisor,
+children:children
+});
+
+}
+
+render();
+
+}
+
+async function addBus(){
+
+const name=
+document.getElementById("busName")
+.value
+.trim();
+
+const supervisor=
+document.getElementById("supervisorName")
+.value
+.trim();
+
+if(!name){
+
+alert("أدخل اسم خط الباص");
+
+return;
+
+}
+
+await addDoc(
+collection(db,"buses"),
+{
 name:name,
 supervisor:supervisor,
-children:[]
-});
+createdAt:new Date()
+}
+);
 
 document.getElementById("busName").value="";
 document.getElementById("supervisorName").value="";
 
-render();
+loadBuses();
 
 }
 
-function deleteBus(busId){
+async function deleteBus(busId){
 
-if(confirm("هل تريد حذف الخط بالكامل؟")){
+if(
+!confirm(
+"هل تريد حذف خط الباص؟"
+)
+){
+return;
+}
 
-buses=buses.filter(bus=>bus.id!==busId);
+await deleteDoc(
+doc(
+db,
+"buses",
+busId
+)
+);
 
-render();
+loadBuses();
 
 }
 
-}
+async function addChild(busId){
 
-function addChild(busId){
-
-const childName=prompt("اسم الطفل");
+const childName=
+prompt("اسم الطفل");
 
 if(!childName) return;
 
-const bus=buses.find(b=>b.id===busId);
-
-bus.children.push({
-id:Date.now()+Math.random(),
+await addDoc(
+collection(
+db,
+"buses",
+busId,
+"children"
+),
+{
 name:childName,
-present:false
-});
-
-render();
-
+present:false,
+attendanceDate:"",
+createdAt:new Date()
 }
-
-function deleteChild(busId,childId){
-
-const bus=buses.find(b=>b.id===busId);
-
-bus.children=bus.children.filter(
-child=>child.id!==childId
 );
 
-render();
+loadBuses();
 
 }
 
-function toggleAttendance(busId,childId){
+async function deleteChild(
+busId,
+childId
+){
 
-const bus=buses.find(b=>b.id===busId);
-
-const child=bus.children.find(
-c=>c.id===childId
+await deleteDoc(
+doc(
+db,
+"buses",
+busId,
+"children",
+childId
+)
 );
 
-child.present=!child.present;
-
-render();
+loadBuses();
 
 }
 
-function openBulkModal(busId){
+async function toggleAttendance(
+busId,
+childId
+){
+
+const childRef=
+doc(
+db,
+"buses",
+busId,
+"children",
+childId
+);
+
+const childSnap=
+await getDoc(
+childRef
+);
+
+const current=
+childSnap.data();
+
+await updateDoc(
+childRef,
+{
+present:!current.present,
+attendanceDate:
+new Date()
+.toISOString()
+.slice(0,10)
+}
+);
+
+loadBuses();
+
+}
+
+function openBulkModal(
+busId
+){
 
 currentBusId=busId;
 
-document.getElementById("bulkNames").value="";
+document
+.getElementById(
+"bulkNames"
+)
+.value="";
 
-document.getElementById("bulkModal").style.display="flex";
+document
+.getElementById(
+"bulkModal"
+)
+.style.display="flex";
 
 }
 
 function closeBulkModal(){
 
-document.getElementById("bulkModal").style.display="none";
+document
+.getElementById(
+"bulkModal"
+)
+.style.display="none";
 
 }
 
-function saveBulkNames(){
+async function saveBulkNames(){
 
 const namesText=
-document.getElementById("bulkNames").value;
+document
+.getElementById(
+"bulkNames"
+)
+.value;
 
-if(!namesText) return;
+if(!namesText)
+return;
 
-const bus=buses.find(
-b=>b.id===currentBusId
+const names=
+namesText
+.split("\n")
+.map(
+name=>name.trim()
+)
+.filter(
+name=>name!=""
 );
 
-const names=namesText
-.split("\n")
-.map(name=>name.trim())
-.filter(name=>name!="");
+for(const name of names){
 
-names.forEach(name=>{
-
-bus.children.push({
-id:Date.now()+Math.random(),
+await addDoc(
+collection(
+db,
+"buses",
+currentBusId,
+"children"
+),
+{
 name:name,
-present:false
-});
+present:false,
+attendanceDate:"",
+createdAt:new Date()
+}
+);
 
-});
+}
 
 closeBulkModal();
 
-render();
+loadBuses();
+
+}saveBulkNames()
+  function updateDashboard(){
+
+let totalChildren=0;
+let totalPresent=0;
+
+buses.forEach(bus=>{
+
+totalChildren+=bus.children.length;
+
+totalPresent+=
+bus.children.filter(
+c=>c.present
+).length;
+
+});
+
+const totalAbsent=
+totalChildren-totalPresent;
+
+document.getElementById(
+"totalChildren"
+).innerText=totalChildren;
+
+document.getElementById(
+"totalPresent"
+).innerText=totalPresent;
+
+document.getElementById(
+"totalAbsent"
+).innerText=totalAbsent;
 
 }
 
 function render(){
 
+updateDashboard();
+
 const container=
-document.getElementById("allBusesContainer");
+document.getElementById(
+"allBusesContainer"
+);
+
+const search=
+document.getElementById(
+"searchInput"
+)?.value
+?.toLowerCase() || "";
 
 container.innerHTML="";
 
 buses.forEach(bus=>{
 
-const total=bus.children.length;
+const filteredChildren=
+bus.children.filter(child=>
+child.name
+.toLowerCase()
+.includes(search)
+);
+
+const total=
+bus.children.length;
 
 const present=
-bus.children.filter(c=>c.present).length;
+bus.children.filter(
+c=>c.present
+).length;
 
-const absent=total-present;
+const absent=
+total-present;
 
 container.innerHTML+=`
 
 <div class="bus">
 
-<h2>🚌 ${bus.name}</h2>
+<h2>
+🚌 ${bus.name}
+</h2>
 
 <p>
+
 👨‍✈️ المشرف:
-<b>${bus.supervisor || "-"}</b>
+
+<b>
+${bus.supervisor || "-"}
+</b>
+
 </p>
 
 <button
 class="add"
-onclick="addChild(${bus.id})">
+onclick="addChild('${bus.id}')">
 
 ➕ طفل
 
@@ -363,7 +667,7 @@ onclick="addChild(${bus.id})">
 
 <button
 class="bulk"
-onclick="openBulkModal(${bus.id})">
+onclick="openBulkModal('${bus.id}')">
 
 📋 مجموعة أطفال
 
@@ -371,7 +675,7 @@ onclick="openBulkModal(${bus.id})">
 
 <button
 class="delete"
-onclick="deleteBus(${bus.id})">
+onclick="deleteBus('${bus.id}')">
 
 🗑 حذف الخط
 
@@ -379,13 +683,22 @@ onclick="deleteBus(${bus.id})">
 
 <div class="stats">
 
-👦 العدد الكلي: ${total}
-&nbsp;&nbsp;|&nbsp;&nbsp;
+👦 العدد الكلي:
+${total}
 
-🟢 الحاضرون: ${present}
-&nbsp;&nbsp;|&nbsp;&nbsp;
+&nbsp;&nbsp;|
 
-🔴 الغائبون: ${absent}
+&nbsp;&nbsp;
+
+🟢 الحاضرون:
+${present}
+
+&nbsp;&nbsp;|
+
+&nbsp;&nbsp;
+
+🔴 الغائبون:
+${absent}
 
 </div>
 
@@ -394,30 +707,48 @@ onclick="deleteBus(${bus.id})">
 <tr>
 
 <th>#</th>
-<th>اسم الطفل</th>
-<th>الحالة</th>
-<th>الإجراءات</th>
+
+<th>
+اسم الطفل
+</th>
+
+<th>
+الحالة
+</th>
+
+<th>
+الإجراءات
+</th>
 
 </tr>
 
-${bus.children.map((child,index)=>`
+${filteredChildren.map((child,index)=>`
 
 <tr>
 
-<td>${index+1}</td>
+<td>
+${index+1}
+</td>
 
-<td>${child.name}</td>
+<td>
+${child.name}
+</td>
 
-<td class="${
+<td
+class="${
 child.present
-? 'present'
-: 'absent'
+?
+'present'
+:
+'absent'
 }">
 
 ${
 child.present
-? 'حاضر'
-: 'غائب'
+?
+'حاضر'
+:
+'غائب'
 }
 
 </td>
@@ -426,7 +757,10 @@ child.present
 
 <button
 class="toggle"
-onclick="toggleAttendance(${bus.id},${child.id})">
+onclick="toggleAttendance(
+'${bus.id}',
+'${child.id}'
+)">
 
 تغيير
 
@@ -434,7 +768,10 @@ onclick="toggleAttendance(${bus.id},${child.id})">
 
 <button
 class="delete"
-onclick="deleteChild(${bus.id},${child.id})">
+onclick="deleteChild(
+'${bus.id}',
+'${child.id}'
+)">
 
 حذف
 
@@ -444,7 +781,7 @@ onclick="deleteChild(${bus.id},${child.id})">
 
 </tr>
 
-`).join('')}
+`).join("")}
 
 </table>
 
@@ -455,8 +792,241 @@ onclick="deleteChild(${bus.id},${child.id})">
 });
 
 }
+  document
+.getElementById("searchInput")
+.addEventListener(
+"keyup",
+render
+);
+  function exportExcel(){
 
-</script>
+const rows=[];
+
+buses.forEach(bus=>{
+
+bus.children.forEach(child=>{
+
+rows.push({
+
+"خط الباص":bus.name,
+"المشرف":bus.supervisor,
+"اسم الطفل":child.name,
+"الحالة":
+child.present
+?
+"حاضر"
+:
+"غائب",
+
+"آخر تفقد":
+child.attendanceDate || ""
+
+});
+
+});
+
+});
+
+const worksheet=
+XLSX.utils.json_to_sheet(rows);
+
+const workbook=
+XLSX.utils.book_new();
+
+XLSX.utils.book_append_sheet(
+workbook,
+worksheet,
+"Attendance"
+);
+
+XLSX.writeFile(
+workbook,
+"summer-camp-attendance.xlsx"
+);
+
+}
+
+async function exportPDF(){
+
+const { jsPDF } = window.jspdf;
+
+const pdf =
+new jsPDF();
+
+let y=20;
+
+pdf.setFontSize(16);
+
+pdf.text(
+"Summer Camp Attendance",
+20,
+10
+);
+
+buses.forEach(bus=>{
+
+pdf.setFontSize(12);
+
+pdf.text(
+`Bus: ${bus.name}`,
+10,
+y
+);
+
+y+=8;
+
+bus.children.forEach(child=>{
+
+pdf.text(
+
+`${child.name} - ${
+child.present
+?
+"Present"
+:
+"Absent"
+}`,
+
+15,
+y
+
+);
+
+y+=7;
+
+if(y>270){
+
+pdf.addPage();
+
+y=20;
+
+}
+
+});
+
+y+=10;
+
+});
+
+pdf.save(
+"attendance-report.pdf"
+);
+
+}
+
+function dailyReport(){
+
+const today=
+new Date()
+.toISOString()
+.slice(0,10);
+
+let total=0;
+let present=0;
+
+buses.forEach(bus=>{
+
+bus.children.forEach(child=>{
+
+if(
+child.attendanceDate===today
+){
+
+total++;
+
+if(child.present){
+
+present++;
+
+}
+
+}
+
+});
+
+});
+
+const absent=
+total-present;
+
+alert(
+
+`تقرير اليوم
+
+إجمالي التفقد:
+${total}
+
+الحاضرون:
+${present}
+
+الغائبون:
+${absent}`
+
+);
+
+}
+
+function monthlyReport(){
+
+const currentMonth=
+new Date()
+.toISOString()
+.slice(0,7);
+
+let total=0;
+let present=0;
+
+buses.forEach(bus=>{
+
+bus.children.forEach(child=>{
+
+if(
+child.attendanceDate &&
+child.attendanceDate.startsWith(
+currentMonth
+)
+){
+
+total++;
+
+if(child.present){
+
+present++;
+
+}
+
+}
+
+});
+
+});
+
+const absent=
+total-present;
+
+alert(
+
+`التقرير الشهري
+
+إجمالي السجلات:
+${total}
+
+الحاضرون:
+${present}
+
+الغائبون:
+${absent}`
+
+);
+
+}
+
+window.onload=async()=>{
+
+await loadBuses();
+
+};
+  </script>
 
 </body>
 </html>
