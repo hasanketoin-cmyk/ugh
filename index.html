@@ -1,231 +1,83 @@
-```javascript
-let buses = [];
-let children = [];
+<!DOCTYPE html>
+<html dir="rtl">
 
-const busChildrenCollection =
-collection(
-db,
-"busChildren"
-);
+<head>
 
-function renderAllBuses(){
+<meta charset="UTF-8">
 
-let html = "";
+<title>تفقد الباصات</title>
 
-buses.forEach(bus=>{
+<style>
 
-const kids =
-children.filter(
-c => c.busLine === bus.name
-);
+body{
+font-family:Tahoma;
+background:#f3f4f6;
+padding:20px;
+}
 
-const present =
-kids.filter(
-c => c.attendance
-).length;
+.card{
+background:white;
+padding:20px;
+border-radius:10px;
+margin-bottom:20px;
+box-shadow:0 2px 8px rgba(0,0,0,.1);
+}
 
-const absent =
-kids.length - present;
+table{
+width:100%;
+border-collapse:collapse;
+}
 
-html += `
+th,td{
+padding:12px;
+border:1px solid #ddd;
+text-align:center;
+}
+
+th{
+background:#f8fafc;
+}
+
+.present{
+background:#22c55e;
+color:white;
+padding:8px 15px;
+border:none;
+border-radius:8px;
+cursor:pointer;
+}
+
+.absent{
+background:#ef4444;
+color:white;
+padding:8px 15px;
+border:none;
+border-radius:8px;
+cursor:pointer;
+}
+
+select{
+padding:10px;
+width:300px;
+}
+
+.stat{
+display:inline-block;
+background:white;
+padding:15px;
+margin:10px;
+border-radius:10px;
+font-weight:bold;
+}
+
+</style>
+
+</head>
+
+<body>
 
 <div class="card">
 
 <h2>
-🚌 ${bus.name}
+🚌 تفقد الباصات
 </h2>
-
-<p>
-
-<button
-class="present"
-onclick="addChildToBus('${bus.name}')">
-
-➕ إضافة طفل
-
-</button>
-
-</p>
-
-<p>
-🟢 حضور: ${present}
-|
-🔴 غياب: ${absent}
-|
-👥 إجمالي: ${kids.length}
-</p>
-
-<table>
-
-<tr>
-
-<th>الاسم</th>
-
-<th>الحالة</th>
-
-<th>تفقد</th>
-
-<th>حذف</th>
-
-</tr>
-
-`;
-
-kids.forEach(child=>{
-
-html += `
-
-<tr>
-
-<td>${child.name}</td>
-
-<td>
-${child.attendance ? "🟢 حاضر" : "🔴 غائب"}
-</td>
-
-<td>
-
-<button
-class="${child.attendance ? 'present' : 'absent'}"
-onclick="toggleAttendance('${child.docId}')">
-
-${child.attendance ? 'حاضر' : 'غائب'}
-
-</button>
-
-</td>
-
-<td>
-
-<button
-class="delete"
-onclick="deleteChild('${child.docId}')">
-
-🗑️ حذف
-
-</button>
-
-</td>
-
-</tr>
-
-`;
-
-});
-
-html += `
-</table>
-</div>
-`;
-
-});
-
-document.getElementById(
-"allBusesContainer"
-).innerHTML = html;
-
-}
-
-onSnapshot(
-busesCollection,
-(snapshot)=>{
-
-buses = [];
-
-snapshot.forEach(docu=>{
-
-buses.push({
-docId:docu.id,
-...docu.data()
-});
-
-});
-
-renderAllBuses();
-
-}
-);
-
-onSnapshot(
-busChildrenCollection,
-(snapshot)=>{
-
-children = [];
-
-snapshot.forEach(docu=>{
-
-children.push({
-docId:docu.id,
-...docu.data()
-});
-
-});
-
-renderAllBuses();
-
-}
-);
-
-window.toggleAttendance =
-async function(docId){
-
-const child =
-children.find(
-c => c.docId === docId
-);
-
-if(!child) return;
-
-await updateDoc(
-doc(
-db,
-"busChildren",
-docId
-),
-{
-attendance:
-!child.attendance
-}
-);
-
-};
-
-window.deleteChild =
-async function(docId){
-
-if(!confirm("حذف الطفل؟"))
-return;
-
-await deleteDoc(
-doc(
-db,
-"busChildren",
-docId
-)
-);
-
-};
-
-window.addChildToBus =
-async function(busName){
-
-const childName =
-prompt("اسم الطفل");
-
-if(
-!childName ||
-childName.trim()===""
-)
-return;
-
-await addDoc(
-busChildrenCollection,
-{
-name: childName.trim(),
-busLine: busName,
-attendance: false
-}
-);
-
-};
-```
