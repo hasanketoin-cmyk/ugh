@@ -105,8 +105,38 @@ attendance: !child.attendance
 
 };
 
-window.deleteChild = async function(docId){
+window.editSupervisor =
+async function(docId){
 
+const bus =
+buses.find(
+b => b.docId === docId
+);
+
+if(!bus) return;
+
+const newName =
+prompt(
+"اسم المشرف الجديد",
+bus.supervisor || ""
+);
+
+if(newName === null)
+return;
+
+await updateDoc(
+doc(
+db,
+"buses",
+docId
+),
+{
+supervisor:
+newName.trim()
+}
+);
+
+};
 if(!confirm("حذف الطفل؟"))
 return;
 
@@ -135,9 +165,7 @@ html += `
 
 <p>
 👨‍✈️ المشرف:
-<td>
-
-${bus.supervisor || "-"}
+<b>${bus.supervisor || "-"}</b>
 
 <button
 onclick="editSupervisor('${bus.docId}')">
@@ -146,7 +174,6 @@ onclick="editSupervisor('${bus.docId}')">
 
 </button>
 
-</td>
 </p>
 
 <button
@@ -192,11 +219,17 @@ ${child.attendance ? 'حاضر' : 'غائب'}
 
 <td>
 
+<td>
+
 <button
 class="delete"
 onclick="deleteChild('${child.docId}')">
-window.editSupervisor =
-async function(docId){
+
+🗑️ حذف
+
+</button>
+
+</td>
 
 const bus =
 buses.find(
