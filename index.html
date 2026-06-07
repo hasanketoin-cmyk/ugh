@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
-
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -10,7 +9,7 @@
 <style>
 
 body{
-font-family:Tahoma;
+font-family:Tahoma,sans-serif;
 background:#f4f6f9;
 padding:20px;
 }
@@ -36,11 +35,11 @@ border-radius:6px;
 }
 
 button{
-padding:10px 15px;
+padding:8px 12px;
+margin:3px;
 border:none;
 border-radius:6px;
 cursor:pointer;
-margin:5px;
 }
 
 .add{
@@ -48,8 +47,18 @@ background:#27ae60;
 color:white;
 }
 
+.bulk{
+background:#3498db;
+color:white;
+}
+
 .delete{
 background:#e74c3c;
+color:white;
+}
+
+.toggle{
+background:#f39c12;
 color:white;
 }
 
@@ -64,7 +73,7 @@ box-shadow:0 2px 8px rgba(0,0,0,.1);
 table{
 width:100%;
 border-collapse:collapse;
-margin-top:10px;
+margin-top:15px;
 }
 
 th,td{
@@ -76,54 +85,132 @@ text-align:center;
 .present{
 background:#2ecc71;
 color:white;
+font-weight:bold;
 }
 
 .absent{
 background:#e74c3c;
 color:white;
+font-weight:bold;
 }
 
 .stats{
 margin-top:10px;
+padding:10px;
+background:#ecf0f1;
+border-radius:6px;
 font-weight:bold;
 }
 
+textarea{
+width:100%;
+height:200px;
+padding:10px;
+margin-top:10px;
+border:1px solid #ccc;
+border-radius:6px;
+}
+
+.modal{
+display:none;
+position:fixed;
+top:0;
+left:0;
+right:0;
+bottom:0;
+background:rgba(0,0,0,.5);
+justify-content:center;
+align-items:center;
+}
+
+.modal-content{
+background:white;
+width:500px;
+max-width:95%;
+padding:20px;
+border-radius:10px;
+}
+
 </style>
-
 </head>
-
 <body>
 
-<h1>🚌 إدارة خطوط الباصات</h1>
+<h1>🚌 إدارة خطوط باصات النادي الصيفي</h1>
 
 <div class="card">
 
-<input id="busName" placeholder="اسم خط الباص">
+<input
+type="text"
+id="busName"
+placeholder="اسم خط الباص">
 
-<input id="supervisorName" placeholder="اسم المشرف">
+<input
+type="text"
+id="supervisorName"
+placeholder="اسم المشرف">
 
-<button class="add" onclick="addBus()">
+<button
+class="add"
+onclick="addBus()">
+
 ➕ إضافة خط
+
 </button>
 
 </div>
 
-<div id="busesContainer"></div>
+<div id="allBusesContainer"></div>
+
+<div class="modal" id="bulkModal">
+
+<div class="modal-content">
+
+<h3>📋 إضافة مجموعة أطفال</h3>
+
+<textarea
+id="bulkNames"
+placeholder="كل اسم في سطر"></textarea>
+
+<br><br>
+
+<button
+class="add"
+onclick="saveBulkNames()">
+
+حفظ الأسماء
+
+</button>
+
+<button
+class="delete"
+onclick="closeBulkModal()">
+
+إلغاء
+
+</button>
+
+</div>
+
+</div>
 
 <script>
 
 let buses=[];
+let currentBusId=null;
 
 function addBus(){
 
-const busName=document.getElementById("busName").value;
-const supervisor=document.getElementById("supervisorName").value;
+const name=document.getElementById("busName").value.trim();
+const supervisor=document.getElementById("supervisorName").value.trim();
 
-if(!busName) return;
+if(!name){
+alert("أدخل اسم الخط");
+return;
+}
 
 buses.push({
 id:Date.now(),
-name:busName,
+name:name,
 supervisor:supervisor,
 children:[]
 });
@@ -132,6 +219,18 @@ document.getElementById("busName").value="";
 document.getElementById("supervisorName").value="";
 
 render();
+
+}
+
+function deleteBus(busId){
+
+if(confirm("هل تريد حذف الخط بالكامل؟")){
+
+buses=buses.filter(bus=>bus.id!==busId);
+
+render();
+
+}
 
 }
 
@@ -144,7 +243,7 @@ if(!childName) return;
 const bus=buses.find(b=>b.id===busId);
 
 bus.children.push({
-id:Date.now(),
+id:Date.now()+Math.random(),
 name:childName,
 present:false
 });
@@ -157,7 +256,9 @@ function deleteChild(busId,childId){
 
 const bus=buses.find(b=>b.id===busId);
 
-bus.children=bus.children.filter(c=>c.id!==childId);
+bus.children=bus.children.filter(
+child=>child.id!==childId
+);
 
 render();
 
@@ -167,7 +268,9 @@ function toggleAttendance(busId,childId){
 
 const bus=buses.find(b=>b.id===busId);
 
-const child=bus.children.find(c=>c.id===childId);
+const child=bus.children.find(
+c=>c.id===childId
+);
 
 child.present=!child.present;
 
@@ -175,21 +278,58 @@ render();
 
 }
 
-function deleteBus(busId){
+function openBulkModal(busId){
 
-if(confirm("حذف الخط؟")){
+currentBusId=busId;
 
-buses=buses.filter(b=>b.id!==busId);
+document.getElementById("bulkNames").value="";
+
+document.getElementById("bulkModal").style.display="flex";
+
+}
+
+function closeBulkModal(){
+
+document.getElementById("bulkModal").style.display="none";
+
+}
+
+function saveBulkNames(){
+
+const namesText=
+document.getElementById("bulkNames").value;
+
+if(!namesText) return;
+
+const bus=buses.find(
+b=>b.id===currentBusId
+);
+
+const names=namesText
+.split("\n")
+.map(name=>name.trim())
+.filter(name=>name!="");
+
+names.forEach(name=>{
+
+bus.children.push({
+id:Date.now()+Math.random(),
+name:name,
+present:false
+});
+
+});
+
+closeBulkModal();
 
 render();
 
 }
 
-}
-
 function render(){
 
-const container=document.getElementById("busesContainer");
+const container=
+document.getElementById("allBusesContainer");
 
 container.innerHTML="";
 
@@ -197,7 +337,8 @@ buses.forEach(bus=>{
 
 const total=bus.children.length;
 
-const present=bus.children.filter(c=>c.present).length;
+const present=
+bus.children.filter(c=>c.present).length;
 
 const absent=total-present;
 
@@ -205,23 +346,31 @@ container.innerHTML+=`
 
 <div class="bus">
 
-<h2>
-🚌 ${bus.name}
-</h2>
+<h2>🚌 ${bus.name}</h2>
 
 <p>
 👨‍✈️ المشرف:
-<b>${bus.supervisor}</b>
+<b>${bus.supervisor || "-"}</b>
 </p>
 
-<button class="add"
+<button
+class="add"
 onclick="addChild(${bus.id})">
 
-➕ إضافة طفل
+➕ طفل
 
 </button>
 
-<button class="delete"
+<button
+class="bulk"
+onclick="openBulkModal(${bus.id})">
+
+📋 مجموعة أطفال
+
+</button>
+
+<button
+class="delete"
 onclick="deleteBus(${bus.id})">
 
 🗑 حذف الخط
@@ -230,21 +379,25 @@ onclick="deleteBus(${bus.id})">
 
 <div class="stats">
 
-العدد الكلي: ${total}
-|
-الحاضرين: ${present}
-|
-الغائبين: ${absent}
+👦 العدد الكلي: ${total}
+&nbsp;&nbsp;|&nbsp;&nbsp;
+
+🟢 الحاضرون: ${present}
+&nbsp;&nbsp;|&nbsp;&nbsp;
+
+🔴 الغائبون: ${absent}
 
 </div>
 
 <table>
 
 <tr>
+
 <th>#</th>
 <th>اسم الطفل</th>
 <th>الحالة</th>
-<th>الإجراء</th>
+<th>الإجراءات</th>
+
 </tr>
 
 ${bus.children.map((child,index)=>`
@@ -255,18 +408,27 @@ ${bus.children.map((child,index)=>`
 
 <td>${child.name}</td>
 
-<td class="${child.present?'present':'absent'}">
+<td class="${
+child.present
+? 'present'
+: 'absent'
+}">
 
-${child.present?'حاضر':'غائب'}
+${
+child.present
+? 'حاضر'
+: 'غائب'
+}
 
 </td>
 
 <td>
 
 <button
+class="toggle"
 onclick="toggleAttendance(${bus.id},${child.id})">
 
-تغيير الحالة
+تغيير
 
 </button>
 
@@ -297,5 +459,4 @@ onclick="deleteChild(${bus.id},${child.id})">
 </script>
 
 </body>
-
 </html>
