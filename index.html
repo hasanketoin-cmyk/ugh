@@ -1,5 +1,7 @@
+```javascript
 let buses = [];
 let children = [];
+
 const busChildrenCollection =
 collection(
 db,
@@ -44,6 +46,8 @@ onclick="addChildToBus('${bus.name}')">
 </button>
 
 </p>
+
+<p>
 🟢 حضور: ${present}
 |
 🔴 غياب: ${absent}
@@ -73,9 +77,7 @@ html += `
 
 <tr>
 
-<td>
-${child.name}
-</td>
+<td>${child.name}</td>
 
 <td>
 ${child.attendance ? "🟢 حاضر" : "🔴 غائب"}
@@ -84,22 +86,10 @@ ${child.attendance ? "🟢 حاضر" : "🔴 غائب"}
 <td>
 
 <button
-class="${
-child.attendance
-?
-'present'
-:
-'absent'
-}"
+class="${child.attendance ? 'present' : 'absent'}"
 onclick="toggleAttendance('${child.docId}')">
 
-${
-child.attendance
-?
-'حاضر'
-:
-'غائب'
-}
+${child.attendance ? 'حاضر' : 'غائب'}
 
 </button>
 
@@ -134,7 +124,8 @@ document.getElementById(
 "allBusesContainer"
 ).innerHTML = html;
 
-}```javascript
+}
+
 onSnapshot(
 busesCollection,
 (snapshot)=>{
@@ -144,10 +135,8 @@ buses = [];
 snapshot.forEach(docu=>{
 
 buses.push({
-
 docId:docu.id,
 ...docu.data()
-
 });
 
 });
@@ -166,10 +155,8 @@ children = [];
 snapshot.forEach(docu=>{
 
 children.push({
-
 docId:docu.id,
 ...docu.data()
-
 });
 
 });
@@ -206,11 +193,7 @@ attendance:
 window.deleteChild =
 async function(docId){
 
-if(
-!confirm(
-"حذف الطفل؟"
-)
-)
+if(!confirm("حذف الطفل؟"))
 return;
 
 await deleteDoc(
@@ -222,5 +205,27 @@ docId
 );
 
 };
+
+window.addChildToBus =
+async function(busName){
+
+const childName =
+prompt("اسم الطفل");
+
+if(
+!childName ||
+childName.trim()===""
+)
+return;
+
+await addDoc(
+busChildrenCollection,
+{
+name: childName.trim(),
+busLine: busName,
+attendance: false
+}
+);
+
+};
 ```
-<div id="allBusesContainer"></div>
