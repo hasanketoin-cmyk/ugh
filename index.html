@@ -6,9 +6,6 @@
 
 <head>
 
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
 <title>
 🚌 إدارة خطوط باصات النادي الصيفي
 </title>
@@ -382,8 +379,7 @@ createdAt:new Date()
 document.getElementById("busName").value="";
 document.getElementById("supervisorName").value="";
 
-loadBuses();
-
+await loadBuses();
 }
 
 async function deleteBus(busId){
@@ -404,8 +400,7 @@ busId
 )
 );
 
-loadBuses();
-
+await loadBuses();
 }
 
 async function addChild(busId){
@@ -430,8 +425,7 @@ createdAt:new Date()
 }
 );
 
-loadBuses();
-
+await loadBuses();
 }
 
 async function deleteChild(
@@ -449,8 +443,7 @@ childId
 )
 );
 
-loadBuses();
-
+await loadBuses();
 }
 
 async function toggleAttendance(
@@ -486,8 +479,7 @@ new Date()
 }
 );
 
-loadBuses();
-
+await loadBuses();
 }
 
 function openBulkModal(
@@ -1018,11 +1010,16 @@ ${absent}`
 
 }
 
-window.onload=async()=>{
+
+};
+  document.addEventListener(
+"DOMContentLoaded",
+async ()=>{
 
 await loadBuses();
 
-};
+}
+);
   </script>
 
 </body>
