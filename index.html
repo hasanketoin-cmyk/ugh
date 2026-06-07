@@ -1,164 +1,59 @@
-<!DOCTYPE html>
-<html dir="rtl" lang="ar">
+let buses = [];
+let children = [];
+const busChildrenCollection =
+collection(
+db,
+"busChildren"
+);
 
-<head>
+function renderAllBuses(){
 
-<meta charset="UTF-8">
+let html = "";
 
-<meta name="viewport"
-content="width=device-width, initial-scale=1.0">
+buses.forEach(bus=>{
 
-<title>
-🚌 تفقد الباصات
-</title>
+const kids =
+children.filter(
+c => c.busLine === bus.name
+);
 
-<style>
+const present =
+kids.filter(
+c => c.attendance
+).length;
 
-*{
-margin:0;
-padding:0;
-box-sizing:border-box;
-font-family:Tahoma,sans-serif;
-}
+const absent =
+kids.length - present;
 
-body{
-background:#f3f4f6;
-padding:20px;
-}
-
-.container{
-max-width:1200px;
-margin:auto;
-}
-
-.card{
-background:white;
-padding:20px;
-border-radius:10px;
-margin-bottom:20px;
-box-shadow:0 2px 8px rgba(0,0,0,.1);
-}
-
-h1,h2{
-margin-bottom:15px;
-}
-
-select{
-padding:10px;
-border:1px solid #ddd;
-border-radius:8px;
-width:300px;
-}
-
-table{
-width:100%;
-border-collapse:collapse;
-margin-top:15px;
-}
-
-th,td{
-padding:12px;
-border-bottom:1px solid #ddd;
-text-align:center;
-}
-
-th{
-background:#f8fafc;
-}
-
-.present{
-background:#22c55e;
-color:white;
-padding:6px 12px;
-border:none;
-border-radius:8px;
-cursor:pointer;
-}
-
-.absent{
-background:#ef4444;
-color:white;
-padding:6px 12px;
-border:none;
-border-radius:8px;
-cursor:pointer;
-}
-
-.delete{
-background:#dc2626;
-color:white;
-padding:6px 12px;
-border:none;
-border-radius:8px;
-cursor:pointer;
-}
-
-.stats{
-display:flex;
-gap:10px;
-flex-wrap:wrap;
-margin-top:15px;
-}
-
-.stat{
-background:#f8fafc;
-padding:15px;
-border-radius:10px;
-min-width:120px;
-text-align:center;
-font-weight:bold;
-}
-
-</style>
-
-</head>
-
-<body>
-
-<div class="container">
-
-<div class="card">
-
-<h1>
-🚌 نظام تفقد الباصات
-</h1>
-
-<div id="allBusesContainer"></div>
-
-</div>
-
-<div class="stats">
-
-<div class="stat">
-الحضور
-<div id="presentCount">0</div>
-</div>
-
-<div class="stat">
-الغياب
-<div id="absentCount">0</div>
-</div>
-
-<div class="stat">
-الإجمالي
-<div id="totalCount">0</div>
-</div>
-
-</div>
+html += `
 
 <div class="card">
 
 <h2>
-أطفال خط الباص
+🚌 ${bus.name}
 </h2>
+
+<p>
+
+<button
+class="present"
+onclick="addChildToBus('${bus.name}')">
+
+➕ إضافة طفل
+
+</button>
+
+</p>
+🟢 حضور: ${present}
+|
+🔴 غياب: ${absent}
+|
+👥 إجمالي: ${kids.length}
+</p>
 
 <table>
 
-<thead>
-
 <tr>
-
-<th>رقم الطفل</th>
 
 <th>الاسم</th>
 
@@ -170,199 +65,40 @@ font-weight:bold;
 
 </tr>
 
-</thead>
-
-<tbody id="childrenTable">
-
-</tbody>
-
-</table>
-
-</div>
-
-</div>
-
-  <script type="module">
-
-import { initializeApp }
-from "https://www.gstatic.com/firebasejs/11.8.1/firebase-app.js";
-
-import {
-getFirestore,
-collection,
-doc,
-deleteDoc,
-updateDoc,
-onSnapshot
-}
-from "https://www.gstatic.com/firebasejs/11.8.1/firebase-firestore.js";
-
-const firebaseConfig = {
-
-apiKey: "AIzaSyA-aV5qGj27Vj0e8dtrXkz9Ckt5Tp-reyY",
-
-authDomain:
-"score-summer-camp.firebaseapp.com",
-
-projectId:
-"score-summer-camp",
-
-storageBucket:
-"score-summer-camp.firebasestorage.app",
-
-messagingSenderId:
-"836117896870",
-
-appId:
-"1:836117896870:web:730a652b3a8ab015105e67"
-
-};
-
-const app =
-initializeApp(firebaseConfig);
-
-const db =
-getFirestore(app);
-
-const busesCollection =
-collection(
-db,
-"buses"
-);
-
-const childrenCollection =
-collection(
-db,
-"children"
-);
-
-let buses = [];
-let children = [];
-
-function fillBusSelect(){
-
-let html =
-'<option value="">اختر خط الباص</option>';
-
-buses.forEach(bus=>{
-
-html += `
-<option value="${bus.docId}">
-${bus.name}
-</option>
 `;
 
-});
-
-document.getElementById(
-"busSelect"
-).innerHTML = html;
-
-}
-
-onSnapshot(
-busesCollection,
-(snapshot)=>{
-
-buses = [];
-
-snapshot.forEach(docu=>{
-
-buses.push({
-
-docId:docu.id,
-...docu.data()
-
-});
-
-});
-
-fillBusSelect();
-
-}
-);
-
-onSnapshot(
-busesCollection,
-(snapshot)=>{
-
-buses = [];
-
-snapshot.forEach(docu=>{
-
-buses.push({
-
-docId:docu.id,
-...docu.data()
-
-});
-
-});
-
-renderAllBuses();
-
-);
-
-let html = "";
-let present = 0;
-
 kids.forEach(child=>{
-
-if(child.busAttendance)
-present++;
 
 html += `
 
 <tr>
 
 <td>
-${child.childId || "-"}
+${child.name}
 </td>
 
 <td>
-${child.name || "-"}
-</td>
-
-<td>
-
-<span class="${
-child.busAttendance
-?
-'present'
-:
-'absent'
-}">
-
-${
-child.busAttendance
-?
-'حاضر'
-:
-'غائب'
-}
-
-</span>
-
+${child.attendance ? "🟢 حاضر" : "🔴 غائب"}
 </td>
 
 <td>
 
 <button
 class="${
-child.busAttendance
+child.attendance
 ?
 'present'
 :
 'absent'
 }"
-onclick="toggleBusAttendance('${child.docId}')">
+onclick="toggleAttendance('${child.docId}')">
 
 ${
-child.busAttendance
+child.attendance
 ?
-'🟢 حاضر'
+'حاضر'
 :
-'🔴 غائب'
+'غائب'
 }
 
 </button>
@@ -387,27 +123,63 @@ onclick="deleteChild('${child.docId}')">
 
 });
 
+html += `
+</table>
+</div>
+`;
+
+});
+
 document.getElementById(
-"childrenTable"
+"allBusesContainer"
 ).innerHTML = html;
 
-document.getElementById(
-"presentCount"
-).innerText = present;
+}```javascript
+onSnapshot(
+busesCollection,
+(snapshot)=>{
 
-document.getElementById(
-"absentCount"
-).innerText =
-kids.length - present;
+buses = [];
 
-document.getElementById(
-"totalCount"
-).innerText =
-kids.length;
+snapshot.forEach(docu=>{
+
+buses.push({
+
+docId:docu.id,
+...docu.data()
+
+});
+
+});
+
+renderAllBuses();
 
 }
+);
 
-window.toggleBusAttendance =
+onSnapshot(
+busChildrenCollection,
+(snapshot)=>{
+
+children = [];
+
+snapshot.forEach(docu=>{
+
+children.push({
+
+docId:docu.id,
+...docu.data()
+
+});
+
+});
+
+renderAllBuses();
+
+}
+);
+
+window.toggleAttendance =
 async function(docId){
 
 const child =
@@ -420,12 +192,12 @@ if(!child) return;
 await updateDoc(
 doc(
 db,
-"children",
+"busChildren",
 docId
 ),
 {
-busAttendance:
-!child.busAttendance
+attendance:
+!child.attendance
 }
 );
 
@@ -444,18 +216,11 @@ return;
 await deleteDoc(
 doc(
 db,
-"children",
+"busChildren",
 docId
 )
 );
 
 };
+```
 <div id="allBusesContainer"></div>
-    function renderAllBuses(){
-...
-}
-    
-  </script>
-
-</body>
-</html>
