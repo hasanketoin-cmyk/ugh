@@ -1,21 +1,11 @@
 <div class="card">
 
-html
+
 <h1 class="mainTitle">
 
 🚌 إدارة خطوط باصات النادي الصيفي Score
 
 </h1>
-
-css
-.mainTitle{
-text-align:center;
-color:#2563eb;
-font-size:32px;
-margin-bottom:25px;
-font-weight:bold;
-}
-
 
 
 <input
@@ -217,6 +207,13 @@ onclick="addChildToBus('${bus.name}')">
 
 `;
 
+</td>
+
+
+<td>
+
+<td>
+
 <td>
 
 <button
@@ -228,27 +225,6 @@ onclick="deleteChild('${child.docId}')">
 </button>
 
 </td>
-
-
-<td>
-
-<td>
-
-```javascript
-<td>
-
-<button
-class="delete"
-onclick="deleteChild('${child.docId}')">
-
-🗑️ حذف
-
-</button>
-
-</td>
-
-
-if(!bus) return;
 
 const newName =
 prompt(
