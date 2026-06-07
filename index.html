@@ -137,7 +137,6 @@ newName.trim()
 );
 
 };
-```javascript
 window.deleteChild =
 async function(docId){
 
@@ -153,6 +152,7 @@ docId
 );
 
 };
+
 
 function renderAllBuses(){
 
@@ -201,29 +201,18 @@ onclick="addChildToBus('${bus.name}')">
 
 `;
 
-kids.forEach(child=>{
-
-html += `
-
-<tr>
-
-<td>${child.name}</td>
-
-<td>
-${child.attendance ? "🟢 حاضر" : "🔴 غائب"}
-</td>
-
 <td>
 
 <button
-class="${child.attendance ? 'present' : 'absent'}"
-onclick="toggleAttendance('${child.docId}')">
+class="delete"
+onclick="deleteChild('${child.docId}')">
 
-${child.attendance ? 'حاضر' : 'غائب'}
+🗑️ حذف
 
 </button>
 
 </td>
+
 
 <td>
 
