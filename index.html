@@ -305,6 +305,9 @@ for(const busDoc of busesSnapshot.docs){
 
 const busData=busDoc.data();
 
+if(busData.type !== "bus"){
+continue;
+}
 const children=[];
 
 const childrenSnapshot=
@@ -370,6 +373,10 @@ return;
 await addDoc(
 collection(db,"buses"),
 {
+await addDoc(
+collection(db,"buses"),
+{
+type:"bus",
 name:name,
 supervisor:supervisor,
 createdAt:new Date()
