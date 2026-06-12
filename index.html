@@ -192,7 +192,24 @@ placeholder="اسم المجموعة">
 <div id="groupsList"></div>
 
 </div>
+<div class="card">
 
+<h2>إدارة المشرفين</h2>
+
+<input
+type="text"
+id="supervisorNameInput"
+placeholder="اسم المشرف">
+
+<button onclick="addSupervisor()">
+إضافة مشرف
+</button>
+
+<hr style="margin:15px 0;">
+
+<div id="supervisorsList"></div>
+
+</div>
 <!-- SUPERVISOR -->
 <!-- SUPERVISOR -->
 
@@ -359,7 +376,80 @@ onclick="deleteGroup('${docSnap.id}')">
 }
 
 window.deleteGroup = async(id)=>{
+window.addSupervisor = async () => {
 
+const name =
+document.getElementById("supervisorNameInput").value;
+
+if(!name){
+alert("أدخل اسم المشرف");
+return;
+}
+
+await addDoc(
+collection(db,"supervisors"),
+{
+name:name
+}
+);
+
+document.getElementById("supervisorNameInput").value="";
+
+loadSupervisors();
+
+};
+
+async function loadSupervisors(){
+
+const container =
+document.getElementById("supervisorsList");
+
+container.innerHTML="";
+
+const snapshot =
+await getDocs(collection(db,"supervisors"));
+
+snapshot.forEach((docSnap)=>{
+
+const data = docSnap.data();
+
+container.innerHTML += `
+<div style="
+padding:10px;
+margin:10px 0;
+background:#f5f5f5;
+border-radius:8px;
+display:flex;
+justify-content:space-between;
+align-items:center;
+">
+
+<span>${data.name}</span>
+
+<button
+onclick="deleteSupervisor('${docSnap.id}')">
+حذف
+</button>
+
+</div>
+`;
+
+});
+
+}
+
+window.deleteSupervisor = async(id)=>{
+
+if(!confirm("حذف المشرف؟"))
+return;
+
+await deleteDoc(
+doc(db,"supervisors",id)
+);
+
+loadSupervisors();
+
+};
 if(!confirm("حذف المجموعة؟"))
 return;
 
@@ -368,7 +458,7 @@ doc(db,"groups",id)
 );
 
 loadGroups();
-
+loadSupervisors();
 };
   
 onAuthStateChanged(auth, async(user)=>{
