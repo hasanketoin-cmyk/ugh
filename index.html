@@ -3,241 +3,275 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>SCORE Summer Camp</title>
+<title>نظام حضور طلاب النادي الصيفي</title>
 
 <style>
+.sidebar{
+position:fixed;
+right:0;
+top:0;
+width:260px;
+height:100vh;
 
-:root{
---primary:#102847;
---secondary:#2196f3;
---accent:#cddc39;
---white:#fff;
---bg:#f4f7fb;
-}
+background:linear-gradient(
+180deg,
+#006c34,
+#004d24
+);
 
-*{
-margin:0;
-padding:0;
-box-sizing:border-box;
-font-family:Tahoma,sans-serif;
-}
-
-body{
-background:var(--bg);
-}
-
-.header{
-background:var(--primary);
 color:white;
 padding:20px;
-text-align:center;
+
 }
 
 .logo{
-width:120px;
-margin:auto;
-display:block;
+
+font-size:28px;
+font-weight:bold;
+text-align:center;
+margin-bottom:30px;
+
 }
 
+.sidebar ul{
+
+list-style:none;
+
+}
+
+.sidebar li{
+
+padding:15px;
+margin-bottom:10px;
+border-radius:10px;
+cursor:pointer;
+
+}
+
+.sidebar li:hover{
+
+background:rgba(255,255,255,.15);
+
+}
+
+body{
+background:#f5f7fa;
+font-family:'Tajawal',sans-serif;
+}
+  
 .container{
-max-width:1200px;
-margin:auto;
+
+margin-right:290px;
 padding:20px;
+
 }
 
-.card{
-background:white;
+.header{
+background:#1f2937;
+color:#fff;
 padding:20px;
-border-radius:12px;
-box-shadow:0 2px 10px rgba(0,0,0,.1);
+border-radius:10px;
 margin-bottom:20px;
 }
 
+.card{
+background:#fff;
+padding:20px;
+border-radius:10px;
+margin-bottom:20px;
+box-shadow:0 2px 8px rgba(0,0,0,.1);
+}
+
+.form-group{
+display:flex;
+gap:10px;
+flex-wrap:wrap;
+}
+
 input{
-width:100%;
-padding:12px;
-margin-top:10px;
-margin-bottom:10px;
+padding:10px;
 border:1px solid #ddd;
 border-radius:8px;
 }
 
 button{
-background:var(--secondary);
-color:white;
+padding:10px 15px;
 border:none;
-padding:12px 20px;
 border-radius:8px;
 cursor:pointer;
+color:white;
 }
 
-button:hover{
-opacity:.9;
+.add{background:#22c55e;}
+.search{background:#3b82f6;}
+.delete{background:#ef4444;}
+.reset{background:#f59e0b;}
+.export{background:#8b5cf6;}
+
+table{
+width:100%;
+border-collapse:collapse;
+margin-top:15px;
+}
+
+th,td{
+padding:12px;
+border-bottom:1px solid #ddd;
+text-align:center;
+}
+
+th{
+background:#f8fafc;
+}
+
+.present{
+background:#22c55e;
+color:white;
+padding:5px 10px;
+border-radius:20px;
+display:inline-block;
+min-width:80px;
+}
+
+.absent{
+background:#ef4444;
+color:white;
+padding:5px 10px;
+border-radius:20px;
+display:inline-block;
+min-width:80px;
 }
 
 .stats{
-display:grid;
-grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+display:flex;
 gap:15px;
+margin-top:20px;
+flex-wrap:wrap;
 }
 
 .stat{
-background:white;
-padding:20px;
-border-radius:12px;
+background:#f8fafc;
+padding:15px;
+border-radius:10px;
+min-width:140px;
 text-align:center;
-box-shadow:0 2px 10px rgba(0,0,0,.1);
+font-weight:bold;
 }
 
-.hidden{
-display:none;
+.checkbox{
+width:20px;
+height:20px;
 }
 
-.admin-panel{
-border-top:5px solid #4caf50;
+h2{
+margin-bottom:15px;
 }
 
-.supervisor-panel{
-border-top:5px solid #ff9800;
-}
+  .sidebar{
 
+position:fixed;
+
+right:0;
+
+top:0;
+
+width:260px;
+
+height:100vh;
+
+background:linear-gradient(
+180deg,
+#006c34,
+#004d24
+);
+
+color:white;
+
+padding:20px;
+
+}
 </style>
 </head>
 
 <body>
 
-<div class="header">
-
-<h1>SCORE SUMMER CAMP</h1>
-<p>نظام إدارة النادي الصيفي</p>
-
-</div>
-
 <div class="container">
 
-<!-- LOGIN -->
-
-<div id="loginBox" class="card">
-
-<h2>تسجيل الدخول</h2>
-
-<input type="email" id="email" placeholder="البريد الإلكتروني">
-
-<input type="password" id="password" placeholder="كلمة المرور">
-
-<button onclick="login()">
-دخول
-</button>
-
+<div class="header">
+<h1>📋 نظام حضور الأطفال</h1>
 </div>
 
-<!-- ADMIN -->
+<div class="card">
+<h2>➕ إضافة طفل</h2>
 
-<div id="adminPanel" class="hidden">
+<div class="form-group">
+<input type="text" id="childName" placeholder="اسم الطفل">
+<input type="number" id="childId" placeholder="رقم الطفل">
+<button class="add" onclick="addChild()">إضافة</button>
+</div>
+</div>
 
-<div class="card admin-panel">
+<div class="card">
+<h2>🔍 البحث</h2>
 
-<h2>لوحة المدير</h2>
+<div class="form-group">
+<input type="number" id="searchInput" placeholder="رقم الطفل">
+<button class="search" onclick="searchChild()">بحث</button>
+<button onclick="renderTable()">إظهار الكل</button>
+</div>
+</div>
 
-<p id="adminName"></p>
+<div class="card">
+<h2>📷 تسجيل الحضور</h2>
 
-<button onclick="logout()">
-تسجيل خروج
-</button>
+<input
+type="text"
+id="qrInput"
+placeholder="امسح QR أو أدخل رقم الطفل ثم Enter"
+style="width:350px;">
+</div>
 
+<div class="card">
+
+<h2>👶 الأطفال</h2>
+
+<table>
+
+<thead>
+<tr>
+<th>رقم الطفل</th>
+<th>الاسم</th>
+<th>الحالة</th>
+<th>التفقد</th>
+<th>حذف</th>
+</tr>
+</thead>
+
+<tbody id="tableBody"></tbody>
+
+</table>
+
+<div style="margin-top:15px;">
+<button class="reset" onclick="resetAttendance()">إعادة الحضور</button>
+<button class="export" onclick="exportCSV()">تصدير Excel</button>
 </div>
 
 <div class="stats">
 
 <div class="stat">
-<h3 id="childrenCount">0</h3>
-<p>الأطفال</p>
+الحضور
+<div id="presentCount">0</div>
 </div>
 
 <div class="stat">
-<h3 id="supervisorCount">0</h3>
-<p>المشرفون</p>
+الغياب
+<div id="absentCount">0</div>
 </div>
 
 <div class="stat">
-<h3 id="busCount">0</h3>
-<p>الباصات</p>
+الإجمالي
+<div id="totalCount">0</div>
 </div>
-
-<div class="stat">
-<h3 id="attendanceCount">0</h3>
-<p>الحضور اليوم</p>
-</div>
-
-</div>
-
-</div>
-
-<div class="card">
-
-<h2>إدارة المجموعات</h2>
-
-<input
-type="text"
-id="groupName"
-placeholder="اسم المجموعة">
-<input
-type="text"
-id="groupSupervisor"
-placeholder="اسم المشرف">
-  
-<button onclick="addGroup()">
-إضافة مجموعة
-</button>
-
-<hr style="margin:15px 0;">
-
-<div id="groupsList"></div>
-
-</div>
-
-<div class="card">
-
-<h2>إدارة الأطفال</h2>
-
-<input
-type="text"
-id="childName"
-placeholder="اسم الطفل">
-
-<button onclick="addChild()">
-إضافة طفل
-</button>
-
-<hr style="margin:15px 0;">
-
-<div id="childrenList"></div>
-
-</div>
-  
-<!-- SUPERVISOR -->
-<!-- SUPERVISOR -->
-
-<div id="supervisorPanel" class="hidden">
-
-<div class="card supervisor-panel">
-
-<h2>لوحة المشرف</h2>
-
-<p id="supervisorName"></p>
-
-<button onclick="logout()">
-تسجيل خروج
-</button>
-
-</div>
-
-<div class="card">
-
-<p>
-يمكنك تفقد الأطفال التابعين لك فقط.
-</p>
 
 </div>
 
@@ -245,294 +279,315 @@ placeholder="اسم الطفل">
 
 </div>
 
-<script type="module">
+<script>
 
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+let children = JSON.parse(
+localStorage.getItem("children")
+) || [
 
-import {
-getAuth,
-signInWithEmailAndPassword,
-signOut,
-onAuthStateChanged
-}
-from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-
-import {
-getFirestore,
-doc,
-getDoc,
-collection,
-addDoc,
-getDocs,
-deleteDoc
-}
-from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-
-const firebaseConfig = {
-
-apiKey: "AIzaSyA-aV5qGj27Vj0e8dtrXkz9Ckt5Tp-reyY",
-
-authDomain: "score-summer-camp.firebaseapp.com",
-
-projectId: "score-summer-camp",
-
-storageBucket: "score-summer-camp.firebasestorage.app",
-
-messagingSenderId: "836117896870",
-
-appId: "1:836117896870:web:730a652b3a8ab015105e67"
-
-};
-
-const app = initializeApp(firebaseConfig);
-
-const auth = getAuth(app);
-
-const db = getFirestore(app);
-
-window.login = async () => {
-
-const email =
-document.getElementById("email").value;
-
-const password =
-document.getElementById("password").value;
-
-try{
-
-await signInWithEmailAndPassword(
-auth,
-email,
-password
-);
-
-}catch(error){
-
-alert(error.message);
-
-}
-
-};
-
-window.logout = async () => {
-
-await signOut(auth);
-
-};
-window.addGroup = async () => {
-
-const name =
-document.getElementById("groupName").value;
-const supervisor =
-document.getElementById("groupSupervisor").value;
-  
-if(!name){
-alert("أدخل اسم المجموعة");
-return;
-}
-
-await addDoc(
-collection(db,"groups"),
 {
-name:name,
-supervisor:supervisor
+id:1001,
+name:"أحمد محمد",
+present:false
+},
+
+{
+id:1002,
+name:"سارة علي",
+present:false
 }
+
+];
+
+function saveData(){
+
+localStorage.setItem(
+"children",
+JSON.stringify(children)
 );
 
-document.getElementById("groupName").value="";
+}
 
-loadGroups();
+function renderTable(data = children){
 
-};
+let html = "";
 
-async function loadGroups(){
+data.forEach(child=>{
 
-const container =
-document.getElementById("groupsList");
+html += `
+<tr>
 
-container.innerHTML="";
+<td>${child.id}</td>
 
-const snapshot =
-await getDocs(collection(db,"groups"));
+<td>${child.name}</td>
 
-snapshot.forEach((docSnap)=>{
+<td>
+<span class="${
+child.present
+? 'present'
+: 'absent'
+}">
+${child.present ? 'حاضر' : 'غائب'}
+</span>
+</td>
 
-const data = docSnap.data();
+<td>
+<input
+type="checkbox"
+class="checkbox"
+${child.present ? 'checked' : ''}
+onchange="toggleAttendance(${child.id})">
+</td>
 
-container.innerHTML += `
-<div style="
-padding:10px;
-margin:10px 0;
-background:#f5f5f5;
-border-radius:8px;
-display:flex;
-justify-content:space-between;
-align-items:center;
-">
-
-<div>
-<b>${data.name}</b><br>
-المشرف: ${data.supervisor || "غير محدد"}
-</div>
-
+<td>
 <button
-onclick="deleteGroup('${docSnap.id}')">
+class="delete"
+onclick="deleteChild(${child.id})">
 حذف
 </button>
+</td>
 
-</div>
+</tr>
 `;
 
 });
 
+document.getElementById(
+"tableBody"
+).innerHTML = html;
+
+updateStats();
+
 }
 
-window.deleteGroup = async(id)=>{
+function addChild(){
 
-if(!confirm("حذف المجموعة؟"))
-return;
+let name =
+document.getElementById(
+"childName"
+).value.trim();
 
-await deleteDoc(
-doc(db,"groups",id)
-);
+let id =
+document.getElementById(
+"childId"
+).value.trim();
 
-loadGroups();
+if(!name || !id){
 
-};
+alert("أدخل البيانات");
 
-/* ضع كود الأطفال هنا */
-
-window.addChild = async () => {
-
-const name =
-document.getElementById("childName").value;
-
-if(!name){
-alert("أدخل اسم الطفل");
 return;
 }
 
-await addDoc(
-collection(db,"children"),
-{
+if(children.find(c=>c.id==id)){
+
+alert("الرقم موجود");
+
+return;
+}
+
+children.push({
+
+id:Number(id),
 name:name,
-groupId:""
-}
-);
-
-document.getElementById("childName").value="";
-
-loadChildren();
-
-};
-async function loadChildren(){
-
-const container =
-document.getElementById("childrenList");
-
-container.innerHTML="";
-
-const snapshot =
-await getDocs(collection(db,"children"));
-
-snapshot.forEach((docSnap)=>{
-
-const data = docSnap.data();
-
-container.innerHTML += `
-<div style="
-padding:10px;
-margin:10px 0;
-background:#f5f5f5;
-border-radius:8px;
-display:flex;
-justify-content:space-between;
-align-items:center;
-">
-
-<span>${data.name}</span>
-
-<button onclick="deleteChild('${docSnap.id}')">
-حذف
-</button>
-
-</div>
-`;
+present:false
 
 });
 
+saveData();
+
+document.getElementById(
+"childName"
+).value = "";
+
+document.getElementById(
+"childId"
+).value = "";
+
+renderTable();
+
 }
 
-window.deleteChild = async(id)=>{
+function deleteChild(id){
 
-if(!confirm("حذف الطفل؟"))
-return;
+if(confirm("هل تريد الحذف؟")){
 
-await deleteDoc(
-doc(db,"children",id)
+children =
+children.filter(
+c=>c.id!==id
 );
 
-loadChildren();
+saveData();
 
-};
-
-
-onAuthStateChanged(auth, async(user)=>{
-
-if(!user){
-
-document.getElementById("loginBox").classList.remove("hidden");
-
-document.getElementById("adminPanel").classList.add("hidden");
-
-document.getElementById("supervisorPanel").classList.add("hidden");
-
-return;
+renderTable();
 
 }
 
-document.getElementById("loginBox").classList.add("hidden");
+}
 
-const query = await getDoc(
-doc(db,"users",user.uid)
+function searchChild(){
+
+let value =
+document.getElementById(
+"searchInput"
+).value;
+
+if(value===""){
+
+renderTable();
+
+return;
+}
+
+let result =
+children.filter(c=>
+c.id.toString()
+.includes(value)
 );
 
-if(!query.exists()){
-
-alert("المستخدم غير مسجل");
-
-await signOut(auth);
-
-return;
+renderTable(result);
 
 }
 
-const data = query.data();
+function toggleAttendance(id){
 
-if(data.role==="admin"){
+let child =
+children.find(
+c=>c.id===id
+);
 
-document.getElementById("adminPanel").classList.remove("hidden");
+child.present =
+!child.present;
 
-document.getElementById("supervisorPanel").classList.add("hidden");
+saveData();
 
-document.getElementById("adminName").innerText =
-"مرحباً " + data.name;
+renderTable();
 
-loadGroups();
-loadChildren();
+}
+
+function updateStats(){
+
+let present =
+children.filter(
+c=>c.present
+).length;
+
+let absent =
+children.length - present;
+
+document.getElementById(
+"presentCount"
+).innerText = present;
+
+document.getElementById(
+"absentCount"
+).innerText = absent;
+
+document.getElementById(
+"totalCount"
+).innerText = children.length;
+
+}
+
+function resetAttendance(){
+
+if(confirm(
+"إعادة تعيين الحضور؟"
+)){
+
+children.forEach(c=>{
+
+c.present = false;
+
+});
+
+saveData();
+
+renderTable();
+
+}
+
+}
+
+function exportCSV(){
+
+let csv =
+"رقم الطفل,الاسم,الحالة\n";
+
+children.forEach(c=>{
+
+csv +=
+c.id + "," +
+c.name + "," +
+(c.present ?
+"حاضر" :
+"غائب") +
+"\n";
+
+});
+
+let blob =
+new Blob(
+[csv],
+{
+type:'text/csv'
+}
+);
+
+let link =
+document.createElement("a");
+
+link.href =
+URL.createObjectURL(blob);
+
+link.download =
+"attendance.csv";
+
+link.click();
+
+}
+
+document
+.getElementById("qrInput")
+.addEventListener(
+"change",
+function(){
+
+let qr =
+this.value.trim();
+
+let child =
+children.find(
+c=>c.id == qr
+);
+
+if(child){
+
+child.present = true;
+
+saveData();
+
+renderTable();
+
+alert(
+"تم تسجيل حضور: "
++ child.name
+);
 
 }else{
 
-document.getElementById("supervisorPanel").classList.remove("hidden");
-
-document.getElementById("adminPanel").classList.add("hidden");
-
-document.getElementById("supervisorName").innerText =
-"مرحباً " + data.name;
+alert(
+"الطفل غير موجود"
+);
 
 }
 
-});
+this.value = "";
+
+}
+);
+
+renderTable();
 
 </script>
 
