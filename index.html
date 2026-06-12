@@ -5,14 +5,17 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>نظام حضور طلاب النادي الصيفي</title>
 
-<style>
-.sidebar{
-position:fixed;
-right:0;
-top:0;
-width:260px;
-height:100vh;
+<title>SCORE Summer Camp</title>
 
+<style>
+
+:root{
+--primary:#102847;
+--secondary:#2196f3;
+--accent:#cddc39;
+--white:#fff;
+--bg:#f4f7fb;
+}
 background:linear-gradient(
 180deg,
 #006c34,
@@ -54,10 +57,46 @@ background:rgba(255,255,255,.15);
 
 }
 
-body{
-background:#f5f7fa;
-font-family:'Tajawal',sans-serif;
-}
+<body>
+
+<div class="header">
+
+<h1>SCORE SUMMER CAMP</h1>
+<p>نظام إدارة النادي الصيفي</p>
+
+</div>
+
+<div class="container">
+
+<!-- LOGIN -->
+
+<div id="loginBox" class="card">
+
+<h2>تسجيل الدخول</h2>
+
+<input type="email" id="email" placeholder="البريد الإلكتروني">
+
+<input type="password" id="password" placeholder="كلمة المرور">
+
+<button onclick="login()">
+دخول
+</button>
+
+</div>
+
+<!-- ADMIN -->
+
+<div id="adminPanel" class="hidden">
+
+<div class="card admin-panel">
+
+<h2>لوحة المدير</h2>
+
+<p id="adminName"></p>
+
+<button onclick="logout()">
+تسجيل خروج
+</button>
   
 .container{
 
