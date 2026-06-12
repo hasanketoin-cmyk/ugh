@@ -305,9 +305,61 @@ for(const busDoc of busesSnapshot.docs){
 
 const busData=busDoc.data();
 
-if(busData.type !== "bus"){
-continue;
+const busesSnapshot = await getDocs(
+collection(db,"buses")
+);
+
+for(const busDoc of busesSnapshot.docs){
+
+```
+const busData = busDoc.data();
+
+if(
+    !busData.type ||
+    busData.type !== "bus"
+){
+    continue;
 }
+
+const children = [];
+
+const childrenSnapshot =
+await getDocs(
+    collection(
+        db,
+        "buses",
+        busDoc.id,
+        "children"
+    )
+);
+
+childrenSnapshot.forEach(childDoc=>{
+
+    const childData =
+    childDoc.data();
+
+    children.push({
+        id: childDoc.id,
+        name: childData.name || "",
+        present:
+            childData.present || false,
+        attendanceDate:
+            childData.attendanceDate || ""
+    });
+
+});
+
+buses.push({
+    id: busDoc.id,
+    name: busData.name || "",
+    supervisor:
+        busData.supervisor || "",
+    children
+});
+```
+
+}
+
 const children=[];
 
 const childrenSnapshot=
