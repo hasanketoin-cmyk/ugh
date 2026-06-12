@@ -1,230 +1,333 @@
-```html
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
-
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SCORE Management System</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;800&display=swap" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+<title>SCORE Summer Camp</title>
 
-    <link rel="stylesheet" href="style.css">
+<style>
+
+:root{
+--primary:#102847;
+--secondary:#2196f3;
+--accent:#cddc39;
+--white:#fff;
+--bg:#f4f7fb;
+}
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Tahoma,sans-serif;
+}
+
+body{
+background:var(--bg);
+}
+
+.header{
+background:var(--primary);
+color:white;
+padding:20px;
+text-align:center;
+}
+
+.logo{
+width:120px;
+margin:auto;
+display:block;
+}
+
+.container{
+max-width:1200px;
+margin:auto;
+padding:20px;
+}
+
+.card{
+background:white;
+padding:20px;
+border-radius:12px;
+box-shadow:0 2px 10px rgba(0,0,0,.1);
+margin-bottom:20px;
+}
+
+input{
+width:100%;
+padding:12px;
+margin-top:10px;
+margin-bottom:10px;
+border:1px solid #ddd;
+border-radius:8px;
+}
+
+button{
+background:var(--secondary);
+color:white;
+border:none;
+padding:12px 20px;
+border-radius:8px;
+cursor:pointer;
+}
+
+button:hover{
+opacity:.9;
+}
+
+.stats{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+gap:15px;
+}
+
+.stat{
+background:white;
+padding:20px;
+border-radius:12px;
+text-align:center;
+box-shadow:0 2px 10px rgba(0,0,0,.1);
+}
+
+.hidden{
+display:none;
+}
+
+.admin-panel{
+border-top:5px solid #4caf50;
+}
+
+.supervisor-panel{
+border-top:5px solid #ff9800;
+}
+
+</style>
 </head>
 
 <body>
 
-    <!-- Sidebar -->
+<div class="header">
 
-    <aside class="sidebar">
+<h1>SCORE SUMMER CAMP</h1>
+<p>نظام إدارة النادي الصيفي</p>
 
-        <div class="logo">
+</div>
 
-            <img src="assets/images/logo.png" alt="SCORE">
+<div class="container">
 
-            <h2>SCORE</h2>
+<!-- LOGIN -->
 
-            <p>Management System</p>
+<div id="loginBox" class="card">
 
-        </div>
+<h2>تسجيل الدخول</h2>
 
-        <ul class="menu">
+<input type="email" id="email" placeholder="البريد الإلكتروني">
 
-            <li class="active">
-                <i class="fas fa-home"></i>
-                <span>الرئيسية</span>
-            </li>
+<input type="password" id="password" placeholder="كلمة المرور">
 
-            <li>
-                <i class="fas fa-child"></i>
-                <span>الأطفال</span>
-            </li>
+<button onclick="login()">
+دخول
+</button>
 
-            <li>
-                <i class="fas fa-calendar-check"></i>
-                <span>الحضور</span>
-            </li>
+</div>
 
-            <li>
-                <i class="fas fa-futbol"></i>
-                <span>الأنشطة</span>
-            </li>
+<!-- ADMIN -->
 
-            <li>
-                <i class="fas fa-user-tie"></i>
-                <span>المدربين</span>
-            </li>
+<div id="adminPanel" class="hidden">
 
-            <li>
-                <i class="fas fa-chart-line"></i>
-                <span>التقارير</span>
-            </li>
+<div class="card admin-panel">
 
-            <li>
-                <i class="fas fa-cog"></i>
-                <span>الإعدادات</span>
-            </li>
+<h2>لوحة المدير</h2>
 
-        </ul>
+<p id="adminName"></p>
 
-    </aside>
+<button onclick="logout()">
+تسجيل خروج
+</button>
 
-    <!-- Main Content -->
+</div>
 
-    <main class="main-content">
+<div class="stats">
 
-        <!-- Header -->
+<div class="stat">
+<h3 id="childrenCount">0</h3>
+<p>الأطفال</p>
+</div>
 
-        <header class="header">
+<div class="stat">
+<h3 id="supervisorCount">0</h3>
+<p>المشرفون</p>
+</div>
 
-            <div class="search-box">
-                <input type="text" placeholder="بحث عن طفل ...">
-            </div>
+<div class="stat">
+<h3 id="busCount">0</h3>
+<p>الباصات</p>
+</div>
 
-            <div class="user-info">
+<div class="stat">
+<h3 id="attendanceCount">0</h3>
+<p>الحضور اليوم</p>
+</div>
 
-                <div>
-                    <h3>مرحباً أحمد</h3>
-                    <p>مدير النظام</p>
-                </div>
+</div>
 
-                <img src="assets/images/admin.png" alt="Admin">
+</div>
 
-            </div>
+<!-- SUPERVISOR -->
 
-        </header>
+<div id="supervisorPanel" class="hidden">
 
-        <!-- Statistics -->
+<div class="card supervisor-panel">
 
-        <section class="stats">
+<h2>لوحة المشرف</h2>
 
-            <div class="card">
-                <i class="fas fa-users"></i>
-                <h2>420</h2>
-                <p>إجمالي الأطفال</p>
-            </div>
+<p id="supervisorName"></p>
 
-            <div class="card">
-                <i class="fas fa-user-check"></i>
-                <h2>389</h2>
-                <p>الحاضرون اليوم</p>
-            </div>
+<button onclick="logout()">
+تسجيل خروج
+</button>
 
-            <div class="card">
-                <i class="fas fa-user-times"></i>
-                <h2>31</h2>
-                <p>الغائبون اليوم</p>
-            </div>
+</div>
 
-            <div class="card">
-                <i class="fas fa-futbol"></i>
-                <h2>12</h2>
-                <p>عدد الأنشطة</p>
-            </div>
+<div class="card">
 
-            <div class="card">
-                <i class="fas fa-chart-line"></i>
-                <h2>92%</h2>
-                <p>نسبة الحضور</p>
-            </div>
+<p>
+يمكنك تفقد الأطفال التابعين لك فقط.
+</p>
 
-        </section>
+</div>
 
-        <!-- Charts Area -->
+</div>
 
-        <section class="dashboard-row">
+</div>
 
-            <div class="attendance-chart">
+<script type="module">
 
-                <h3>الحضور خلال آخر 30 يوم</h3>
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 
-                <canvas id="attendanceChart"></canvas>
+import {
+getAuth,
+signInWithEmailAndPassword,
+signOut,
+onAuthStateChanged
+}
+from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
-            </div>
+import {
+getFirestore,
+doc,
+getDoc
+}
+from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-            <div class="popular-activities">
+const firebaseConfig = {
 
-                <h3>الأنشطة الأكثر شعبية</h3>
+apiKey: "AIzaSyA-aV5qGj27Vj0e8dtrXkz9Ckt5Tp-reyY",
 
-                <ul>
+authDomain: "score-summer-camp.firebaseapp.com",
 
-                    <li>⚽ كرة القدم - 120 طفل</li>
+projectId: "score-summer-camp",
 
-                    <li>🏀 كرة السلة - 80 طفل</li>
+storageBucket: "score-summer-camp.firebasestorage.app",
 
-                    <li>🏊 السباحة - 65 طفل</li>
+messagingSenderId: "836117896870",
 
-                    <li>🎨 الرسم - 50 طفل</li>
+appId: "1:836117896870:web:730a652b3a8ab015105e67"
 
-                    <li>♟ الشطرنج - 40 طفل</li>
+};
 
-                </ul>
+const app = initializeApp(firebaseConfig);
 
-            </div>
+const auth = getAuth(app);
 
-        </section>
+const db = getFirestore(app);
 
-        <!-- Bottom Row -->
+window.login = async () => {
 
-        <section class="dashboard-row">
+const email =
+document.getElementById("email").value;
 
-            <div class="today-activities">
+const password =
+document.getElementById("password").value;
 
-                <h3>نشاطات اليوم</h3>
+try{
 
-                <table>
+await signInWithEmailAndPassword(
+auth,
+email,
+password
+);
 
-                    <tr>
-                        <th>الوقت</th>
-                        <th>النشاط</th>
-                    </tr>
+}catch(error){
 
-                    <tr>
-                        <td>09:00</td>
-                        <td>كرة القدم</td>
-                    </tr>
+alert(error.message);
 
-                    <tr>
-                        <td>10:00</td>
-                        <td>السباحة</td>
-                    </tr>
+}
 
-                    <tr>
-                        <td>11:00</td>
-                        <td>الرسم</td>
-                    </tr>
+};
 
-                    <tr>
-                        <td>12:00</td>
-                        <td>الشطرنج</td>
-                    </tr>
+window.logout = async () => {
 
-                </table>
+await signOut(auth);
 
-            </div>
+};
 
-            <div class="latest-children">
+onAuthStateChanged(auth, async(user)=>{
 
-                <h3>آخر الأطفال المسجلين</h3>
+if(!user){
 
-                <ul>
+document.getElementById("loginBox").classList.remove("hidden");
 
-                    <li>أحمد محمد</li>
-                    <li>محمد علي</li>
-                    <li>نور خالد</li>
-                    <li>يوسف أحمد</li>
-                    <li>ليان محمود</li>
+document.getElementById("adminPanel").classList.add("hidden");
 
-                </ul>
+document.getElementById("supervisorPanel").classList.add("hidden");
 
-            </div>
+return;
 
-        </section>
+}
 
-    </main>
+document.getElementById("loginBox").classList.add("hidden");
+
+const query = await getDoc(
+doc(db,"users",user.uid)
+);
+
+if(!query.exists()){
+
+alert("المستخدم غير مسجل");
+
+await signOut(auth);
+
+return;
+
+}
+
+const data = query.data();
+
+if(data.role==="admin"){
+
+document.getElementById("adminPanel").classList.remove("hidden");
+
+document.getElementById("supervisorPanel").classList.add("hidden");
+
+document.getElementById("adminName").innerText =
+"مرحباً " + data.name;
+
+}else{
+
+document.getElementById("supervisorPanel").classList.remove("hidden");
+
+document.getElementById("adminPanel").classList.add("hidden");
+
+document.getElementById("supervisorName").innerText =
+"مرحباً " + data.name;
+
+}
+
+});
+
+</script>
 
 </body>
-
 </html>
-```
