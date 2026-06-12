@@ -196,10 +196,6 @@ placeholder="اسم المشرف">
 <div id="groupsList"></div>
 
 </div>
-<div class="card">
-
-
-</div>
 
 <div class="card">
 
@@ -404,41 +400,6 @@ loadGroups();
 
 };
 
-async function loadSupervisors(){
-
-const container =
-document.getElementById("supervisorsList");
-
-container.innerHTML="";
-
-const snapshot =
-await getDocs(collection(db,"supervisors"));
-
-snapshot.forEach((docSnap)=>{
-
-const data = docSnap.data();
-
-container.innerHTML += `
-<div style="
-padding:10px;
-margin:10px 0;
-background:#f5f5f5;
-border-radius:8px;
-display:flex;
-justify-content:space-between;
-align-items:center;
-">
-<span>${data.name}</span>
-<button onclick="deleteSupervisor('${docSnap.id}')">
-حذف
-</button>
-</div>
-`;
-
-});
-
-}
-
 /* ضع كود الأطفال هنا */
 
 window.addChild = async () => {
@@ -558,7 +519,6 @@ document.getElementById("adminName").innerText =
 "مرحباً " + data.name;
 
 loadGroups();
-loadSupervisors();
 loadChildren();
 
 }else{
