@@ -182,7 +182,11 @@ border-top:5px solid #ff9800;
 type="text"
 id="groupName"
 placeholder="اسم المجموعة">
-
+<input
+type="text"
+id="groupSupervisor"
+placeholder="اسم المشرف">
+  
 <button onclick="addGroup()">
 إضافة مجموعة
 </button>
@@ -337,7 +341,9 @@ window.addGroup = async () => {
 
 const name =
 document.getElementById("groupName").value;
-
+const supervisor =
+document.getElementById("groupSupervisor").value;
+  
 if(!name){
 alert("أدخل اسم المجموعة");
 return;
@@ -346,7 +352,8 @@ return;
 await addDoc(
 collection(db,"groups"),
 {
-name:name
+name:name,
+supervisor:supervisor
 }
 );
 
@@ -381,7 +388,10 @@ justify-content:space-between;
 align-items:center;
 ">
 
-<span>${data.name}</span>
+<div>
+<b>${data.name}</b><br>
+المشرف: ${data.supervisor || "غير محدد"}
+</div>
 
 <button
 onclick="deleteGroup('${docSnap.id}')">
