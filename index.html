@@ -207,7 +207,23 @@ placeholder="اسم المشرف">
 
 <hr style="margin:15px 0;">
 
-<div id="supervisorsList"></div>
+<div class="card">
+  
+</div>
+<h2>إدارة الأطفال</h2>
+
+<input
+type="text"
+id="childName"
+placeholder="اسم الطفل">
+
+<button onclick="addChild()">
+إضافة طفل
+</button>
+
+<hr style="margin:15px 0;">
+
+<div id="childrenList"></div>
 
 </div>
 <!-- SUPERVISOR -->
@@ -456,8 +472,15 @@ doc(db,"supervisors",id)
 
 loadSupervisors();
 
-};  
-  
+};
+
+/* ضع كود الأطفال هنا */
+
+window.addChild = async () => {
+
+
+};
+
 onAuthStateChanged(auth, async(user)=>{
 
 if(!user){
@@ -501,7 +524,8 @@ document.getElementById("adminName").innerText =
 
 loadGroups();
 loadSupervisors();
-
+loadChildren();
+  
 }else{
 
 document.getElementById("supervisorPanel").classList.remove("hidden");
