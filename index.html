@@ -376,6 +376,17 @@ onclick="deleteGroup('${docSnap.id}')">
 }
 
 window.deleteGroup = async(id)=>{
+
+if(!confirm("حذف المجموعة؟"))
+return;
+
+await deleteDoc(
+doc(db,"groups",id)
+);
+
+loadGroups();
+
+};
 window.addSupervisor = async () => {
 
 const name =
@@ -423,14 +434,10 @@ display:flex;
 justify-content:space-between;
 align-items:center;
 ">
-
 <span>${data.name}</span>
-
-<button
-onclick="deleteSupervisor('${docSnap.id}')">
+<button onclick="deleteSupervisor('${docSnap.id}')">
 حذف
 </button>
-
 </div>
 `;
 
@@ -449,17 +456,7 @@ doc(db,"supervisors",id)
 
 loadSupervisors();
 
-};
-if(!confirm("حذف المجموعة؟"))
-return;
-
-await deleteDoc(
-doc(db,"groups",id)
-);
-
-loadGroups();
-loadSupervisors();
-};
+};  
   
 onAuthStateChanged(auth, async(user)=>{
 
@@ -502,16 +499,17 @@ document.getElementById("supervisorPanel").classList.add("hidden");
 document.getElementById("adminName").innerText =
 "مرحباً " + data.name;
 
+loadGroups();
+loadSupervisors();
+
 }else{
 
 document.getElementById("supervisorPanel").classList.remove("hidden");
 
 document.getElementById("adminPanel").classList.add("hidden");
 
-document.getElementById("adminName").innerText =
+document.getElementById("supervisorName").innerText =
 "مرحباً " + data.name;
-
-loadGroups();
 
 }
 
