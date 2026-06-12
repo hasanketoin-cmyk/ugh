@@ -403,29 +403,6 @@ doc(db,"groups",id)
 loadGroups();
 
 };
-window.addSupervisor = async () => {
-
-const name =
-document.getElementById("supervisorNawindow.addSupervisor
-meInput").value;
-
-if(!name){
-alert("أدخل اسم المشرف");
-return;
-}
-
-await addDoc(
-collection(db,"supervisors"),
-{
-name:name
-}
-);
-
-document.getElementById("supervisorNameInput").value="";
-
-loadSupervisors();
-
-};
 
 async function loadSupervisors(){
 
@@ -462,19 +439,6 @@ align-items:center;
 
 }
 
-window.deleteSupervisor = async(id)=>{
-
-if(!confirm("حذف المشرف؟"))
-return;
-
-await deleteDoc(
-doc(db,"supervisors",id)
-);
-
-loadSupervisors();
-
-};
-
 /* ضع كود الأطفال هنا */
 
 window.addChild = async () => {
@@ -487,14 +451,19 @@ alert("أدخل اسم الطفل");
 return;
 }
 
-children
+await addDoc(
+collection(db,"children"),
+{
+name:name,
+groupId:""
+}
+);
 
 document.getElementById("childName").value="";
 
 loadChildren();
 
 };
-
 async function loadChildren(){
 
 const container =
