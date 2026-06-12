@@ -207,9 +207,12 @@ placeholder="اسم المشرف">
 
 <hr style="margin:15px 0;">
 
-<div class="card">
-  
+<div id="supervisorsList"></div>
+
 </div>
+
+<div class="card">
+
 <h2>إدارة الأطفال</h2>
 
 <input
@@ -226,6 +229,7 @@ placeholder="اسم الطفل">
 <div id="childrenList"></div>
 
 </div>
+  
 <!-- SUPERVISOR -->
 <!-- SUPERVISOR -->
 
@@ -478,8 +482,78 @@ loadSupervisors();
 
 window.addChild = async () => {
 
+const name =
+document.getElementById("childName").value;
+
+if(!name){
+alert("أدخل اسم الطفل");
+return;
+}
+
+await addDoc(
+collection(db,"children"),
+{
+name:name
+}
+);
+
+document.getElementById("childName").value="";
+
+loadChildren();
 
 };
+
+async function loadChildren(){
+
+const container =
+document.getElementById("childrenList");
+
+container.innerHTML="";
+
+const snapshot =
+await getDocs(collection(db,"children"));
+
+snapshot.forEach((docSnap)=>{
+
+const data = docSnap.data();
+
+container.innerHTML += `
+<div style="
+padding:10px;
+margin:10px 0;
+background:#f5f5f5;
+border-radius:8px;
+display:flex;
+justify-content:space-between;
+align-items:center;
+">
+
+<span>${data.name}</span>
+
+<button onclick="deleteChild('${docSnap.id}')">
+حذف
+</button>
+
+</div>
+`;
+
+});
+
+}
+
+window.deleteChild = async(id)=>{
+
+if(!confirm("حذف الطفل؟"))
+return;
+
+await deleteDoc(
+doc(db,"children",id)
+);
+
+loadChildren();
+
+};
+
 
 onAuthStateChanged(auth, async(user)=>{
 
@@ -525,7 +599,7 @@ document.getElementById("adminName").innerText =
 loadGroups();
 loadSupervisors();
 loadChildren();
-  
+
 }else{
 
 document.getElementById("supervisorPanel").classList.remove("hidden");
