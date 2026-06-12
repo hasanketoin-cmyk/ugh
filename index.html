@@ -1,339 +1,230 @@
-/* ===== Google Font ===== */
-
-@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;800&display=swap');
-
-*{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
-    font-family:'Cairo',sans-serif;
-}
-
-body{
-    background:#f5f7fb;
-    display:flex;
-    min-height:100vh;
-    overflow-x:hidden;
-}
-
-/* ======================
-   Sidebar
-====================== */
-
-.sidebar{
-    width:280px;
-    background:linear-gradient(
-        180deg,
-        #0f172a 0%,
-        #1e40af 50%,
-        #0ea5e9 100%
-    );
-
-    color:#fff;
-    padding:25px;
-    position:fixed;
-    top:0;
-    right:0;
-    height:100vh;
-
-    box-shadow:
-    0 0 30px rgba(0,0,0,.15);
-}
-
-.logo{
-    text-align:center;
-    margin-bottom:40px;
-}
-
-.logo img{
-    width:95px;
-    margin-bottom:10px;
-}
-
-.logo h2{
-    font-size:30px;
-    font-weight:800;
-}
-
-.logo span{
-    opacity:.8;
-    font-size:14px;
-}
-
-.menu{
-    list-style:none;
-}
-
-.menu li{
-    display:flex;
-    align-items:center;
-    gap:15px;
-
-    padding:16px 20px;
-    margin-bottom:12px;
-
-    border-radius:15px;
-
-    cursor:pointer;
-
-    transition:.3s;
-}
-
-.menu li:hover{
-    background:rgba(255,255,255,.15);
-}
-
-.menu li.active{
-    background:#22c55e;
-}
-
-.menu li i{
-    font-size:18px;
-}
-
-/* ======================
-   Main Content
-====================== */
-
-.main-content{
-    flex:1;
-    margin-right:280px;
-    padding:30px;
-}
+```html
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
 
-/* ======================
-   Topbar
-====================== */
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SCORE Management System</title>
 
-.topbar{
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    margin-bottom:35px;
-}
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
 
-.search-box{
-    position:relative;
-}
-
-.search-box input{
-    width:350px;
-    border:none;
-    outline:none;
-
-    background:white;
+    <link rel="stylesheet" href="style.css">
+</head>
 
-    padding:14px 20px;
+<body>
 
-    border-radius:14px;
+    <!-- Sidebar -->
 
-    box-shadow:
-    0 5px 20px rgba(0,0,0,.05);
-}
+    <aside class="sidebar">
 
-.search-box i{
-    position:absolute;
-    left:18px;
-    top:18px;
-    color:#888;
-}
+        <div class="logo">
 
-.admin-info{
-    display:flex;
-    align-items:center;
-    gap:15px;
-}
+            <img src="assets/images/logo.png" alt="SCORE">
 
-.admin-info img{
-    width:55px;
-    height:55px;
-    border-radius:50%;
-}
+            <h2>SCORE</h2>
 
-.admin-info h3{
-    font-size:20px;
-}
+            <p>Management System</p>
 
-.admin-info p{
-    color:#777;
-}
+        </div>
 
-/* ======================
-   Statistics
-====================== */
+        <ul class="menu">
 
-.stats{
-    display:grid;
+            <li class="active">
+                <i class="fas fa-home"></i>
+                <span>الرئيسية</span>
+            </li>
 
-    grid-template-columns:
-    repeat(5,1fr);
+            <li>
+                <i class="fas fa-child"></i>
+                <span>الأطفال</span>
+            </li>
 
-    gap:20px;
+            <li>
+                <i class="fas fa-calendar-check"></i>
+                <span>الحضور</span>
+            </li>
 
-    margin-bottom:30px;
-}
+            <li>
+                <i class="fas fa-futbol"></i>
+                <span>الأنشطة</span>
+            </li>
 
-.card{
-    background:white;
+            <li>
+                <i class="fas fa-user-tie"></i>
+                <span>المدربين</span>
+            </li>
 
-    border-radius:20px;
+            <li>
+                <i class="fas fa-chart-line"></i>
+                <span>التقارير</span>
+            </li>
 
-    padding:25px;
+            <li>
+                <i class="fas fa-cog"></i>
+                <span>الإعدادات</span>
+            </li>
 
-    box-shadow:
-    0 8px 25px rgba(0,0,0,.05);
+        </ul>
 
-    transition:.3s;
-}
+    </aside>
 
-.card:hover{
-    transform:translateY(-4px);
-}
+    <!-- Main Content -->
 
-.card i{
-    font-size:35px;
-    color:#1e40af;
-    margin-bottom:15px;
-}
+    <main class="main-content">
 
-.card h2{
-    font-size:32px;
-    margin-bottom:5px;
-}
+        <!-- Header -->
 
-.card p{
-    color:#777;
-}
+        <header class="header">
 
-/* ======================
-   Dashboard Grid
-====================== */
+            <div class="search-box">
+                <input type="text" placeholder="بحث عن طفل ...">
+            </div>
 
-.dashboard-grid{
-    display:grid;
-    grid-template-columns:2fr 1fr;
-    gap:25px;
-    margin-bottom:25px;
-}
+            <div class="user-info">
 
-.chart-box,
-.popular-box,
-.today-box,
-.children-box{
+                <div>
+                    <h3>مرحباً أحمد</h3>
+                    <p>مدير النظام</p>
+                </div>
 
-    background:white;
+                <img src="assets/images/admin.png" alt="Admin">
 
-    border-radius:20px;
+            </div>
 
-    padding:25px;
+        </header>
 
-    box-shadow:
-    0 8px 25px rgba(0,0,0,.05);
-}
+        <!-- Statistics -->
 
-.chart-box h3,
-.popular-box h3,
-.today-box h3,
-.children-box h3{
-    margin-bottom:20px;
-}
+        <section class="stats">
 
-/* Fake Chart */
+            <div class="card">
+                <i class="fas fa-users"></i>
+                <h2>420</h2>
+                <p>إجمالي الأطفال</p>
+            </div>
 
-.fake-chart{
+            <div class="card">
+                <i class="fas fa-user-check"></i>
+                <h2>389</h2>
+                <p>الحاضرون اليوم</p>
+            </div>
 
-    height:320px;
+            <div class="card">
+                <i class="fas fa-user-times"></i>
+                <h2>31</h2>
+                <p>الغائبون اليوم</p>
+            </div>
 
-    border-radius:15px;
+            <div class="card">
+                <i class="fas fa-futbol"></i>
+                <h2>12</h2>
+                <p>عدد الأنشطة</p>
+            </div>
 
-    background:
-    linear-gradient(
-    180deg,
-    rgba(34,197,94,.3),
-    rgba(34,197,94,.05)
-    );
+            <div class="card">
+                <i class="fas fa-chart-line"></i>
+                <h2>92%</h2>
+                <p>نسبة الحضور</p>
+            </div>
 
-    border:
-    2px dashed #22c55e;
-}
+        </section>
 
-/* Popular Activities */
+        <!-- Charts Area -->
 
-.popular-box ul{
-    list-style:none;
-}
+        <section class="dashboard-row">
 
-.popular-box li{
-    display:flex;
-    justify-content:space-between;
+            <div class="attendance-chart">
 
-    padding:15px 0;
+                <h3>الحضور خلال آخر 30 يوم</h3>
 
-    border-bottom:
-    1px solid #eee;
-}
+                <canvas id="attendanceChart"></canvas>
 
-.popular-box span{
-    color:#1e40af;
-    font-weight:700;
-}
+            </div>
 
-/* Bottom */
+            <div class="popular-activities">
 
-.bottom-grid{
-    display:grid;
-    grid-template-columns:1fr 1fr;
-    gap:25px;
-}
+                <h3>الأنشطة الأكثر شعبية</h3>
 
-.today-box ul,
-.children-box ul{
-    list-style:none;
-}
+                <ul>
 
-.today-box li,
-.children-box li{
-    padding:14px 0;
-    border-bottom:1px solid #eee;
-}
+                    <li>⚽ كرة القدم - 120 طفل</li>
 
-/* Responsive */
+                    <li>🏀 كرة السلة - 80 طفل</li>
 
-@media(max-width:1200px){
+                    <li>🏊 السباحة - 65 طفل</li>
 
-    .stats{
-        grid-template-columns:
-        repeat(2,1fr);
-    }
+                    <li>🎨 الرسم - 50 طفل</li>
 
-    .dashboard-grid{
-        grid-template-columns:1fr;
-    }
+                    <li>♟ الشطرنج - 40 طفل</li>
 
-    .bottom-grid{
-        grid-template-columns:1fr;
-    }
-}
+                </ul>
 
-@media(max-width:768px){
+            </div>
 
-    .sidebar{
-        width:90px;
-    }
+        </section>
 
-    .main-content{
-        margin-right:90px;
-    }
+        <!-- Bottom Row -->
 
-    .menu li{
-        justify-content:center;
-    }
+        <section class="dashboard-row">
 
-    .menu li span{
-        display:none;
-    }
+            <div class="today-activities">
 
-    .search-box input{
-        width:220px;
-    }
-}
+                <h3>نشاطات اليوم</h3>
+
+                <table>
+
+                    <tr>
+                        <th>الوقت</th>
+                        <th>النشاط</th>
+                    </tr>
+
+                    <tr>
+                        <td>09:00</td>
+                        <td>كرة القدم</td>
+                    </tr>
+
+                    <tr>
+                        <td>10:00</td>
+                        <td>السباحة</td>
+                    </tr>
+
+                    <tr>
+                        <td>11:00</td>
+                        <td>الرسم</td>
+                    </tr>
+
+                    <tr>
+                        <td>12:00</td>
+                        <td>الشطرنج</td>
+                    </tr>
+
+                </table>
+
+            </div>
+
+            <div class="latest-children">
+
+                <h3>آخر الأطفال المسجلين</h3>
+
+                <ul>
+
+                    <li>أحمد محمد</li>
+                    <li>محمد علي</li>
+                    <li>نور خالد</li>
+                    <li>يوسف أحمد</li>
+                    <li>ليان محمود</li>
+
+                </ul>
+
+            </div>
+
+        </section>
+
+    </main>
+
+</body>
+
+</html>
+```
