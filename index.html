@@ -198,20 +198,6 @@ placeholder="اسم المشرف">
 </div>
 <div class="card">
 
-<h2>إدارة المشرفين</h2>
-
-<input
-type="text"
-id="supervisorNameInput"
-placeholder="اسم المشرف">
-
-<button onclick="addSupervisor()">
-إضافة مشرف
-</button>
-
-<hr style="margin:15px 0;">
-
-<div id="supervisorsList"></div>
 
 </div>
 
@@ -420,7 +406,8 @@ loadGroups();
 window.addSupervisor = async () => {
 
 const name =
-document.getElementById("supervisorNameInput").value;
+document.getElementById("supervisorNawindow.addSupervisor
+meInput").value;
 
 if(!name){
 alert("أدخل اسم المشرف");
@@ -500,12 +487,7 @@ alert("أدخل اسم الطفل");
 return;
 }
 
-await addDoc(
-collection(db,"children"),
-{
-name:name
-}
-);
+children
 
 document.getElementById("childName").value="";
 
