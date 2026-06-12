@@ -173,7 +173,28 @@ border-top:5px solid #ff9800;
 </div>
 
 </div>
+</div>
 
+<div class="card">
+
+<h2>إدارة المجموعات</h2>
+
+<input
+type="text"
+id="groupName"
+placeholder="اسم المجموعة">
+
+<button onclick="addGroup()">
+إضافة مجموعة
+</button>
+
+<hr style="margin:15px 0;">
+
+<div id="groupsList"></div>
+
+</div>
+
+<!-- SUPERVISOR -->
 <!-- SUPERVISOR -->
 
 <div id="supervisorPanel" class="hidden">
@@ -217,7 +238,11 @@ from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 import {
 getFirestore,
 doc,
-getDoc
+getDoc,
+collection,
+addDoc,
+getDocs,
+deleteDoc
 }
 from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
@@ -272,7 +297,81 @@ window.logout = async () => {
 await signOut(auth);
 
 };
+window.addGroup = async () => {
 
+const name =
+document.getElementById("groupName").value;
+
+if(!name){
+alert("أدخل اسم المجموعة");
+return;
+}
+
+await addDoc(
+collection(db,"groups"),
+{
+name:name
+}
+);
+
+document.getElementById("groupName").value="";
+
+loadGroups();
+
+};
+
+async function loadGroups(){
+
+const container =
+document.getElementById("groupsList");
+
+container.innerHTML="";
+
+const snapshot =
+await getDocs(collection(db,"groups"));
+
+snapshot.forEach((docSnap)=>{
+
+const data = docSnap.data();
+
+container.innerHTML += `
+<div style="
+padding:10px;
+margin:10px 0;
+background:#f5f5f5;
+border-radius:8px;
+display:flex;
+justify-content:space-between;
+align-items:center;
+">
+
+<span>${data.name}</span>
+
+<button
+onclick="deleteGroup('${docSnap.id}')">
+حذف
+</button>
+
+</div>
+`;
+
+});
+
+}
+
+window.deleteGroup = async(id)=>{
+
+if(!confirm("حذف المجموعة؟"))
+return;
+
+await deleteDoc(
+doc(db,"groups",id)
+);
+
+loadGroups();
+
+};
+  
 onAuthStateChanged(auth, async(user)=>{
 
 if(!user){
@@ -320,10 +419,10 @@ document.getElementById("supervisorPanel").classList.remove("hidden");
 
 document.getElementById("adminPanel").classList.add("hidden");
 
-document.getElementById("supervisorName").innerText =
+document.getElementById("adminName").innerText =
 "مرحباً " + data.name;
 
-}
+loadGroups();
 
 });
 
