@@ -578,7 +578,37 @@ margin-top:15px;
 <h2>المجموعات</h2>
 <svg class="icon" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
 </div>
+<div class="card">
 
+
+<h3>إضافة طفل للمجموعة</h3>
+
+<div class="form-group">
+
+<input
+type="text"
+id="groupChildName"
+placeholder="اسم الطفل">
+
+<select id="groupChildSupervisor">
+<option value="">اختر المجموعة</option>
+</select>
+
+<input
+type="date"
+id="groupStartDate">
+
+<button
+class="add"
+onclick="addChildFromGroups()">
+
+إضافة طفل
+
+</button>
+
+</div>
+
+</div>
 <div id="groupsContainer"></div>
 </div>
 
@@ -688,13 +718,14 @@ function requireAdmin(){
 if(adminMode)
 return true;
 
-alert(
-"الإدارة مقفلة"
-);
+alert("الإدارة مقفلة");
 
 return false;
 
+}
+
 createDefaultGroups();
+
 window.addSupervisor =
 async function(){
 
@@ -791,20 +822,27 @@ let html =
 supervisors.forEach(s=>{
 
 html += `
-
 <option value="${s.docId}">
 ${s.name}
 </option>
-
 `;
 
 });
 
-document
-.getElementById(
+document.getElementById(
 "childSupervisor"
-)
-.innerHTML = html;
+).innerHTML = html;
+
+const groupSelect =
+document.getElementById(
+"groupChildSupervisor"
+);
+
+if(groupSelect){
+
+groupSelect.innerHTML = html;
+
+}
 
 }
 
@@ -873,40 +911,20 @@ c => Number(c.childId || 0)
 return maxId + 1;
 
 }
-  window.addChild =
-async function(){
+window.addChild = async function(){
 
 const name =
-document
-.getElementById(
-"childName"
-)
-.value
-.trim();
-
+document.getElementById("childName").value.trim();
 
 const supervisorId =
-document
-.getElementById(
-"childSupervisor"
-)
-.value;
+document.getElementById("childSupervisor").value;
 
 const startDate =
-document
-.getElementById(
-"startDate"
-)
-.value;
+document.getElementById("startDate").value;
 
-if(
-!name ||
-!supervisorId
-){
+if(!name || !supervisorId){
 
-alert(
-"أكمل البيانات"
-);
+alert("أكمل البيانات");
 
 return;
 
@@ -923,23 +941,56 @@ present:false
 }
 );
 
-document
-.getElementById(
-"childName"
-)
-.value="";
-
+document.getElementById("childName").value="";
+document.getElementById("startDate").value="";
 
 };
 
-window.deleteChild =
-async function(docId){
+// ===== إضافة طفل من صفحة المجموعات =====
 
-if(
-!confirm(
-"حذف الطفل؟"
-)
-)
+window.addChildFromGroups = async function(){
+
+const name =
+document.getElementById("groupChildName").value.trim();
+
+const supervisorId =
+document.getElementById("groupChildSupervisor").value;
+
+const startDate =
+document.getElementById("groupStartDate").value;
+
+if(!name || !supervisorId){
+
+alert("أكمل البيانات");
+
+return;
+
+}
+
+await addDoc(
+childrenCollection,
+{
+name:name,
+childId:getNextChildId(),
+supervisorId:supervisorId,
+startDate:startDate,
+present:false
+}
+);
+
+document.getElementById("groupChildName").value="";
+document.getElementById("groupStartDate").value="";
+
+};
+
+// ===== حذف طفل =====
+
+window.deleteChild = async function(docId){
+
+if(!requireAdmin())
+return;
+
+if(!confirm("حذف الطفل؟"))
 return;
 
 await deleteDoc(
@@ -952,13 +1003,11 @@ docId
 
 };
 
-window.toggleAttendance =
-async function(docId){
+window.toggleAttendance = async function(docId){
 
 const child =
 children.find(
-c =>
-c.docId === docId
+c => c.docId === docId
 );
 
 await updateDoc(
@@ -968,8 +1017,11 @@ db,
 child.docId
 ),
 {
-present:true,
-attendanceDate:new Date().toLocaleDateString('en-CA')
+present: !child.present,
+attendanceDate:
+!child.present
+? new Date().toLocaleDateString('en-CA')
+: ""
 }
 );
 
@@ -1177,13 +1229,11 @@ html += `
 <tr>
 
 <th>رقم الطفل</th>
-
 <th>الاسم</th>
-
 <th>تاريخ البدء</th>
-
 <th>الحالة</th>
-
+<th>التفقد</th>
+<th>حذف</th>
 </tr>
 
 </thead>
@@ -1198,45 +1248,44 @@ html += `
 
 <tr>
 
-<td>
-${child.childId}
-</td>
+<td>${child.childId}</td>
+
+<td>${child.name}</td>
+
+<td>${child.startDate || "-"}</td>
 
 <td>
-${child.name}
-</td>
-
-<td>
-${child.startDate || "-"}
-</td>
-
-<td>
-
-<span
-class="${
-child.present
-?
-'present'
-:
-'absent'
-}">
-
-${
-child.present
-?
-'حاضر'
-:
-'غائب'
-}
-
+<span class="${child.present ? 'present' : 'absent'}">
+${child.present ? 'حاضر' : 'غائب'}
 </span>
+</td>
+
+<td>
+
+<input
+type="checkbox"
+class="checkbox"
+${child.present ? 'checked' : ''}
+onchange="toggleAttendance('${child.docId}')">
+
+</td>
+
+<td>
+
+<button
+class="delete"
+onclick="deleteChild('${child.docId}')">
+
+حذف
+
+</button>
 
 </td>
 
 </tr>
 
 `;
-
+  
 });
 
 html += `
