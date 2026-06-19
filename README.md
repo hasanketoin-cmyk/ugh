@@ -1005,6 +1005,56 @@ docId
 
 window.toggleAttendance = async function(docId){
 
+  window.checkGroup = async function(supervisorId){
+
+const groupChildren =
+children.filter(
+c => c.supervisorId === supervisorId
+);
+
+for(const child of groupChildren){
+
+await updateDoc(
+doc(
+db,
+"children",
+child.docId
+),
+{
+present:true,
+attendanceDate:new Date().toLocaleDateString('en-CA')
+}
+);
+
+}
+
+};
+
+window.uncheckGroup = async function(supervisorId){
+
+const groupChildren =
+children.filter(
+c => c.supervisorId === supervisorId
+);
+
+for(const child of groupChildren){
+
+await updateDoc(
+doc(
+db,
+"children",
+child.docId
+),
+{
+present:false,
+attendanceDate:""
+}
+);
+
+}
+
+};
+  
 const child =
 children.find(
 c => c.docId === docId
@@ -1221,9 +1271,27 @@ html += `
 
 </h3>
 
-<table>
+<div style="margin-bottom:15px;display:flex;gap:10px;flex-wrap:wrap;">
 
-<thead>
+<button
+class="add"
+onclick="checkGroup('${s.docId}')">
+
+✅ تفقد المجموعة
+
+</button>
+
+<button
+class="reset"
+onclick="uncheckGroup('${s.docId}')">
+
+❌ إلغاء التفقد
+
+</button>
+
+</div>
+
+<table>
 
 <tr>
 
