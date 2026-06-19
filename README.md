@@ -1026,7 +1026,6 @@ attendanceDate:
 );
 
 };
-
 window.searchChild =
 function(){
 
