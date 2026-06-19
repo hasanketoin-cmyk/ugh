@@ -416,7 +416,7 @@ margin-top:15px;
 <!-- Sidebar -->
 <aside class="sidebar">
 <div class="logo-section">
-<img src="score-logo.jpg" alt="SCORE Logo">\
+<img src="logo.png" alt="SCORE Logo">
 <h1>أكاديمية SCORE</h1>
 <p>نظام إدارة الحضور</p>
 </div>
@@ -723,8 +723,6 @@ alert("الإدارة مقفلة");
 return false;
 
 }
-
-createDefaultGroups();
 
 window.addSupervisor =
 async function(){
