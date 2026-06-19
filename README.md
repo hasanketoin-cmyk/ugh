@@ -1005,7 +1005,31 @@ docId
 
 window.toggleAttendance = async function(docId){
 
-  window.checkGroup = async function(supervisorId){
+const child =
+children.find(
+c => c.docId === docId
+);
+
+await updateDoc(
+doc(
+db,
+"children",
+child.docId
+),
+{
+present: !child.present,
+attendanceDate:
+!child.present
+? new Date().toLocaleDateString('en-CA')
+: ""
+}
+);
+
+};
+
+// هنا تنتهي الدالة
+
+window.checkGroup = async function(supervisorId){
 
 const groupChildren =
 children.filter(
@@ -1052,28 +1076,6 @@ attendanceDate:""
 );
 
 }
-
-};
-  
-const child =
-children.find(
-c => c.docId === docId
-);
-
-await updateDoc(
-doc(
-db,
-"children",
-child.docId
-),
-{
-present: !child.present,
-attendanceDate:
-!child.present
-? new Date().toLocaleDateString('en-CA')
-: ""
-}
-);
 
 };
 window.searchChild =
@@ -1387,7 +1389,8 @@ db,
 child.docId
 ),
 {
-present:false
+present:false,
+attendanceDate:""
 }
 );
 
