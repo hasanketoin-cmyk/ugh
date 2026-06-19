@@ -446,6 +446,12 @@ margin-top:15px;
 <span>المجموعات</span>
 </a>
 </li>
+  <li class="nav-item">
+<a class="nav-link" onclick="showPage('busLines')">
+🚌
+<span>خطوط الباصات</span>
+</a>
+</li>
 </ul>
 
 <div class="admin-section">
@@ -611,7 +617,72 @@ onclick="addChildFromGroups()">
 </div>
 <div id="groupsContainer"></div>
 </div>
+<!-- Bus Lines Page -->
 
+<div id="busLines" class="page">
+
+<div class="page-header">
+<h2>🚌 خطوط الباصات</h2>
+</div>
+
+<div class="card">
+
+<h3>إضافة خط باص</h3>
+
+<div class="form-group">
+
+<input
+type="text"
+id="busLineName"
+placeholder="اسم الخط">
+
+<input
+type="text"
+id="busSupervisorName"
+placeholder="اسم مشرف الباص">
+
+<button
+class="add"
+onclick="addBusLine()">
+
+إضافة خط
+
+</button>
+
+</div>
+
+</div>
+
+<div class="card">
+
+<h3>إضافة طفل إلى خط</h3>
+
+<div class="form-group">
+
+<select id="busLineSelect">
+<option value="">اختر الخط</option>
+</select>
+
+<input
+type="text"
+id="busChildName"
+placeholder="اسم الطفل">
+
+<button
+class="add"
+onclick="addBusChild()">
+
+إضافة طفل
+
+</button>
+
+</div>
+
+</div>
+
+<div id="busLinesContainer"></div>
+
+</div>
 </main>
 
 <script>
@@ -685,12 +756,26 @@ const supervisorsCollection =
 collection(
 db,
 "supervisors"
+); 
+const busLinesCollection =
+collection(
+db,
+"busLines"
 );
 
+const busChildrenCollection =
+collection(
+db,
+"busChildren"
+);
 let children = [];
 let supervisors = [];
-let adminMode = false;
 
+let busLines = [];
+let busChildren = [];
+
+let adminMode = false;
+  
 window.toggleAdminMode = function(){
 
 if(adminMode){
@@ -760,9 +845,85 @@ document
 
 
 };
+window.addSupervisor = async function(){
 
-window.deleteSupervisor =
-async function(docId){
+// كود إضافة المشرف
+
+};
+
+// ===== إضافة خط باص =====
+
+window.addBusLine = async function(){
+
+const name =
+document.getElementById(
+"busLineName"
+).value.trim();
+
+const supervisor =
+document.getElementById(
+"busSupervisorName"
+).value.trim();
+
+if(!name){
+
+alert("أدخل اسم الخط");
+
+return;
+
+}
+
+await addDoc(
+busLinesCollection,
+{
+name:name,
+supervisor:supervisor
+}
+);
+
+};
+
+// ===== إضافة طفل إلى الباص =====
+
+window.addBusChild = async function(){
+
+const lineId =
+document.getElementById(
+"busLineSelect"
+).value;
+
+const name =
+document.getElementById(
+"busChildName"
+).value.trim();
+
+if(!lineId || !name){
+
+alert("أكمل البيانات");
+
+return;
+
+}
+
+await addDoc(
+busChildrenCollection,
+{
+lineId:lineId,
+name:name,
+present:false,
+attendanceDate:""
+}
+);
+
+};
+
+// ثم يبقى كودك الأصلي
+
+window.deleteSupervisor = async function(docId){
+
+// كود الحذف
+
+};
 
 if(
 !confirm(
