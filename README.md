@@ -694,30 +694,6 @@ alert(
 
 return false;
 
-}
-async function createDefaultGroups(){
-
-const snapshot =
-await getDocs(
-supervisorsCollection
-);
-
-if(snapshot.empty){
-for(const group of groups){
-
-await addDoc(
-supervisorsCollection,
-{
-name:group
-}
-);
-
-}
-
-}
-
-}
-
 createDefaultGroups();
 window.addSupervisor =
 async function(){
