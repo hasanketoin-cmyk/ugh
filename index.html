@@ -628,7 +628,9 @@ placeholder="المدفوع">
 <th>المدفوع</th>
 <th>المتبقي</th>
 <th>الاشتراك</th>
+<th>الجلسات المتبقية</th>
 <th>تاريخ البدء</th>
+<th>تاريخ الانتهاء</th>
 <th>تاريخ التفقد</th>
 <th>الحالة</th>
 <th>التفقد</th>
@@ -844,6 +846,7 @@ id="totalRemaining">
 <th>المدفوع</th>
 <th>المتبقي</th>
 <th>إضافة دفعة</th>
+<th>تجديد</th>
 <th>جلسة إضافية</th>
 </tr>
 
@@ -1362,6 +1365,16 @@ document.getElementById(
 "sessionPackage"
 ).value
 );
+const endDate =
+new Date(startDate);
+
+endDate.setDate(
+endDate.getDate() + 28
+);
+
+const expiryDate =
+endDate.toISOString()
+.split("T")[0];
 const fees =
 Number(
 document.getElementById(
@@ -1389,10 +1402,18 @@ childrenCollection,
 name:name,
 childId:getNextChildId(),
 supervisorId:supervisorId,
+
 startDate:startDate,
+expiryDate:expiryDate,
+
+packageSessions:sessionPackage,
+usedSessions:0,
+extraSessions:0,
+
 fees:fees,
 paid:paid,
 remaining:fees-paid,
+
 present:false
 }
 );
@@ -1432,18 +1453,17 @@ childId:getNextChildId(),
 supervisorId:supervisorId,
 startDate:startDate,
 
-packageSessions:sessionPackage,
-usedSessions:0,
-
-extraSessions:0,
-
-fees:fees,
-paid:paid,
-remaining:fees-paid,
-
+await addDoc(
+childrenCollection,
+{
+name:name,
+childId:getNextChildId(),
+supervisorId:supervisorId,
+startDate:startDate,
 present:false
 }
 );
+
 
 document.getElementById("groupChildName").value="";
 document.getElementById("groupStartDate").value="";
@@ -1716,11 +1736,10 @@ docId
 function renderTable(data){
 
 let html = "";
-const subscription =
-getSubscriptionStatus(child);
 
 data.forEach(child=>{
-
+const subscription =
+getSubscriptionStatus(child);
 const supervisor =
 supervisors.find(
 s =>
@@ -1766,6 +1785,9 @@ Number(child.usedSessions || 0)
 </td>
 
 <td>${child.startDate || "-"}</td>
+<td>
+${child.expiryDate || "-"}
+</td>
 
 <td>${child.attendanceDate || "-"}</td>
 <td>
@@ -1901,8 +1923,7 @@ document
 }
 
 function renderGroups(){
-const subscription =
-getSubscriptionStatus(child);
+
 let html = "";
 
 supervisors.forEach(s=>{
@@ -1961,6 +1982,7 @@ onclick="uncheckGroup('${s.docId}')">
 <th>اسم الطفل</th>
 <th>المشرف</th>
 <th>تاريخ البدء</th>
+<th>تاريخ الانتهاء</th>
 <th>تاريخ التفقد</th>
 <th>الرسوم</th>
 <th>المدفوع</th>
@@ -1977,7 +1999,8 @@ onclick="uncheckGroup('${s.docId}')">
 `;
 
 kids.forEach(child=>{
-
+const subscription =
+getSubscriptionStatus(child);
 html += `
 
 <tr>
@@ -1989,6 +2012,9 @@ html += `
 <td>${s.name}</td>
 
 <td>${child.startDate || "-"}</td>
+<td>
+${child.expiryDate || "-"}
+</td>
 
 <td>${child.attendanceDate || "-"}</td>
 
@@ -2291,6 +2317,38 @@ onclick="addPayment('${child.docId}')">
 💰 دفعة
 
 </button>
+
+</td>
+
+<td>
+
+<button
+class="export"
+onclick="renewSubscription(
+'${child.docId}',
+12
+)">
+
+12 جلسة
+
+</button>
+
+<button
+class="reset"
+onclick="renewSubscription(
+'${child.docId}',
+8
+)">
+
+8 جلسات
+
+</button>
+
+</td>
+
+💰 دفعة
+
+</button>
 </td>
 
 <td>
@@ -2415,6 +2473,48 @@ extraSessions:
 Number(
 child.extraSessions || 0
 )+1
+}
+);
+
+};
+window.renewSubscription =
+async function(
+docId,
+sessions
+){
+
+const today =
+new Date();
+
+today.setDate(
+today.getDate()+28
+);
+
+const expiryDate =
+today.toISOString()
+.split("T")[0];
+
+await updateDoc(
+doc(
+db,
+"children",
+docId
+),
+{
+startDate:
+new Date()
+.toISOString()
+.split("T")[0],
+
+expiryDate:
+expiryDate,
+
+packageSessions:
+sessions,
+
+usedSessions:0,
+
+extraSessions:0
 }
 );
 
