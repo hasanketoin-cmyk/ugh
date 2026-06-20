@@ -6,6 +6,32 @@
 <title>أكاديمية SCORE - نظام الحضور</title>
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
+.activeSub{
+background:#16a34a;
+color:white;
+padding:6px 12px;
+border-radius:20px;
+font-size:12px;
+font-weight:bold;
+}
+
+.warning{
+background:#f59e0b;
+color:white;
+padding:6px 12px;
+border-radius:20px;
+font-size:12px;
+font-weight:bold;
+}
+
+.expired{
+background:#dc2626;
+color:white;
+padding:6px 12px;
+border-radius:20px;
+font-size:12px;
+font-weight:bold;
+}
 *{
 margin:0;
 padding:0;
@@ -550,6 +576,17 @@ margin-top:15px;
 <option value="">اختر المشرف</option>
 </select>
 <input type="date" id="startDate">
+<select id="sessionPackage">
+
+<option value="12">
+12 جلسة
+</option>
+
+<option value="8">
+8 جلسات
+</option>
+
+</select>
 <input
 type="number"
 id="childFees"
@@ -590,7 +627,10 @@ placeholder="المدفوع">
 <th>الرسوم</th>
 <th>المدفوع</th>
 <th>المتبقي</th>
+<th>الاشتراك</th>
+<th>الجلسات المتبقية</th>
 <th>تاريخ البدء</th>
+<th>تاريخ الانتهاء</th>
 <th>تاريخ التفقد</th>
 <th>الحالة</th>
 <th>التفقد</th>
@@ -806,7 +846,8 @@ id="totalRemaining">
 <th>المدفوع</th>
 <th>المتبقي</th>
 <th>إضافة دفعة</th>
-
+<th>تجديد</th>
+<th>جلسة إضافية</th>
 </tr>
 
 </thead>
@@ -1096,52 +1137,6 @@ attendanceDate:""
 );
 
 };
-window.editSupervisor =
-async function(docId){
-
-const current =
-supervisors.find(
-s=>s.docId===docId
-);
-
-const newName =
-prompt(
-"اسم المشرف الجديد",
-current.name
-);
-
-if(!newName) return;
-
-await updateDoc(
-doc(
-db,
-"supervisors",
-docId
-),
-{
-name:newName.trim()
-}
-);
-
-};
-// ثم يبقى كودك الأصلي
-window.deleteSupervisor = async function(docId){
-
-if(!requireAdmin())
-return;
-
-if(!confirm("حذف المشرف؟"))
-return;
-
-await deleteDoc(
-doc(
-db,
-"supervisors",
-docId
-)
-);
-
-};
 
 window.editSupervisor =
 async function(docId){
@@ -1318,6 +1313,22 @@ document.getElementById("childSupervisor").value;
 
 const startDate =
 document.getElementById("startDate").value;
+const sessionPackage =
+Number(
+document.getElementById(
+"sessionPackage"
+).value
+);
+const endDate =
+new Date(startDate);
+
+endDate.setDate(
+endDate.getDate() + 28
+);
+
+const expiryDate =
+endDate.toISOString()
+.split("T")[0];
 const fees =
 Number(
 document.getElementById(
@@ -1345,14 +1356,22 @@ childrenCollection,
 name:name,
 childId:getNextChildId(),
 supervisorId:supervisorId,
+
 startDate:startDate,
+expiryDate:expiryDate,
+
+packageSessions:sessionPackage,
+usedSessions:0,
+extraSessions:0,
+
 fees:fees,
 paid:paid,
 remaining:fees-paid,
+
 present:false
 }
 );
-
+  
 document.getElementById("childName").value="";
 document.getElementById("startDate").value="";
 document.getElementById("childFees").value="";
@@ -1387,12 +1406,19 @@ name:name,
 childId:getNextChildId(),
 supervisorId:supervisorId,
 startDate:startDate,
+
+packageSessions:12,
+usedSessions:0,
+extraSessions:0,
+
 fees:0,
 paid:0,
 remaining:0,
+
 present:false
 }
 );
+
 
 document.getElementById("groupChildName").value="";
 document.getElementById("groupStartDate").value="";
@@ -1426,6 +1452,9 @@ children.find(
 c => c.docId === docId
 );
 
+const newPresent =
+!child.present;
+
 await updateDoc(
 doc(
 db,
@@ -1433,14 +1462,26 @@ db,
 child.docId
 ),
 {
-present: !child.present,
+present:newPresent,
+
 attendanceDate:
-!child.present
-? new Date().toLocaleDateString('en-CA')
-: ""
+newPresent
+?
+new Date().toLocaleDateString('en-CA')
+:
+"",
+
+usedSessions:
+newPresent
+?
+Number(child.usedSessions || 0)+1
+:
+Math.max(
+0,
+Number(child.usedSessions || 0)-1
+)
 }
 );
-
 };
 
 // هنا تنتهي الدالة
@@ -1653,6 +1694,9 @@ let html = "";
 
 data.forEach(child=>{
 
+const subscription =
+getSubscriptionStatus(child);
+  
 const supervisor =
 supervisors.find(
 s =>
@@ -1675,8 +1719,32 @@ html += `
 <td>${child.paid || 0}</td>
 
 <td>${child.remaining || 0}</td>
+<td>
+
+<span
+class="${subscription.className}">
+
+${subscription.text}
+
+</span>
+
+</td>
+<td>
+${
+(
+Number(child.packageSessions || 0)
++
+Number(child.extraSessions || 0)
+)
+-
+Number(child.usedSessions || 0)
+}
+</td>
 
 <td>${child.startDate || "-"}</td>
+<td>
+${child.expiryDate || "-"}
+</td>
 
 <td>${child.attendanceDate || "-"}</td>
 <td>
@@ -1743,6 +1811,42 @@ renderGroups();
 renderSupervisors();
 
 renderFinance();
+
+}
+  function getSubscriptionStatus(child){
+
+const remainingSessions =
+
+(
+Number(child.packageSessions || 0)
++
+Number(child.extraSessions || 0)
+)
+-
+Number(child.usedSessions || 0);
+
+if(remainingSessions <= 0){
+
+return {
+text:"منتهي",
+className:"expired"
+};
+
+}
+
+if(remainingSessions === 1){
+
+return {
+text:"جلسة أخيرة",
+className:"warning"
+};
+
+}
+
+return {
+text:"فعال",
+className:"activeSub"
+};
 
 }
   function updateStats(){
@@ -1835,10 +1939,12 @@ onclick="uncheckGroup('${s.docId}')">
 <th>اسم الطفل</th>
 <th>المشرف</th>
 <th>تاريخ البدء</th>
+<th>تاريخ الانتهاء</th>
 <th>تاريخ التفقد</th>
 <th>الرسوم</th>
 <th>المدفوع</th>
 <th>المتبقي</th>
+<th>الجلسات المتبقية</th>
 <th>الحالة</th>
 <th>التفقد</th>
 <th>حذف</th>
@@ -1850,7 +1956,8 @@ onclick="uncheckGroup('${s.docId}')">
 `;
 
 kids.forEach(child=>{
-
+const subscription =
+getSubscriptionStatus(child);
 html += `
 
 <tr>
@@ -1862,6 +1969,9 @@ html += `
 <td>${s.name}</td>
 
 <td>${child.startDate || "-"}</td>
+<td>
+${child.expiryDate || "-"}
+</td>
 
 <td>${child.attendanceDate || "-"}</td>
 
@@ -1870,6 +1980,16 @@ html += `
 <td>${child.paid || 0}</td>
 
 <td>${child.remaining || 0}</td>
+<td>
+
+<span
+class="${subscription.className}">
+
+${subscription.text}
+
+</span>
+
+</td>
 
 <td>
 
@@ -2130,8 +2250,7 @@ Number(child.remaining || 0);
 totalFees += fees;
 totalPaid += paid;
 totalRemaining += remaining;
-
-html += `
+  html += `
 
 <tr>
 
@@ -2152,6 +2271,38 @@ class="add"
 onclick="addPayment('${child.docId}')">
 
 💰 دفعة
+
+</button>
+
+</td>
+
+<td>
+
+<button
+class="export"
+onclick="renewSubscription('${child.docId}',12)">
+
+12 جلسة
+
+</button>
+
+<button
+class="reset"
+onclick="renewSubscription('${child.docId}',8)">
+
+8 جلسات
+
+</button>
+
+</td>
+
+<td>
+
+<button
+class="export"
+onclick="addExtraSession('${child.docId}')">
+
+➕ جلسة
 
 </button>
 
@@ -2246,6 +2397,73 @@ document.body.removeChild(link);
 
 };
 
+window.addExtraSession =
+async function(docId){
+
+const child =
+children.find(
+c=>c.docId===docId
+);
+
+if(!child) return;
+
+await updateDoc(
+doc(
+db,
+"children",
+docId
+),
+{
+extraSessions:
+Number(
+child.extraSessions || 0
+)+1
+}
+);
+
+};
+window.renewSubscription =
+async function(
+docId,
+sessions
+){
+
+const today =
+new Date();
+
+today.setDate(
+today.getDate()+28
+);
+
+const expiryDate =
+today.toISOString()
+.split("T")[0];
+
+await updateDoc(
+doc(
+db,
+"children",
+docId
+),
+{
+startDate:
+new Date()
+.toISOString()
+.split("T")[0],
+
+expiryDate:
+expiryDate,
+
+packageSessions:
+sessions,
+
+usedSessions:0,
+
+extraSessions:0
+}
+);
+
+};
 window.addPayment = async function(docId){
 
 const child =
