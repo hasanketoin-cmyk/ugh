@@ -842,7 +842,7 @@ document.querySelectorAll('.nav-link').forEach(link => {
 link.classList.remove('active');
 });
 
-if(event){
+if(typeof event !== "undefined" && event){
 event.target.closest('.nav-link').classList.add('active');
 }
 
@@ -1572,40 +1572,6 @@ docId
 };
 // ===== يكمل الكود القديم =====
 
-window.searchChild = function(){
-
-const value =
-document
-.getElementById(
-"searchInput"
-)
-.value;
-
-if(value===""){
-
-renderTable(
-children
-);
-
-return;
-
-}
-
-renderTable(
-
-children.filter(
-c =>
-String(
-c.childId
-)
-.includes(
-value
-)
-)
-
-);
-
-};
 function renderTable(data){
 
 let html = "";
@@ -2024,6 +1990,35 @@ document.getElementById(
 }
 function renderFinance(){
 
+const financeTable =
+document.getElementById(
+"financeTable"
+);
+
+const totalFeesEl =
+document.getElementById(
+"totalFees"
+);
+
+const totalPaidEl =
+document.getElementById(
+"totalPaid"
+);
+
+const totalRemainingEl =
+document.getElementById(
+"totalRemaining"
+);
+
+if(
+!financeTable ||
+!totalFeesEl ||
+!totalPaidEl ||
+!totalRemainingEl
+){
+return;
+}
+
 let html = "";
 
 let totalFees = 0;
@@ -2072,25 +2067,21 @@ onclick="addPayment('${child.docId}')">
 </td>
 
 </tr>
+
 `;
 
 });
 
-document.getElementById(
-"financeTable"
-).innerHTML = html;
+financeTable.innerHTML = html;
 
-document.getElementById(
-"totalFees"
-).innerText = totalFees;
+totalFeesEl.innerText =
+totalFees;
 
-document.getElementById(
-"totalPaid"
-).innerText = totalPaid;
+totalPaidEl.innerText =
+totalPaid;
 
-document.getElementById(
-"totalRemaining"
-).innerText = totalRemaining;
+totalRemainingEl.innerText =
+totalRemaining;
 
 }
 window.resetAttendance =
@@ -2308,26 +2299,26 @@ children
 }
 );
 onSnapshot(
-busLinesCollection,
+busChildrenCollection,
 (snapshot)=>{
 
-busLines = [];
+busChildren = [];
 
 snapshot.forEach(docu=>{
 
-busLines.push({
+busChildren.push({
 docId:docu.id,
 ...docu.data()
 });
 
 });
 
-fillBusLines();
 renderBusLines();
+renderFinance();
 
 }
 );
-
+  
 onSnapshot(
 busChildrenCollection,
 (snapshot)=>{
