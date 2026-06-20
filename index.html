@@ -1137,52 +1137,6 @@ attendanceDate:""
 );
 
 };
-window.editSupervisor =
-async function(docId){
-
-const current =
-supervisors.find(
-s=>s.docId===docId
-);
-
-const newName =
-prompt(
-"اسم المشرف الجديد",
-current.name
-);
-
-if(!newName) return;
-
-await updateDoc(
-doc(
-db,
-"supervisors",
-docId
-),
-{
-name:newName.trim()
-}
-);
-
-};
-// ثم يبقى كودك الأصلي
-window.deleteSupervisor = async function(docId){
-
-if(!requireAdmin())
-return;
-
-if(!confirm("حذف المشرف؟"))
-return;
-
-await deleteDoc(
-doc(
-db,
-"supervisors",
-docId
-)
-);
-
-};
 
 window.editSupervisor =
 async function(docId){
@@ -1417,7 +1371,7 @@ remaining:fees-paid,
 present:false
 }
 );
-
+  
 document.getElementById("childName").value="";
 document.getElementById("startDate").value="";
 document.getElementById("childFees").value="";
@@ -1453,13 +1407,14 @@ childId:getNextChildId(),
 supervisorId:supervisorId,
 startDate:startDate,
 
-await addDoc(
-childrenCollection,
-{
-name:name,
-childId:getNextChildId(),
-supervisorId:supervisorId,
-startDate:startDate,
+packageSessions:12,
+usedSessions:0,
+extraSessions:0,
+
+fees:0,
+paid:0,
+remaining:0,
+
 present:false
 }
 );
@@ -1738,8 +1693,10 @@ function renderTable(data){
 let html = "";
 
 data.forEach(child=>{
+
 const subscription =
 getSubscriptionStatus(child);
+  
 const supervisor =
 supervisors.find(
 s =>
@@ -2314,6 +2271,26 @@ html += `
 class="add"
 onclick="addPayment('${child.docId}')">
 
+html += `
+
+<tr>
+
+<td>${child.childId}</td>
+
+<td>${child.name}</td>
+
+<td>${fees}</td>
+
+<td>${paid}</td>
+
+<td>${remaining}</td>
+
+<td>
+
+<button
+class="add"
+onclick="addPayment('${child.docId}')">
+
 💰 دفعة
 
 </button>
@@ -2324,10 +2301,7 @@ onclick="addPayment('${child.docId}')">
 
 <button
 class="export"
-onclick="renewSubscription(
-'${child.docId}',
-12
-)">
+onclick="renewSubscription('${child.docId}',12)">
 
 12 جلسة
 
@@ -2335,20 +2309,12 @@ onclick="renewSubscription(
 
 <button
 class="reset"
-onclick="renewSubscription(
-'${child.docId}',
-8
-)">
+onclick="renewSubscription('${child.docId}',8)">
 
 8 جلسات
 
 </button>
 
-</td>
-
-💰 دفعة
-
-</button>
 </td>
 
 <td>
