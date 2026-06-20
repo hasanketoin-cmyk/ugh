@@ -1096,7 +1096,34 @@ attendanceDate:""
 );
 
 };
+window.editSupervisor =
+async function(docId){
 
+const current =
+supervisors.find(
+s=>s.docId===docId
+);
+
+const newName =
+prompt(
+"اسم المشرف الجديد",
+current.name
+);
+
+if(!newName) return;
+
+await updateDoc(
+doc(
+db,
+"supervisors",
+docId
+),
+{
+name:newName.trim()
+}
+);
+
+};
 // ثم يبقى كودك الأصلي
 window.deleteSupervisor = async function(docId){
 
@@ -1237,6 +1264,14 @@ ${count}
 <td>
 
 <button
+class="export"
+onclick="editSupervisor('${s.docId}')">
+
+تعديل
+
+</button>
+
+<button
 class="delete"
 onclick="deleteSupervisor('${s.docId}')">
 
@@ -1245,7 +1280,6 @@ onclick="deleteSupervisor('${s.docId}')">
 </button>
 
 </td>
-
 </tr>
 
 `;
@@ -1538,6 +1572,44 @@ attendanceDate:""
 }
 
 };
+window.editBusLine =
+async function(docId){
+
+const line =
+busLines.find(
+b => b.docId === docId
+);
+
+if(!line) return;
+
+const newLineName =
+prompt(
+"اسم الخط الجديد",
+line.name
+);
+
+if(!newLineName)
+return;
+
+const newSupervisor =
+prompt(
+"اسم مشرف الباص",
+line.supervisor || ""
+);
+
+await updateDoc(
+doc(
+db,
+"busLines",
+docId
+),
+{
+name:newLineName.trim(),
+supervisor:newSupervisor.trim()
+}
+);
+
+};
 window.deleteBusLine = async function(docId){
 
 if(!requireAdmin())
@@ -1727,6 +1799,14 @@ html += `
 
 </h3>
 
+<button
+class="export"
+onclick="editSupervisor('${s.docId}')">
+
+✏️ تعديل اسم المجموعة
+
+</button>
+
 <div style="margin-bottom:15px;display:flex;gap:10px;flex-wrap:wrap;">
 
 <button
@@ -1876,6 +1956,14 @@ html += `
 ${line.supervisor || "-"}
 
 </p>
+
+<button
+class="export"
+onclick="editBusLine('${line.docId}')">
+
+✏️ تعديل الخط
+
+</button>
 
 <button
 class="delete"
