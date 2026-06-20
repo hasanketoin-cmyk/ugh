@@ -582,9 +582,11 @@ placeholder="المدفوع">
 <th>اسم الطفل</th>
 <th>المشرف</th>
 <th>تاريخ البدء</th>
+<th>تاريخ التفقد</th>
 <th>الرسوم</th>
 <th>المدفوع</th>
 <th>المتبقي</th>
+<th>الحالة</th>
 <th>التفقد</th>
 <th>حذف</th>
 </tr>
@@ -793,6 +795,7 @@ id="totalRemaining">
 <th>الرسوم</th>
 <th>المدفوع</th>
 <th>المتبقي</th>
+<th>إضافة دفعة</th>
 
 </tr>
 
@@ -1308,7 +1311,8 @@ present:false
 
 document.getElementById("childName").value="";
 document.getElementById("startDate").value="";
-
+document.getElementById("childFees").value="";
+document.getElementById("childPaid").value="";
 };
 
 // ===== إضافة طفل من صفحة المجموعات =====
@@ -1339,6 +1343,9 @@ name:name,
 childId:getNextChildId(),
 supervisorId:supervisorId,
 startDate:startDate,
+fees:0,
+paid:0,
+remaining:0,
 present:false
 }
 );
@@ -1788,8 +1795,13 @@ onclick="uncheckGroup('${s.docId}')">
 <thead>
 <tr>
 <th>رقم الطفل</th>
-<th>الاسم</th>
+<th>اسم الطفل</th>
+<th>المشرف</th>
 <th>تاريخ البدء</th>
+<th>تاريخ التفقد</th>
+<th>الرسوم</th>
+<th>المدفوع</th>
+<th>المتبقي</th>
 <th>الحالة</th>
 <th>التفقد</th>
 <th>حذف</th>
@@ -1810,12 +1822,26 @@ html += `
 
 <td>${child.name}</td>
 
+<td>${s.name}</td>
+
 <td>${child.startDate || "-"}</td>
 
+<td>${child.attendanceDate || "-"}</td>
+
+<td>${child.fees || 0}</td>
+
+<td>${child.paid || 0}</td>
+
+<td>${child.remaining || 0}</td>
+
 <td>
+
 <span class="${child.present ? 'present' : 'absent'}">
+
 ${child.present ? 'حاضر' : 'غائب'}
+
 </span>
+
 </td>
 
 <td>
@@ -1841,7 +1867,6 @@ onclick="deleteChild('${child.docId}')">
 </td>
 
 </tr>
-
 `;
   
 });
@@ -2046,8 +2071,19 @@ html += `
 
 <td>${remaining}</td>
 
-</tr>
+<td>
 
+<button
+class="add"
+onclick="addPayment('${child.docId}')">
+
+💰 دفعة
+
+</button>
+
+</td>
+
+</tr>
 `;
 
 });
@@ -2138,6 +2174,54 @@ link.click();
 
 document.body.removeChild(link);
 
+};
+
+window.addPayment = async function(docId){
+
+const child =
+children.find(
+c => c.docId === docId
+);
+
+if(!child)
+return;
+
+const amount =
+Number(
+prompt(
+"أدخل قيمة الدفعة"
+)
+);
+
+if(
+!amount ||
+amount <= 0
+)
+return;
+
+const newPaid =
+Number(child.paid || 0)
++
+amount;
+
+const newRemaining =
+Number(child.fees || 0)
+-
+newPaid;
+
+await updateDoc(
+doc(
+db,
+"children",
+docId
+),
+{
+paid:newPaid,
+remaining:newRemaining
+}
+);
+
+};
 };
 window.exportBusAttendance = function(){
 
