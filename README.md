@@ -1623,40 +1623,21 @@ html += `
 
 <tr>
 
-<td>
-${child.childId}
-</td>
+<td>${child.childId}</td>
 
-<td>
-${child.name}
-</td>
+<td>${child.name}</td>
 
-<td>
-${supervisor
-?
-supervisor.name
-:
-"-"}
-</td>
+<td>${supervisor ? supervisor.name : "-"}</td>
 
-<td>
-${child.startDate || "-"}
-</td>
+<td>${child.fees || 0}</td>
 
-<td>
-${child.attendanceDate || "-"}
-</td>
-<td>
-${child.fees || 0}
-</td>
+<td>${child.paid || 0}</td>
 
-<td>
-${child.paid || 0}
-</td>
+<td>${child.remaining || 0}</td>
 
-<td>
-${child.remaining || 0}
-</td>
+<td>${child.startDate || "-"}</td>
+
+<td>${child.attendanceDate || "-"}</td>
 <td>
 
 <span
