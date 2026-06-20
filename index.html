@@ -1937,7 +1937,6 @@ Number(child.extraSessions || 0)
 Number(child.usedSessions || 0)
 }
 </td>
-</td>
 
 <td>${child.startDate || "-"}</td>
 <td>
@@ -2866,6 +2865,75 @@ docId
 );
 
 };
+window.deletePrivatePlayer =
+async function(docId){
+
+if(!requireAdmin())
+return;
+
+if(!confirm("حذف اللاعب؟"))
+return;
+
+await deleteDoc(
+doc(
+db,
+"privatePlayers",
+docId
+)
+);
+
+};
+
+function renderPrivate(){
+
+let html = "";
+
+privatePlayers.forEach(player=>{
+
+html += `
+
+<tr>
+
+<td>${player.name}</td>
+
+<td>${player.startDate || "-"}</td>
+
+<td>${player.sessions}</td>
+
+<td>${player.sessionPrice}</td>
+
+<td>${player.total}</td>
+
+<td>
+
+<button
+class="delete"
+onclick="deletePrivatePlayer('${player.docId}')">
+
+حذف
+
+</button>
+
+</td>
+
+</tr>
+
+`;
+
+});
+
+const table =
+document.getElementById(
+"privateTable"
+);
+
+if(table){
+
+table.innerHTML = html;
+
+}
+
+}
 function renderAcademy(){
 
 let html = "";
@@ -2952,6 +3020,25 @@ docId:docu.id,
 });
 
 renderTable(children);
+
+}
+);
+onSnapshot(
+privateCollection,
+(snapshot)=>{
+
+privatePlayers = [];
+
+snapshot.forEach(docu=>{
+
+privatePlayers.push({
+docId:docu.id,
+...docu.data()
+});
+
+});
+
+renderPrivate();
 
 }
 );
