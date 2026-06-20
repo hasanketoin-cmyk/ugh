@@ -2743,52 +2743,36 @@ return;
 
 }
 
-sessions:sessions,
+const endDate =
+new Date(startDate);
 
-
-};
-window.addPayment = async function(docId){
-
-const child =
-children.find(
-c => c.docId === docId
+endDate.setDate(
+endDate.getDate()+28
 );
 
-if(!child)
-return;
+const expiryDate =
+endDate.toISOString()
+.split("T")[0];
 
-const amount =
-Number(
-prompt(
-"أدخل قيمة الدفعة"
-)
-);
-
-if(
-!amount ||
-amount <= 0
-)
-return;
-
-const newPaid =
-Number(child.paid || 0)
-+
-amount;
-
-const newRemaining =
-Number(child.fees || 0)
--
-newPaid;
-
-await updateDoc(
-doc(
-db,
-"children",
-docId
-),
+await addDoc(
+academyCollection,
 {
-paid:newPaid,
-remaining:newRemaining
+name:name,
+
+startDate:startDate,
+expiryDate:expiryDate,
+
+packageSessions:sessions,
+
+usedSessions:0,
+
+extraSessions:0,
+
+fees:fees,
+
+paid:0,
+
+remaining:fees
 }
 );
 
@@ -3105,14 +3089,6 @@ onclick="deleteAcademyPlayer('${player.docId}')">
 document.getElementById(
 "academyTable"
 ).innerHTML = html;
-
-}
-
-if(table){
-
-table.innerHTML = html;
-
-}
 
 }  
 onSnapshot(
