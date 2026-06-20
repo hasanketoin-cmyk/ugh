@@ -601,6 +601,9 @@ placeholder="المدفوع">
 </table>
 
 </div>
+
+</div>
+
 </div>
 
 <!-- Groups Page -->
@@ -2258,18 +2261,14 @@ supervisors = [];
 snapshot.forEach(docu=>{
 
 supervisors.push({
-
 docId:docu.id,
 ...docu.data()
-
 });
 
 });
 
 fillSupervisorSelect();
-
 renderSupervisors();
-
 renderTable(children);
 
 }
@@ -2284,20 +2283,38 @@ children = [];
 snapshot.forEach(docu=>{
 
 children.push({
-
 docId:docu.id,
 ...docu.data()
-
 });
 
 });
 
-renderTable(
-children
-);
+renderTable(children);
 
 }
 );
+
+onSnapshot(
+busLinesCollection,
+(snapshot)=>{
+
+busLines = [];
+
+snapshot.forEach(docu=>{
+
+busLines.push({
+docId:docu.id,
+...docu.data()
+});
+
+});
+
+fillBusLines();
+renderBusLines();
+
+}
+);
+
 onSnapshot(
 busChildrenCollection,
 (snapshot)=>{
@@ -2318,26 +2335,7 @@ renderFinance();
 
 }
 );
-  
-onSnapshot(
-busChildrenCollection,
-(snapshot)=>{
 
-busChildren = [];
-
-snapshot.forEach(docu=>{
-
-busChildren.push({
-docId:docu.id,
-...docu.data()
-});
-
-});
-
-renderBusLines();
-
-}
-);
 document
 .getElementById(
 "qrInput"
@@ -2352,9 +2350,7 @@ this.value.trim();
 const child =
 children.find(
 c =>
-String(
-c.childId
-) === qr
+String(c.childId) === qr
 );
 
 if(child){
@@ -2377,7 +2373,6 @@ this.value="";
 
 }
 );
-
 </script>
 
 </body>
