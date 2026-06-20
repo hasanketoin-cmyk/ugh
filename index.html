@@ -953,6 +953,79 @@ onclick="addAcademyPlayer()">
 </div>
 
 </div>
+<div id="privateTraining" class="page">
+
+<div class="page-header">
+<h2>🏃 التدريب الخاص</h2>
+</div>
+
+<div class="card">
+
+<h3>إضافة لاعب برايفت</h3>
+
+<div class="form-group">
+
+<input
+type="text"
+id="privateName"
+placeholder="اسم اللاعب">
+
+<input
+type="date"
+id="privateStartDate">
+
+<input
+type="number"
+id="privateSessions"
+placeholder="عدد الجلسات">
+
+<input
+type="number"
+id="privateSessionPrice"
+placeholder="سعر الجلسة">
+
+<button
+class="add"
+onclick="addPrivatePlayer()">
+
+إضافة لاعب
+
+</button>
+
+</div>
+
+</div>
+
+<div class="card">
+
+<h3>قائمة البرايفت</h3>
+
+<table>
+
+<thead>
+
+<tr>
+
+<th>الاسم</th>
+<th>التاريخ</th>
+<th>الجلسات</th>
+<th>سعر الجلسة</th>
+<th>الإجمالي</th>
+<th>حذف</th>
+
+</tr>
+
+</thead>
+
+<tbody id="privateTable">
+
+</tbody>
+
+</table>
+
+</div>
+
+</div>
 </main>
 
 <script>
@@ -2585,6 +2658,53 @@ sessions,
 usedSessions:0,
 
 extraSessions:0
+}
+);
+
+};
+window.addPrivatePlayer =
+async function(){
+
+const name =
+document.getElementById(
+"privateName"
+).value.trim();
+
+const startDate =
+document.getElementById(
+"privateStartDate"
+).value;
+
+const sessions =
+Number(
+document.getElementById(
+"privateSessions"
+).value
+);
+
+const sessionPrice =
+Number(
+document.getElementById(
+"privateSessionPrice"
+).value
+);
+
+if(!name){
+
+alert("أدخل اسم اللاعب");
+
+return;
+
+}
+
+await addDoc(
+privateCollection,
+{
+name:name,
+startDate:startDate,
+sessions:sessions,
+sessionPrice:sessionPrice,
+total:sessions * sessionPrice
 }
 );
 
