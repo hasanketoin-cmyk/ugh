@@ -487,6 +487,19 @@ margin-top:15px;
 <span>المالية</span>
 </a>
 </li>
+<li class="nav-item">
+<a class="nav-link" onclick="showPage('academy')">
+⚽
+<span>أكاديمية كرة القدم</span>
+</a>
+</li>
+
+<li class="nav-item">
+<a class="nav-link" onclick="showPage('privateTraining')">
+🏃
+<span>البرايفت</span>
+</a>
+</li>
 </ul>
 
 <div class="admin-section">
@@ -861,6 +874,85 @@ id="totalRemaining">
 </div>
 
 </div>
+<div id="academy" class="page">
+
+<div class="page-header">
+<h2>⚽ أكاديمية كرة القدم</h2>
+</div>
+
+<div class="card">
+
+<h3>تسجيل لاعب</h3>
+
+<div class="form-group">
+
+<input
+type="text"
+id="academyName"
+placeholder="اسم اللاعب">
+
+<input
+type="date"
+id="academyStartDate">
+
+<select id="academySessions">
+
+<option value="12">
+12 جلسة
+</option>
+
+<option value="8">
+8 جلسات
+</option>
+
+</select>
+
+<input
+type="number"
+id="academyFees"
+placeholder="الرسوم">
+
+<button
+class="add"
+onclick="addAcademyPlayer()">
+
+إضافة لاعب
+
+</button>
+
+</div>
+
+</div>
+
+<div class="card">
+
+<h3>قائمة اللاعبين</h3>
+
+<table>
+
+<thead>
+
+<tr>
+
+<th>اللاعب</th>
+<th>تاريخ التسجيل</th>
+<th>الجلسات</th>
+<th>الرسوم</th>
+<th>حذف</th>
+
+</tr>
+
+</thead>
+
+<tbody id="academyTable">
+
+</tbody>
+
+</table>
+
+</div>
+
+</div>
 </main>
 
 <script>
@@ -994,11 +1086,25 @@ collection(
 db,
 "busChildren"
 );
+const academyCollection =
+collection(
+db,
+"academyPlayers"
+);
+
+const privateCollection =
+collection(
+db,
+"privatePlayers"
+);
 let children = [];
 let supervisors = [];
 
 let busLines = [];
 let busChildren = [];
+  
+let academyPlayers = [];
+let privatePlayers = [];
 
 let adminMode = false;
   
@@ -1303,6 +1409,24 @@ c => Number(c.childId || 0)
 return maxId + 1;
 
 }
+window.deleteSupervisor =
+async function(docId){
+
+if(!requireAdmin())
+return;
+
+if(!confirm("حذف المشرف؟"))
+return;
+
+await deleteDoc(
+doc(
+db,
+"supervisors",
+docId
+)
+);
+
+};
 window.addChild = async function(){
 
 const name =
@@ -1739,6 +1863,7 @@ Number(child.extraSessions || 0)
 -
 Number(child.usedSessions || 0)
 }
+</td>
 </td>
 
 <td>${child.startDate || "-"}</td>
@@ -2464,6 +2589,52 @@ extraSessions:0
 );
 
 };
+window.addAcademyPlayer =
+async function(){
+
+const name =
+document.getElementById(
+"academyName"
+).value.trim();
+
+const startDate =
+document.getElementById(
+"academyStartDate"
+).value;
+
+const sessions =
+Number(
+document.getElementById(
+"academySessions"
+).value
+);
+
+const fees =
+Number(
+document.getElementById(
+"academyFees"
+).value || 0
+);
+
+if(!name){
+
+alert("أدخل اسم اللاعب");
+
+return;
+
+}
+
+await addDoc(
+academyCollection,
+{
+name:name,
+startDate:startDate,
+sessions:sessions,
+fees:fees
+}
+);
+
+};
 window.addPayment = async function(docId){
 
 const child =
@@ -2557,7 +2728,78 @@ link.click();
 document.body.removeChild(link);
 
 };
-  
+window.deleteAcademyPlayer =
+async function(docId){
+
+if(!requireAdmin())
+return;
+
+if(!confirm("حذف اللاعب؟"))
+return;
+
+await deleteDoc(
+doc(
+db,
+"academyPlayers",
+docId
+)
+);
+
+};
+function renderAcademy(){
+
+let html = "";
+
+academyPlayers.forEach(player=>{
+
+html += `
+
+<tr>
+
+<td>${player.name}</td>
+
+<td>${player.startDate || "-"}</td>
+
+<td>${player.sessions}</td>
+
+<td>${player.fees}</td>
+
+<td>
+
+<button
+class="delete"
+onclick="deleteAcademyPlayer('${player.docId}')">
+
+حذف
+
+</button>
+
+</td>
+
+</tr>
+
+`;
+
+});
+
+document.getElementById(
+"academyTable"
+).innerHTML = html;
+
+}
+
+const table =
+document.getElementById(
+"academyTable"
+);
+
+if(table){
+
+table.innerHTML = html;
+
+}
+
+}  
 onSnapshot(
 supervisorsCollection,
 (snapshot)=>{
@@ -2599,7 +2841,25 @@ renderTable(children);
 
 }
 );
+onSnapshot(
+academyCollection,
+(snapshot)=>{
 
+academyPlayers = [];
+
+snapshot.forEach(docu=>{
+
+academyPlayers.push({
+docId:docu.id,
+...docu.data()
+});
+
+});
+
+renderAcademy();
+
+}
+);
 onSnapshot(
 busLinesCollection,
 (snapshot)=>{
