@@ -845,11 +845,6 @@ document
 
 
 };
-window.addSupervisor = async function(){
-
-// كود إضافة المشرف
-
-};
 
 // ===== إضافة خط باص =====
 
@@ -918,18 +913,12 @@ attendanceDate:""
 };
 
 // ثم يبقى كودك الأصلي
-
 window.deleteSupervisor = async function(docId){
 
-// كود الحذف
+if(!requireAdmin())
+return;
 
-};
-
-if(
-!confirm(
-"حذف المشرف؟"
-)
-)
+if(!confirm("حذف المشرف؟"))
 return;
 
 await deleteDoc(
@@ -940,7 +929,9 @@ docId
 )
 );
 
-};window.editSupervisor =
+};
+
+window.editSupervisor =
 async function(docId){
 
 const current =
@@ -973,6 +964,35 @@ name:newName.trim()
 
 };
 
+
+function fillBusLines(){
+
+let html =
+'<option value="">اختر الخط</option>';
+
+busLines.forEach(line=>{
+
+html += `
+<option value="${line.docId}">
+${line.name}
+</option>
+`;
+
+});
+
+const select =
+document.getElementById(
+"busLineSelect"
+);
+
+if(select){
+
+select.innerHTML = html;
+
+}
+
+}
+
 function fillSupervisorSelect(){
 
 let html =
@@ -1004,7 +1024,6 @@ groupSelect.innerHTML = html;
 }
 
 }
-
 function renderSupervisors(){
 
 
@@ -1237,8 +1256,88 @@ attendanceDate:""
 }
 
 };
-window.searchChild =
-function(){
+
+// ===== دوال الباصات =====
+
+window.toggleBusAttendance = async function(docId){
+
+const child =
+busChildren.find(
+c => c.docId === docId
+);
+
+if(!child) return;
+
+await updateDoc(
+doc(
+db,
+"busChildren",
+child.docId
+),
+{
+present: !child.present,
+attendanceDate:
+!child.present
+? new Date().toLocaleDateString('en-CA')
+: ""
+}
+);
+
+};
+
+window.checkBusLine = async function(lineId){
+
+const kids =
+busChildren.filter(
+c => c.lineId === lineId
+);
+
+for(const child of kids){
+
+await updateDoc(
+doc(
+db,
+"busChildren",
+child.docId
+),
+{
+present:true,
+attendanceDate:new Date().toLocaleDateString('en-CA')
+}
+);
+
+}
+
+};
+
+window.uncheckBusLine = async function(lineId){
+
+const kids =
+busChildren.filter(
+c => c.lineId === lineId
+);
+
+for(const child of kids){
+
+await updateDoc(
+doc(
+db,
+"busChildren",
+child.docId
+),
+{
+present:false,
+attendanceDate:""
+}
+);
+
+}
+
+};
+
+// ===== يكمل الكود القديم =====
+
+window.searchChild = function(){
 
 const value =
 document
@@ -1272,7 +1371,6 @@ value
 );
 
 };
-
 function renderTable(data){
 
 let html = "";
@@ -1454,8 +1552,8 @@ onclick="uncheckGroup('${s.docId}')">
 
 <table>
 
+<thead>
 <tr>
-
 <th>رقم الطفل</th>
 <th>الاسم</th>
 <th>تاريخ البدء</th>
@@ -1463,7 +1561,6 @@ onclick="uncheckGroup('${s.docId}')">
 <th>التفقد</th>
 <th>حذف</th>
 </tr>
-
 </thead>
 
 <tbody>
@@ -1535,7 +1632,129 @@ document
 .innerHTML = html;
 
 }
+function renderBusLines(){
 
+let html = "";
+
+busLines.forEach(line=>{
+
+const kids =
+busChildren.filter(
+c => c.lineId === line.docId
+);
+
+html += `
+
+<div class="card">
+
+<h3>
+
+🚌 ${line.name}
+
+(${kids.length})
+
+</h3>
+
+<p>
+
+مشرف الباص:
+${line.supervisor || "-"}
+
+</p>
+
+<div style="margin-bottom:15px">
+
+<button
+class="add"
+onclick="checkBusLine('${line.docId}')">
+
+✅ تفقد الخط
+
+</button>
+
+<button
+class="reset"
+onclick="uncheckBusLine('${line.docId}')">
+
+❌ إلغاء التفقد
+
+</button>
+
+</div>
+
+<table>
+
+<thead>
+<tr>
+<th>الطفل</th>
+<th>الحالة</th>
+<th>التفقد</th>
+</tr>
+</thead>
+
+<tbody>
+
+`;
+
+kids.forEach(child=>{
+
+html += `
+
+<tr>
+
+<td>${child.name}</td>
+
+<td>
+
+<span class="${
+child.present
+?
+'present'
+:
+'absent'
+}">
+
+${
+child.present
+?
+'حاضر'
+:
+'غائب'
+}
+
+</span>
+
+</td>
+
+<td>
+
+<input
+type="checkbox"
+class="checkbox"
+${child.present ? "checked" : ""}
+onchange="toggleBusAttendance('${child.docId}')">
+
+</td>
+
+</tr>
+
+`;
+
+});
+
+html += `
+</tbody>
+</table>
+</div>
+`;
+
+});
+
+document.getElementById(
+"busLinesContainer"
+).innerHTML = html;
+
+}
 window.resetAttendance =
 async function(){
 
@@ -1656,7 +1875,46 @@ children
 
 }
 );
+onSnapshot(
+busLinesCollection,
+(snapshot)=>{
 
+busLines = [];
+
+snapshot.forEach(docu=>{
+
+busLines.push({
+docId:docu.id,
+...docu.data()
+});
+
+});
+
+fillBusLines();
+renderBusLines();
+
+}
+);
+
+onSnapshot(
+busChildrenCollection,
+(snapshot)=>{
+
+busChildren = [];
+
+snapshot.forEach(docu=>{
+
+busChildren.push({
+docId:docu.id,
+...docu.data()
+});
+
+});
+
+renderBusLines();
+
+}
+);
 document
 .getElementById(
 "qrInput"
@@ -1685,7 +1943,8 @@ db,
 child.docId
 ),
 {
-present:true
+present:true,
+attendanceDate:new Date().toLocaleDateString('en-CA')
 }
 );
 
