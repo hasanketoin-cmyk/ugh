@@ -267,6 +267,7 @@ table{
 width:100%;
 border-collapse:collapse;
 margin-top:15px;
+table-layout:auto;
 }
 
 th{
@@ -276,6 +277,7 @@ padding:15px;
 text-align:center;
 font-weight:600;
 font-size:14px;
+white-space: nowrap;
 }
 
 td{
@@ -283,6 +285,7 @@ padding:15px;
 border-bottom:1px solid var(--gray);
 text-align:center;
 font-size:14px;
+white-space: nowrap;
 }
 
 tr:hover td{
@@ -452,6 +455,12 @@ margin-top:15px;
 <span>خطوط الباصات</span>
 </a>
 </li>
+  <li class="nav-item">
+<a class="nav-link" onclick="showPage('finance')">
+💰
+<span>المالية</span>
+</a>
+</li>
 </ul>
 
 <div class="admin-section">
@@ -541,6 +550,15 @@ margin-top:15px;
 <option value="">اختر المشرف</option>
 </select>
 <input type="date" id="startDate">
+<input
+type="number"
+id="childFees"
+placeholder="الرسوم الشهرية">
+
+<input
+type="number"
+id="childPaid"
+placeholder="المدفوع">
 <button class="add" onclick="addChild()">
 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-left:8px"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
 إضافة طفل
@@ -560,12 +578,18 @@ margin-top:15px;
 </button>
 </div>
 <h3>قائمة الأطفال</h3>
+
+<div style="overflow-x:auto;">
+
 <table>
 <thead>
 <tr>
 <th>رقم الطفل</th>
 <th>اسم الطفل</th>
 <th>المشرف</th>
+<th>الرسوم</th>
+<th>المدفوع</th>
+<th>المتبقي</th>
 <th>تاريخ البدء</th>
 <th>تاريخ التفقد</th>
 <th>الحالة</th>
@@ -575,6 +599,7 @@ margin-top:15px;
 </thead>
 <tbody id="tableBody"></tbody>
 </table>
+
 </div>
 </div>
 
@@ -690,23 +715,173 @@ onclick="exportBusAttendance()">
 
 <div id="busLinesContainer"></div>
 </div>
+  <!-- Finance Page -->
+
+<div id="finance" class="page">
+
+<div class="page-header">
+<h2>💰 المالية</h2>
+</div>
+
+<div class="card">
+
+<h3>الإحصائيات المالية</h3>
+
+<div class="stats">
+
+<div class="stat-card">
+
+<div
+class="number"
+id="totalFees">
+
+0
+
+</div>
+
+<div class="label">
+
+إجمالي الرسوم
+
+</div>
+
+</div>
+
+<div class="stat-card">
+
+<div
+class="number"
+id="totalPaid">
+
+0
+
+</div>
+
+<div class="label">
+
+إجمالي المقبوض
+
+</div>
+
+</div>
+
+<div class="stat-card">
+
+<div
+class="number"
+id="totalRemaining">
+
+0
+
+</div>
+
+<div class="label">
+
+إجمالي المتبقي
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+<div class="card">
+
+<h3>كشف الحساب</h3>
+
+<table>
+
+<thead>
+
+<tr>
+
+<th>رقم الطفل</th>
+<th>اسم الطفل</th>
+<th>الرسوم</th>
+<th>المدفوع</th>
+<th>المتبقي</th>
+<th>إضافة دفعة</th>
+
+</tr>
+
+</thead>
+
+<tbody id="financeTable">
+
+</tbody>
+
+</table>
+
+</div>
+
+</div>
 </main>
 
 <script>
 // Page Navigation
 function showPage(pageId) {
+
+// حفظ الصفحة الحالية
+localStorage.setItem(
+"currentPage",
+pageId
+);
+
 // Hide all pages
 document.querySelectorAll('.page').forEach(page => {
 page.classList.remove('active');
 });
+
 // Show selected page
 document.getElementById(pageId).classList.add('active');
+
 // Update nav links
 document.querySelectorAll('.nav-link').forEach(link => {
 link.classList.remove('active');
 });
+
+if(event){
 event.target.closest('.nav-link').classList.add('active');
 }
+
+}
+
+// ===== أضف هذا الجزء الجديد =====
+
+window.addEventListener(
+"load",
+function(){
+
+const savedPage =
+localStorage.getItem(
+"currentPage"
+);
+
+if(savedPage){
+
+document
+.querySelectorAll('.page')
+.forEach(page=>{
+page.classList.remove('active');
+});
+
+const page =
+document.getElementById(
+savedPage
+);
+
+if(page){
+
+page.classList.add('active');
+
+}
+
+}
+
+}
+);
 </script>
 
 <script type="module">
@@ -1106,7 +1281,19 @@ document.getElementById("childSupervisor").value;
 
 const startDate =
 document.getElementById("startDate").value;
+const fees =
+Number(
+document.getElementById(
+"childFees"
+).value || 0
+);
 
+const paid =
+Number(
+document.getElementById(
+"childPaid"
+).value || 0
+);
 if(!name || !supervisorId){
 
 alert("أكمل البيانات");
@@ -1122,13 +1309,17 @@ name:name,
 childId:getNextChildId(),
 supervisorId:supervisorId,
 startDate:startDate,
+fees:fees,
+paid:paid,
+remaining:fees-paid,
 present:false
 }
 );
 
 document.getElementById("childName").value="";
 document.getElementById("startDate").value="";
-
+document.getElementById("childFees").value="";
+document.getElementById("childPaid").value="";
 };
 
 // ===== إضافة طفل من صفحة المجموعات =====
@@ -1159,6 +1350,9 @@ name:name,
 childId:getNextChildId(),
 supervisorId:supervisorId,
 startDate:startDate,
+fees:0,
+paid:0,
+remaining:0,
 present:false
 }
 );
@@ -1452,7 +1646,17 @@ ${child.startDate || "-"}
 <td>
 ${child.attendanceDate || "-"}
 </td>
+<td>
+${child.fees || 0}
+</td>
 
+<td>
+${child.paid || 0}
+</td>
+
+<td>
+${child.remaining || 0}
+</td>
 <td>
 
 <span
@@ -1515,6 +1719,8 @@ updateStats();
 renderGroups();
 
 renderSupervisors();
+
+renderFinance();
 
 }
   function updateStats(){
@@ -1596,8 +1802,13 @@ onclick="uncheckGroup('${s.docId}')">
 <thead>
 <tr>
 <th>رقم الطفل</th>
-<th>الاسم</th>
+<th>اسم الطفل</th>
+<th>المشرف</th>
 <th>تاريخ البدء</th>
+<th>تاريخ التفقد</th>
+<th>الرسوم</th>
+<th>المدفوع</th>
+<th>المتبقي</th>
 <th>الحالة</th>
 <th>التفقد</th>
 <th>حذف</th>
@@ -1618,12 +1829,26 @@ html += `
 
 <td>${child.name}</td>
 
+<td>${s.name}</td>
+
 <td>${child.startDate || "-"}</td>
 
+<td>${child.attendanceDate || "-"}</td>
+
+<td>${child.fees || 0}</td>
+
+<td>${child.paid || 0}</td>
+
+<td>${child.remaining || 0}</td>
+
 <td>
+
 <span class="${child.present ? 'present' : 'absent'}">
+
 ${child.present ? 'حاضر' : 'غائب'}
+
 </span>
+
 </td>
 
 <td>
@@ -1649,7 +1874,6 @@ onclick="deleteChild('${child.docId}')">
 </td>
 
 </tr>
-
 `;
   
 });
@@ -1817,6 +2041,77 @@ document.getElementById(
 ).innerHTML = html;
 
 }
+function renderFinance(){
+
+let html = "";
+
+let totalFees = 0;
+let totalPaid = 0;
+let totalRemaining = 0;
+
+children.forEach(child=>{
+
+const fees =
+Number(child.fees || 0);
+
+const paid =
+Number(child.paid || 0);
+
+const remaining =
+Number(child.remaining || 0);
+
+totalFees += fees;
+totalPaid += paid;
+totalRemaining += remaining;
+
+html += `
+
+<tr>
+
+<td>${child.childId}</td>
+
+<td>${child.name}</td>
+
+<td>${fees}</td>
+
+<td>${paid}</td>
+
+<td>${remaining}</td>
+
+<td>
+
+<button
+class="add"
+onclick="addPayment('${child.docId}')">
+
+💰 دفعة
+
+</button>
+
+</td>
+
+</tr>
+`;
+
+});
+
+document.getElementById(
+"financeTable"
+).innerHTML = html;
+
+document.getElementById(
+"totalFees"
+).innerText = totalFees;
+
+document.getElementById(
+"totalPaid"
+).innerText = totalPaid;
+
+document.getElementById(
+"totalRemaining"
+).innerText = totalRemaining;
+
+}
 window.resetAttendance =
 async function(){
 
@@ -1885,6 +2180,53 @@ document.body.appendChild(link);
 link.click();
 
 document.body.removeChild(link);
+
+};
+
+window.addPayment = async function(docId){
+
+const child =
+children.find(
+c => c.docId === docId
+);
+
+if(!child)
+return;
+
+const amount =
+Number(
+prompt(
+"أدخل قيمة الدفعة"
+)
+);
+
+if(
+!amount ||
+amount <= 0
+)
+return;
+
+const newPaid =
+Number(child.paid || 0)
++
+amount;
+
+const newRemaining =
+Number(child.fees || 0)
+-
+newPaid;
+
+await updateDoc(
+doc(
+db,
+"children",
+docId
+),
+{
+paid:newPaid,
+remaining:newRemaining
+}
+);
 
 };
 window.exportBusAttendance = function(){
