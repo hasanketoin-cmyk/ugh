@@ -277,6 +277,7 @@ padding:15px;
 text-align:center;
 font-weight:600;
 font-size:14px;
+white-space: nowrap;
 }
 
 td{
@@ -284,6 +285,7 @@ padding:15px;
 border-bottom:1px solid var(--gray);
 text-align:center;
 font-size:14px;
+white-space: nowrap;
 }
 
 tr:hover td{
@@ -576,17 +578,20 @@ placeholder="المدفوع">
 </button>
 </div>
 <h3>قائمة الأطفال</h3>
+
+<div style="overflow-x:auto;">
+
 <table>
 <thead>
 <tr>
 <th>رقم الطفل</th>
 <th>اسم الطفل</th>
 <th>المشرف</th>
-<th>تاريخ البدء</th>
-<th>تاريخ التفقد</th>
 <th>الرسوم</th>
 <th>المدفوع</th>
 <th>المتبقي</th>
+<th>تاريخ البدء</th>
+<th>تاريخ التفقد</th>
 <th>الحالة</th>
 <th>التفقد</th>
 <th>حذف</th>
@@ -594,6 +599,7 @@ placeholder="المدفوع">
 </thead>
 <tbody id="tableBody"></tbody>
 </table>
+
 </div>
 </div>
 
@@ -2222,7 +2228,6 @@ remaining:newRemaining
 }
 );
 
-};
 };
 window.exportBusAttendance = function(){
 
