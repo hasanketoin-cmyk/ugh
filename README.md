@@ -2782,12 +2782,6 @@ onclick="deleteAcademyPlayer('${player.docId}')">
 
 });
 
-document.getElementById(
-"academyTable"
-).innerHTML = html;
-
-}
-
 const table =
 document.getElementById(
 "academyTable"
