@@ -468,7 +468,7 @@ margin-top:15px;
 <!-- Dashboard Page -->
 <div id="dashboard" class="page active">
 <div class="page-header">
-<h2>� لوحة التحكم</h2>
+<h2> لوحة التحكم</h2>
 <svg class="icon" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
 </div>
 
@@ -680,8 +680,15 @@ onclick="addBusChild()">
 
 </div>
 
-<div id="busLinesContainer"></div>
+<button
+class="export"
+onclick="exportBusAttendance()">
 
+📊 تصدير حضور الباصات
+
+</button>
+
+<div id="busLinesContainer"></div>
 </div>
 </main>
 
@@ -1334,7 +1341,41 @@ attendanceDate:""
 }
 
 };
+window.deleteBusLine = async function(docId){
 
+if(!requireAdmin())
+return;
+
+if(!confirm("حذف خط الباص؟"))
+return;
+
+await deleteDoc(
+doc(
+db,
+"busLines",
+docId
+)
+);
+
+};
+
+window.deleteBusChild = async function(docId){
+
+if(!requireAdmin())
+return;
+
+if(!confirm("حذف الطفل؟"))
+return;
+
+await deleteDoc(
+doc(
+db,
+"busChildren",
+docId
+)
+);
+
+};
 // ===== يكمل الكود القديم =====
 
 window.searchChild = function(){
@@ -1662,6 +1703,14 @@ ${line.supervisor || "-"}
 
 </p>
 
+<button
+class="delete"
+onclick="deleteBusLine('${line.docId}')">
+
+🗑 حذف الخط
+
+</button>
+
 <div style="margin-bottom:15px">
 
 <button
@@ -1689,6 +1738,7 @@ onclick="uncheckBusLine('${line.docId}')">
 <th>الطفل</th>
 <th>الحالة</th>
 <th>التفقد</th>
+<th>حذف</th>
 </tr>
 </thead>
 
@@ -1733,6 +1783,18 @@ type="checkbox"
 class="checkbox"
 ${child.present ? "checked" : ""}
 onchange="toggleBusAttendance('${child.docId}')">
+
+</td>
+
+<td>
+
+<button
+class="delete"
+onclick="deleteBusChild('${child.docId}')">
+
+حذف
+
+</button>
 
 </td>
 
@@ -1825,7 +1887,54 @@ link.click();
 document.body.removeChild(link);
 
 };
+window.exportBusAttendance = function(){
 
+let csv =
+"الخط\tاسم المشرف\tالطفل\tتاريخ التفقد\tالحالة\n";
+
+busChildren.forEach(child=>{
+
+const line =
+busLines.find(
+l => l.docId === child.lineId
+);
+
+csv +=
+`${line ? line.name : ''}\t` +
+`${line ? line.supervisor : ''}\t` +
+`${child.name || ''}\t` +
+`${child.attendanceDate || ''}\t` +
+`${child.present ? 'حاضر' : 'غائب'}\n`;
+
+});
+
+const BOM = "\uFEFF";
+
+const blob =
+new Blob(
+[BOM + csv],
+{
+type:"text/csv;charset=utf-8;"
+}
+);
+
+const link =
+document.createElement("a");
+
+link.href =
+URL.createObjectURL(blob);
+
+link.download =
+"bus_attendance.xls";
+
+document.body.appendChild(link);
+
+link.click();
+
+document.body.removeChild(link);
+
+};
+  
 onSnapshot(
 supervisorsCollection,
 (snapshot)=>{
