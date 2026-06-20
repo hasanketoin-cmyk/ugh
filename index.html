@@ -1623,21 +1623,11 @@ html += `
 
 <tr>
 
-<td>
-${child.childId}
-</td>
+<td>${child.childId}</td>
 
-<td>
-${child.name}
-</td>
+<td>${child.name}</td>
 
-<td>
-${supervisor
-?
-supervisor.name
-:
-"-"}
-</td>
+<td>${supervisor ? supervisor.name : "-"}</td>
 
 <td>${child.fees || 0}</td>
 
