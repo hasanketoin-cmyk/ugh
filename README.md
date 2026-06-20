@@ -1409,6 +1409,24 @@ c => Number(c.childId || 0)
 return maxId + 1;
 
 }
+window.deleteSupervisor =
+async function(docId){
+
+if(!requireAdmin())
+return;
+
+if(!confirm("حذف المشرف؟"))
+return;
+
+await deleteDoc(
+doc(
+db,
+"supervisors",
+docId
+)
+);
+
+};
 window.addChild = async function(){
 
 const name =
@@ -1845,6 +1863,7 @@ Number(child.extraSessions || 0)
 -
 Number(child.usedSessions || 0)
 }
+</td>
 </td>
 
 <td>${child.startDate || "-"}</td>
@@ -2709,6 +2728,24 @@ link.click();
 document.body.removeChild(link);
 
 };
+window.deleteAcademyPlayer =
+async function(docId){
+
+if(!requireAdmin())
+return;
+
+if(!confirm("حذف اللاعب؟"))
+return;
+
+await deleteDoc(
+doc(
+db,
+"academyPlayers",
+docId
+)
+);
+
+};
 function renderAcademy(){
 
 let html = "";
@@ -2744,6 +2781,12 @@ onclick="deleteAcademyPlayer('${player.docId}')">
 `;
 
 });
+
+document.getElementById(
+"academyTable"
+).innerHTML = html;
+
+}
 
 const table =
 document.getElementById(
