@@ -842,7 +842,7 @@ document.querySelectorAll('.nav-link').forEach(link => {
 link.classList.remove('active');
 });
 
-if(event){
+if(typeof event !== "undefined" && event){
 event.target.closest('.nav-link').classList.add('active');
 }
 
@@ -1572,40 +1572,6 @@ docId
 };
 // ===== يكمل الكود القديم =====
 
-window.searchChild = function(){
-
-const value =
-document
-.getElementById(
-"searchInput"
-)
-.value;
-
-if(value===""){
-
-renderTable(
-children
-);
-
-return;
-
-}
-
-renderTable(
-
-children.filter(
-c =>
-String(
-c.childId
-)
-.includes(
-value
-)
-)
-
-);
-
-};
 function renderTable(data){
 
 let html = "";
