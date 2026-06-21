@@ -938,17 +938,34 @@ id="academyStartDate">
 
 <select id="academySessions">
 
-<select id="academySessions">
+<input
+type="hidden"
+id="sessionPackage"
+value="22">
 
-<option value="22">
-22 جلسة
-</option>
+<div style="display:flex;gap:10px">
 
-<option value="12">
-12 جلسة
-</option>
+<button
+type="button"
+class="export packageBtn"
+onclick="selectPackage(22,this)"
+style="opacity:1">
 
-</select>
+🟢 22 جلسة
+
+</button>
+
+<button
+type="button"
+class="reset packageBtn"
+onclick="selectPackage(12,this)"
+style="opacity:.5">
+
+🟠 12 جلسة
+
+</button>
+
+</div>
 
 <input
 type="number"
