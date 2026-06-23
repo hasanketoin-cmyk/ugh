@@ -611,7 +611,6 @@ margin-top:15px;
 <option value="">اختر المشرف</option>
 </select>
 <input type="date" id="startDate">
-<select id="sessionPackage">
 
 <input
 type="hidden"
@@ -933,26 +932,22 @@ id="academyName"
 placeholder="اسم اللاعب">
 
 <input
-type="date"
-id="academyStartDate">
-
-<select id="academySessions">
-
-<input
 type="hidden"
-id="sessionPackage"
-value="22">
+id="academySessions"
+value="12">
 
-<div style="display:flex;gap:10px">
+<div
+style="
+padding:12px;
+background:#f59e0b;
+color:white;
+border-radius:12px;
+font-weight:bold;
+">
 
-<button
-type="button"
-class="export packageBtn"
-onclick="selectPackage(22,this)"
-style="opacity:1">
+⚽ اشتراك ثابت 12 جلسة
 
-🟢 22 جلسة
-
+</div>
 </button>
 
 <button
@@ -2602,29 +2597,25 @@ onclick="addPayment('${child.docId}')">
 
 <button
 class="export"
-onclick="renewSubscription('${child.docId}',12)">
+onclick="renewSubscription('${child.docId}',22)">
 
-22 جلسة
+🟢 22 جلسة
+
+</button>
+
+<button
+class="export"
+onclick="renewSubscription('${child.docId}',22)">
+
+🟢 22 جلسة
 
 </button>
 
 <button
 class="reset"
-onclick="renewSubscription('${child.docId}',8)">
+onclick="renewSubscription('${child.docId}',12)">
 
-12 جلسات
-
-</button>
-
-</td>
-
-<td>
-
-<button
-class="export"
-onclick="addExtraSession('${child.docId}')">
-
-➕ جلسة
+🟠 12 جلسة
 
 </button>
 
