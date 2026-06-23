@@ -269,56 +269,33 @@ box-shadow:0 4px 12px rgba(0,0,0,0.15);
 .export{background:linear-gradient(135deg, #8b5cf6, #7c3aed);}
 
 .stats{
-display:grid;
-grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+display:flex;
 gap:20px;
-margin-top:20px;
+margin-top:25px;
+flex-wrap:wrap;
 }
 
 .stat-card{
-background:white;
-border-radius:25px;
+flex:1;
+min-width:180px;
+background:linear-gradient(135deg, var(--light), #dbeafe);
 padding:25px;
-box-shadow:0 10px 25px rgba(0,0,0,.08);
-transition:.3s;
+border-radius:16px;
+text-align:center;
+box-shadow:0 4px 12px rgba(0,0,0,0.05);
 }
 
-.stat-card:hover{
-transform:translateY(-5px);
-}
-
-.number{
-font-size:48px;
+.stat-card .number{
+font-size:36px;
 font-weight:700;
-color:#111827;
-margin-top:10px;
+color:var(--primary);
+margin-bottom:5px;
 }
 
-.label{
-font-size:18px;
-font-weight:700;
-color:#374151;
-margin-top:10px;
-}
-
-.percent{
-font-size:15px;
-color:#6b7280;
-margin-top:10px;
-}
-
-.progress{
-height:8px;
-background:#e5e7eb;
-border-radius:20px;
-overflow:hidden;
-margin-top:15px;
-}
-
-.progress span{
-display:block;
-height:100%;
-border-radius:20px;
+.stat-card .label{
+font-size:14px;
+color:var(--dark);
+font-weight:600;
 }
 
 table{
@@ -557,143 +534,85 @@ margin-top:15px;
 <input type="text" id="qrInput" placeholder="امسح QR أو أدخل رقم الطفل">
 </div>
 
+<div class="stats">
 <div class="stat-card">
-
-<div style="font-size:45px;color:#16a34a">
-✅
-</div>
-
-<div class="label">
-الحضور
-</div>
-
-<div class="number"
-id="presentCount">
-0
-</div>
-
-<div class="percent">
-نسبة الحضور
-</div>
-
-<div class="progress">
-<span
-style="
-width:90%;
-background:#16a34a">
-</span>
-</div>
-
-</div>
-</div>
-<div class="stat-card">
-<div class="stat-card">
-<div style="font-size:45px;color:#16a34a">✅</div>
-<div class="label">الحضور</div>
 <div class="number" id="presentCount">0</div>
-<div class="percent">الحضور اليوم</div>
-<div class="progress">
-<span style="width:85%;background:#16a34a"></span>
+<div class="label">الحضور</div>
 </div>
-</div>
-
 <div class="stat-card">
-<div style="font-size:45px;color:#dc2626">❌</div>
-<div class="label">الغياب</div>
 <div class="number" id="absentCount">0</div>
-<div class="percent">الغياب اليوم</div>
-<div class="progress">
-<span style="width:20%;background:#dc2626"></span>
+<div class="label">الغياب</div>
 </div>
-</div>
-
 <div class="stat-card">
-<div style="font-size:45px;color:#2563eb">👦</div>
-<div class="label">إجمالي الأطفال</div>
-<div class="number" id="childrenCount">0</div>
-<div class="percent">المسجلين</div>
-<div class="progress">
-<span style="width:100%;background:#2563eb"></span>
+<div class="number" id="totalCount">0</div>
+<div class="label">الإجمالي</div>
 </div>
-</div>
-
-<div class="stat-card">
-<div style="font-size:45px;color:#f59e0b">🟠</div>
-<div class="label">اشتراك 12 جلسة</div>
+  <div class="stat-card">
 <div class="number" id="count12">0</div>
-<div class="percent">12 جلسة</div>
-<div class="progress">
-<span style="width:50%;background:#f59e0b"></span>
+<div class="label">
+اشتراك 12 جلسة
 </div>
 </div>
 
 <div class="stat-card">
-<div style="font-size:45px;color:#16a34a">🟢</div>
-<div class="label">اشتراك 22 جلسة</div>
 <div class="number" id="count22">0</div>
-<div class="percent">22 جلسة</div>
-<div class="progress">
-<span style="width:80%;background:#16a34a"></span>
+<div class="label">
+اشتراك 22 جلسة
+</div>
+</div>
+<div class="stat-card">
+<div class="number" id="childrenCount">0</div>
+<div class="label">
+عدد الأطفال
 </div>
 </div>
 
 <div class="stat-card">
-<div style="font-size:45px;color:#dc2626">🔴</div>
-<div class="label">اشتراكات منتهية</div>
 <div class="number" id="expiredCount">0</div>
-<div class="percent">تحتاج تجديد</div>
-<div class="progress">
-<span style="width:15%;background:#dc2626"></span>
+<div class="label">
+الاشتراكات المنتهية
 </div>
 </div>
 
 <div class="stat-card">
-<div style="font-size:45px;color:#7c3aed">⚽</div>
-<div class="label">الأكاديمية</div>
 <div class="number" id="academyCount">0</div>
-<div class="percent">عدد اللاعبين</div>
-<div class="progress">
-<span style="width:70%;background:#7c3aed"></span>
+<div class="label">
+لاعبي الأكاديمية
 </div>
 </div>
 
 <div class="stat-card">
-<div style="font-size:45px;color:#0ea5e9">🏃</div>
-<div class="label">البرايفت</div>
+<div class="number" id="academyExpiredCount">0</div>
+<div class="label">
+منتهي الأكاديمية
+</div>
+</div>
+
+<div class="stat-card">
 <div class="number" id="privateCount">0</div>
-<div class="percent">عدد اللاعبين</div>
-<div class="progress">
-<span style="width:60%;background:#0ea5e9"></span>
+<div class="label">
+البرايفت
 </div>
 </div>
 
 <div class="stat-card">
-<div style="font-size:45px;color:#8b5cf6">💰</div>
-<div class="label">إجمالي الرسوم</div>
 <div class="number" id="dashboardTotalFees">0</div>
-<div class="percent">الرسوم الكلية</div>
-<div class="progress">
-<span style="width:100%;background:#8b5cf6"></span>
+<div class="label">
+إجمالي الرسوم
 </div>
 </div>
 
 <div class="stat-card">
-<div style="font-size:45px;color:#16a34a">💵</div>
-<div class="label">إجمالي المقبوض</div>
 <div class="number" id="dashboardPaid">0</div>
-<div class="percent">المقبوض</div>
-<div class="progress">
-<span style="width:75%;background:#16a34a"></span>
+<div class="label">
+إجمالي المقبوض
 </div>
 </div>
 
 <div class="stat-card">
-<div style="font-size:45px;color:#f97316">📌</div>
-<div class="label">المتبقي</div>
 <div class="number" id="dashboardRemaining">0</div>
-<div class="percent">المبالغ المتبقية</div>
-<div class="progress">
-<span style="width:35%;background:#f97316"></span>
+<div class="label">
+إجمالي المتبقي
 </div>
 </div>
 </div>
@@ -963,54 +882,56 @@ onclick="exportBusAttendance()">
 
 <div class="stat-card">
 
-<div class="stats">
+<div
+class="number"
+id="totalFees">
+
+0
+
+</div>
+
+<div class="label">
+
+إجمالي الرسوم
+
+</div>
+
+</div>
 
 <div class="stat-card">
 
-<div style="font-size:45px;color:#16a34a">
-✅
-</div>
+<div
+class="number"
+id="totalPaid">
 
-<div class="label">الحضور</div>
-
-<div class="number" id="presentCount">
 0
-</div>
-
-<div class="percent">
-نسبة الحضور
-</div>
-
-<div class="progress">
-<span
-style="width:90%;background:#16a34a">
-</span>
-</div>
 
 </div>
 
+<div class="label">
 
+إجمالي المقبوض
+
+</div>
+
+</div>
 
 <div class="stat-card">
 
-<div style="font-size:45px;color:#dc2626">
-❌
-</div>
+<div
+class="number"
+id="totalRemaining">
 
-<div class="label">الغياب</div>
-
-<div class="number" id="absentCount">
 0
+
 </div>
 
-<div class="percent">
-نسبة الغياب
+<div class="label">
+
+إجمالي المتبقي
+
 </div>
 
-<div class="progress">
-<span
-style="width:20%;background:#dc2626">
-</span>
 </div>
 
 </div>
