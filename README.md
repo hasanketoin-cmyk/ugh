@@ -1860,6 +1860,24 @@ selectedSupervisor.name
 
 };
 
+window.deleteChild =
+async function(docId){
+
+if(!requireAdmin())
+return;
+
+if(!confirm("حذف الطفل؟"))
+return;
+
+await deleteDoc(
+doc(
+db,
+"children",
+docId
+)
+);
+
+};
 window.toggleAttendance = async function(docId){
 
 const child =
@@ -2571,13 +2589,20 @@ onchange="toggleAttendance('${child.docId}')">
 <td>
 
 <button
-class="delete"
-onclick="deleteChild('${child.docId}')">
+class="export"
+onclick="editChild('${child.docId}')">
 
-حذف
+🔄 نقل
 
 </button>
 
+<button
+class="delete"
+onclick="deleteChild('${child.docId}')">
+
+🗑 حذف
+
+</button>
 </td>
 
 </tr>
