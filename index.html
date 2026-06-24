@@ -1060,17 +1060,16 @@ onclick="addAcademyPlayer()">
 <table>
 
 <thead>
-
 <tr>
-
 <th>اللاعب</th>
-<th>تاريخ التسجيل</th>
-<th>الجلسات</th>
+<th>تاريخ البدء</th>
+<th>تاريخ الانتهاء</th>
+<th>الحالة</th>
+<th>الجلسات المتبقية</th>
 <th>الرسوم</th>
+<th>تجديد</th>
 <th>حذف</th>
-
 </tr>
-
 </thead>
 
 <tbody id="academyTable">
@@ -1791,27 +1790,23 @@ document.getElementById("groupStartDate").value="";
 window.editChild =
 async function(docId){
 
+if(!requireAdmin())
+return;
+
 const child =
 children.find(
 c=>c.docId===docId
 );
 
-if(!child) return;
+if(!child)
+return;
 
-const newName =
-prompt(
-"اسم الطفل",
-child.name
-);
+let groupsText = "";
 
-if(!newName) return;
+supervisors.forEach((s,index)=>{
 
-let groups = "";
-
-supervisors.forEach((s,i)=>{
-
-groups +=
-(i+1)
+groupsText +=
+(index+1)
 +
 " - "
 +
@@ -1823,45 +1818,44 @@ s.name
 
 const groupNumber =
 prompt(
-"اختر رقم المجموعة:\n\n"+groups
+"اختر رقم المجموعة الجديدة:\n\n" +
+groupsText
 );
 
-if(!groupNumber) return;
+if(!groupNumber)
+return;
 
-const newGroup =
+const selectedSupervisor =
 supervisors[
 Number(groupNumber)-1
 ];
 
-if(!newGroup) return;
+if(!selectedSupervisor){
+
+alert("رقم المجموعة غير صحيح");
+
+return;
+
+}
 
 await updateDoc(
+
 doc(
 db,
 "children",
 docId
 ),
+
 {
-name:newName.trim(),
-supervisorId:newGroup.docId
+supervisorId:
+selectedSupervisor.docId
 }
+
 );
 
-};
-window.deleteChild = async function(docId){
-
-if(!requireAdmin())
-return;
-
-if(!confirm("حذف الطفل؟"))
-return;
-
-await deleteDoc(
-doc(
-db,
-"children",
-docId
-)
+alert(
+"تم نقل الطفل إلى مجموعة " +
+selectedSupervisor.name
 );
 
 };
