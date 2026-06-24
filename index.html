@@ -2150,11 +2150,23 @@ html += `
 
 <td>${supervisor ? supervisor.name : "-"}</td>
 
-<td>${child.fees || 0}</td>
+<td>${Number(child.fees || 0).toLocaleString(
+'de-DE',
+{
+minimumFractionDigits:3,
+maximumFractionDigits:3
+}
+)}</td>
 
-<td>${child.paid || 0}</td>
+<td>${Number(child.paid || 0).toLocaleString(
+'de-DE',
+{
+minimumFractionDigits:3,
+maximumFractionDigits:3
+}
+)}</td>
 
-<td>${child.remaining || 0}</td>
+<td>${Number(child.remaining || 0).toLocaleString( 'de-DE', { minimumFractionDigits:3, maximumFractionDigits:3 } )}</td>
 <td>
 
 <span
@@ -2554,7 +2566,13 @@ ${child.expiryDate || "-"}
 
 <td>${child.paid || 0}</td>
 
-<td>${child.remaining || 0}</td>
+<td>${Number(child.remaining || 0).toLocaleString(
+'de-DE',
+{
+minimumFractionDigits:3,
+maximumFractionDigits:3
+}
+)}</td>
 <td>
 
 <span
