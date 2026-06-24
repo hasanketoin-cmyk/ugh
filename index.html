@@ -2046,7 +2046,9 @@ function renderTable(data){
 let html = "";
 
 [...data]
-.reverse()
+.sort((a,b)=>
+Number(b.childId)-Number(a.childId)
+)
 .forEach(child=>{
 const subscription =
 getSubscriptionStatus(child);
