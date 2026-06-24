@@ -668,8 +668,9 @@ margin-top:15px;
 <input type="date" id="startDate">
 
 <input
-type="hidden"
+type="number"
 id="sessionPackage"
+placeholder="عدد الجلسات"
 value="22">
 
 <div style="display:flex;gap:15px">
@@ -724,8 +725,19 @@ placeholder="المدفوع">
 </div>
 <h3>قائمة الأطفال</h3>
 
-<div style="overflow-x:auto;">
+<input
+type="text"
+id="searchChild"
+placeholder="🔍 البحث عن اسم الطفل"
+style="
+width:300px;
+padding:12px;
+border-radius:12px;
+border:2px solid #ddd;
+margin-bottom:15px"
+oninput="searchChildren()">
 
+<div style="overflow-x:auto;">
 <table>
 <thead>
 <tr>
@@ -987,8 +999,9 @@ id="academyName"
 placeholder="اسم اللاعب">
 
 <input
-type="hidden"
+type="number"
 id="academySessions"
+placeholder="عدد الجلسات"
 value="12">
 
 <div
@@ -1000,7 +1013,6 @@ border-radius:12px;
 font-weight:bold;
 ">
 
-⚽ اشتراك ثابت 12 جلسة
 
 </div>
 </button>
@@ -1011,7 +1023,6 @@ class="reset packageBtn"
 onclick="selectPackage(12,this)"
 style="opacity:.5">
 
-🟠 12 جلسة
 
 </button>
 
@@ -1676,6 +1687,22 @@ return;
 
 }
 
+const exists =
+children.some(
+c =>
+c.name.trim().toLowerCase()
+===
+name.toLowerCase()
+);
+
+if(exists){
+
+alert("الطفل موجود مسبقاً");
+
+return;
+
+}
+
 await addDoc(
 childrenCollection,
 {
@@ -2018,8 +2045,9 @@ function renderTable(data){
 
 let html = "";
 
-data.forEach(child=>{
-
+[...data]
+.reverse()
+.forEach(child=>{
 const subscription =
 getSubscriptionStatus(child);
   
@@ -2781,6 +2809,22 @@ totalRemainingEl.innerText =
 totalRemaining;
 
 }
+window.searchChildren = function(){
+
+const value =
+document
+.getElementById("searchChild")
+.value
+.toLowerCase();
+
+const filtered =
+children.filter(c=>
+c.name.toLowerCase().includes(value)
+);
+
+renderTable(filtered);
+
+};
 window.resetAttendance =
 async function(){
 
