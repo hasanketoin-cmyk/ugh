@@ -2894,6 +2894,56 @@ c.name.toLowerCase().includes(value)
 renderTable(filtered);
 
 };
+window.fixOldSubscriptions =
+async function(){
+
+if(!requireAdmin())
+return;
+
+if(
+!confirm(
+"سيتم إصلاح جميع الاشتراكات القديمة، هل تريد المتابعة؟"
+)
+)
+return;
+
+let count = 0;
+
+for(const child of children){
+
+if(
+!child.packageSessions ||
+Number(child.packageSessions)===0
+){
+
+await updateDoc(
+doc(
+db,
+"children",
+child.docId
+),
+{
+packageSessions:22,
+usedSessions:0,
+extraSessions:0
+}
+);
+
+count++;
+
+}
+
+}
+
+alert(
+"تم إصلاح "
++
+count
++
+" اشتراك بنجاح"
+);
+
+};
 window.resetAttendance =
 async function(){
 
