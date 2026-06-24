@@ -1780,6 +1780,66 @@ document.getElementById("groupStartDate").value="";
 
 // ===== حذف طفل =====
 
+window.editChild =
+async function(docId){
+
+const child =
+children.find(
+c=>c.docId===docId
+);
+
+if(!child) return;
+
+const newName =
+prompt(
+"اسم الطفل",
+child.name
+);
+
+if(!newName) return;
+
+let groups = "";
+
+supervisors.forEach((s,i)=>{
+
+groups +=
+(i+1)
++
+" - "
++
+s.name
++
+"\n";
+
+});
+
+const groupNumber =
+prompt(
+"اختر رقم المجموعة:\n\n"+groups
+);
+
+if(!groupNumber) return;
+
+const newGroup =
+supervisors[
+Number(groupNumber)-1
+];
+
+if(!newGroup) return;
+
+await updateDoc(
+doc(
+db,
+"children",
+docId
+),
+{
+name:newName.trim(),
+supervisorId:newGroup.docId
+}
+);
+
+};
 window.deleteChild = async function(docId){
 
 if(!requireAdmin())
@@ -2139,13 +2199,20 @@ onchange="toggleAttendance('${child.docId}')">
 <td>
 
 <button
+class="export"
+onclick="editChild('${child.docId}')">
+
+✏️ تعديل
+
+</button>
+
+<button
 class="delete"
 onclick="deleteChild('${child.docId}')">
 
 حذف
 
 </button>
-
 </td>
 
 </tr>
