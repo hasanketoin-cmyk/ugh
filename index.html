@@ -890,6 +890,14 @@ onclick="exportBusAttendance()">
 
 <h3>الإحصائيات المالية</h3>
 
+<button
+class="export"
+onclick="fixOldSubscriptions()">
+
+🔧 إصلاح الاشتراكات القديمة
+
+</button>
+
 <div class="stats">
 
 <div class="stat-card">
@@ -2927,6 +2935,62 @@ packageSessions:22,
 usedSessions:0,
 extraSessions:0
 }
+);
+
+count++;
+
+}
+
+}
+
+alert(
+"تم إصلاح "
++
+count
++
+" اشتراك بنجاح"
+);
+
+};
+window.fixOldSubscriptions =
+async function(){
+
+if(!requireAdmin())
+return;
+
+if(
+!confirm(
+"سيتم إصلاح جميع الاشتراكات القديمة، هل تريد المتابعة؟"
+)
+)
+return;
+
+let count = 0;
+
+for(const child of children){
+
+if(
+
+!child.packageSessions ||
+
+Number(child.packageSessions)===0
+
+){
+
+await updateDoc(
+
+doc(
+db,
+"children",
+child.docId
+),
+
+{
+packageSessions:22,
+usedSessions:0,
+extraSessions:0
+}
+
 );
 
 count++;
