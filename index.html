@@ -2212,10 +2212,9 @@ onclick="editChild('${child.docId}')">
 class="delete"
 onclick="deleteChild('${child.docId}')">
 
-حذف
+🗑 حذف
 
 </button>
-</td>
 
 </tr>
 
@@ -2678,7 +2677,7 @@ onclick="uncheckBusLine('${line.docId}')">
 <th>الطفل</th>
 <th>الحالة</th>
 <th>التفقد</th>
-<th>حذف</th>
+<th>إدارة</th>
 </tr>
 </thead>
 
