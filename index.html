@@ -1646,6 +1646,12 @@ document.querySelectorAll(".packageBtn")
 btn.style.opacity="1";
 
 };
+function formatMoney(value){
+
+return Number(value || 0)
+.toLocaleString('de-DE');
+
+}
 window.addChild = async function(){
 
 const name =
@@ -2562,9 +2568,9 @@ ${child.expiryDate || "-"}
 
 <td>${child.attendanceDate || "-"}</td>
 
-<td>${child.fees || 0}</td>
+<td>${formatMoney(child.fees)}</td>
 
-<td>${child.paid || 0}</td>
+<td>${formatMoney(child.paid)}</td>
 
 <td>${Number(child.remaining || 0).toLocaleString(
 'de-DE',
