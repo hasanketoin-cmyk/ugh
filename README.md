@@ -14,7 +14,15 @@ border-radius:20px;
 font-size:12px;
 font-weight:bold;
 }
-
+.orangeSub{
+background:#f59e0b;
+color:white;
+padding:6px 12px;
+border-radius:20px;
+font-size:12px;
+font-weight:bold;
+}
+  
 .warning{
 background:#f59e0b;
 color:white;
@@ -219,13 +227,14 @@ margin-bottom:20px;
 
 .form-group input,
 .form-group select{
-flex:1;
-min-width:200px;
+width:220px;
+min-width:220px;
 padding:12px 18px;
+font-size:16px;
 border:2px solid var(--gray);
 border-radius:12px;
-font-size:15px;
-transition:all 0.3s ease;
+background:white;
+cursor:pointer;
 }
 
 .form-group input:focus,
@@ -538,6 +547,74 @@ margin-top:15px;
 <div class="number" id="totalCount">0</div>
 <div class="label">الإجمالي</div>
 </div>
+  <div class="stat-card">
+<div class="number" id="count12">0</div>
+<div class="label">
+اشتراك 12 جلسة
+</div>
+</div>
+
+<div class="stat-card">
+<div class="number" id="count22">0</div>
+<div class="label">
+اشتراك 22 جلسة
+</div>
+</div>
+<div class="stat-card">
+<div class="number" id="childrenCount">0</div>
+<div class="label">
+عدد الأطفال
+</div>
+</div>
+
+<div class="stat-card">
+<div class="number" id="expiredCount">0</div>
+<div class="label">
+الاشتراكات المنتهية
+</div>
+</div>
+
+<div class="stat-card">
+<div class="number" id="academyCount">0</div>
+<div class="label">
+لاعبي الأكاديمية
+</div>
+</div>
+
+<div class="stat-card">
+<div class="number" id="academyExpiredCount">0</div>
+<div class="label">
+منتهي الأكاديمية
+</div>
+</div>
+
+<div class="stat-card">
+<div class="number" id="privateCount">0</div>
+<div class="label">
+البرايفت
+</div>
+</div>
+
+<div class="stat-card">
+<div class="number" id="dashboardTotalFees">0</div>
+<div class="label">
+إجمالي الرسوم
+</div>
+</div>
+
+<div class="stat-card">
+<div class="number" id="dashboardPaid">0</div>
+<div class="label">
+إجمالي المقبوض
+</div>
+</div>
+
+<div class="stat-card">
+<div class="number" id="dashboardRemaining">0</div>
+<div class="label">
+إجمالي المتبقي
+</div>
+</div>
 </div>
 </div>
 
@@ -589,17 +666,36 @@ margin-top:15px;
 <option value="">اختر المشرف</option>
 </select>
 <input type="date" id="startDate">
-<select id="sessionPackage">
 
-<option value="12">
-12 جلسة
-</option>
+<input
+type="number"
+id="sessionPackage"
+placeholder="عدد الجلسات"
+value="22">
 
-<option value="8">
-8 جلسات
-</option>
+<div style="display:flex;gap:15px">
 
-</select>
+<button
+type="button"
+class="export packageBtn"
+onclick="selectPackage(22,this)"
+style="opacity:1">
+
+🟢 22 جلسة
+
+</button>
+
+<button
+type="button"
+class="reset packageBtn"
+onclick="selectPackage(12,this)"
+style="opacity:.5">
+
+🟠 12 جلسة
+
+</button>
+
+</div>
 <input
 type="number"
 id="childFees"
@@ -629,8 +725,19 @@ placeholder="المدفوع">
 </div>
 <h3>قائمة الأطفال</h3>
 
-<div style="overflow-x:auto;">
+<input
+type="text"
+id="searchChild"
+placeholder="🔍 البحث عن اسم الطفل"
+style="
+width:300px;
+padding:12px;
+border-radius:12px;
+border:2px solid #ddd;
+margin-bottom:15px"
+oninput="searchChildren()">
 
+<div style="overflow-x:auto;">
 <table>
 <thead>
 <tr>
@@ -783,6 +890,14 @@ onclick="exportBusAttendance()">
 
 <h3>الإحصائيات المالية</h3>
 
+<button
+class="export"
+onclick="fixOldSubscriptions()">
+
+🔧 إصلاح الاشتراكات القديمة
+
+</button>
+
 <div class="stats">
 
 <div class="stat-card">
@@ -892,20 +1007,34 @@ id="academyName"
 placeholder="اسم اللاعب">
 
 <input
-type="date"
-id="academyStartDate">
+type="number"
+id="academySessions"
+placeholder="عدد الجلسات"
+value="12">
 
-<select id="academySessions">
+<div
+style="
+padding:12px;
+background:#f59e0b;
+color:white;
+border-radius:12px;
+font-weight:bold;
+">
 
-<option value="12">
-12 جلسة
-</option>
 
-<option value="8">
-8 جلسات
-</option>
+</div>
+</button>
 
-</select>
+<button
+type="button"
+class="reset packageBtn"
+onclick="selectPackage(12,this)"
+style="opacity:.5">
+
+
+</button>
+
+</div>
 
 <input
 type="number"
@@ -931,20 +1060,92 @@ onclick="addAcademyPlayer()">
 <table>
 
 <thead>
+<tr>
+<th>اللاعب</th>
+<th>تاريخ البدء</th>
+<th>تاريخ الانتهاء</th>
+<th>الحالة</th>
+<th>الجلسات المتبقية</th>
+<th>الرسوم</th>
+<th>تجديد</th>
+<th>حذف</th>
+</tr>
+</thead>
+
+<tbody id="academyTable">
+
+</tbody>
+
+</table>
+
+</div>
+
+</div>
+<div id="privateTraining" class="page">
+
+<div class="page-header">
+<h2>🏃 التدريب الخاص</h2>
+</div>
+
+<div class="card">
+
+<h3>إضافة لاعب برايفت</h3>
+
+<div class="form-group">
+
+<input
+type="text"
+id="privateName"
+placeholder="اسم اللاعب">
+
+<input
+type="date"
+id="privateStartDate">
+
+<input
+type="number"
+id="privateSessions"
+placeholder="عدد الجلسات">
+
+<input
+type="number"
+id="privateSessionPrice"
+placeholder="سعر الجلسة">
+
+<button
+class="add"
+onclick="addPrivatePlayer()">
+
+إضافة لاعب
+
+</button>
+
+</div>
+
+</div>
+
+<div class="card">
+
+<h3>قائمة البرايفت</h3>
+
+<table>
+
+<thead>
 
 <tr>
 
-<th>اللاعب</th>
-<th>تاريخ التسجيل</th>
+<th>الاسم</th>
+<th>التاريخ</th>
 <th>الجلسات</th>
-<th>الرسوم</th>
+<th>سعر الجلسة</th>
+<th>الإجمالي</th>
 <th>حذف</th>
 
 </tr>
 
 </thead>
 
-<tbody id="academyTable">
+<tbody id="privateTable">
 
 </tbody>
 
@@ -1427,6 +1628,24 @@ docId
 );
 
 };
+window.selectPackage = function(sessions, btn){
+
+document.getElementById("sessionPackage").value = sessions;
+
+// إذا كنا في الأكاديمية أيضاً
+const academyInput =
+document.getElementById("academySessions");
+
+if(academyInput){
+academyInput.value = sessions;
+}
+
+document.querySelectorAll(".packageBtn")
+.forEach(b=>b.style.opacity="0.5");
+
+btn.style.opacity="1";
+
+};
 window.addChild = async function(){
 
 const name =
@@ -1443,6 +1662,7 @@ document.getElementById(
 "sessionPackage"
 ).value
 );
+console.log("package =", sessionPackage);
 const endDate =
 new Date(startDate);
 
@@ -1469,6 +1689,22 @@ document.getElementById(
 if(!name || !supervisorId){
 
 alert("أكمل البيانات");
+
+return;
+
+}
+
+const exists =
+children.some(
+c =>
+c.name.trim().toLowerCase()
+===
+name.toLowerCase()
+);
+
+if(exists){
+
+alert("الطفل موجود مسبقاً");
 
 return;
 
@@ -1551,20 +1787,75 @@ document.getElementById("groupStartDate").value="";
 
 // ===== حذف طفل =====
 
-window.deleteChild = async function(docId){
+window.editChild =
+async function(docId){
 
 if(!requireAdmin())
 return;
 
-if(!confirm("حذف الطفل؟"))
+const child =
+children.find(
+c=>c.docId===docId
+);
+
+if(!child)
 return;
 
-await deleteDoc(
+let groupsText = "";
+
+supervisors.forEach((s,index)=>{
+
+groupsText +=
+(index+1)
++
+" - "
++
+s.name
++
+"\n";
+
+});
+
+const groupNumber =
+prompt(
+"اختر رقم المجموعة الجديدة:\n\n" +
+groupsText
+);
+
+if(!groupNumber)
+return;
+
+const selectedSupervisor =
+supervisors[
+Number(groupNumber)-1
+];
+
+if(!selectedSupervisor){
+
+alert("رقم المجموعة غير صحيح");
+
+return;
+
+}
+
+await updateDoc(
+
 doc(
 db,
 "children",
 docId
-)
+),
+
+{
+supervisorId:
+selectedSupervisor.docId
+}
+
+);
+
+alert(
+"تم نقل الطفل إلى مجموعة " +
+selectedSupervisor.name
 );
 
 };
@@ -1816,8 +2107,11 @@ function renderTable(data){
 
 let html = "";
 
-data.forEach(child=>{
-
+[...data]
+.sort((a,b)=>
+Number(b.childId)-Number(a.childId)
+)
+.forEach(child=>{
 const subscription =
 getSubscriptionStatus(child);
   
@@ -1864,7 +2158,6 @@ Number(child.extraSessions || 0)
 Number(child.usedSessions || 0)
 }
 </td>
-</td>
 
 <td>${child.startDate || "-"}</td>
 <td>
@@ -1908,13 +2201,20 @@ onchange="toggleAttendance('${child.docId}')">
 <td>
 
 <button
+class="export"
+onclick="editChild('${child.docId}')">
+
+✏️ تعديل
+
+</button>
+
+<button
 class="delete"
 onclick="deleteChild('${child.docId}')">
 
 حذف
 
 </button>
-
 </td>
 
 </tr>
@@ -1938,7 +2238,7 @@ renderSupervisors();
 renderFinance();
 
 }
-  function getSubscriptionStatus(child){
+function getSubscriptionStatus(child){
 
 const remainingSessions =
 
@@ -1952,7 +2252,7 @@ Number(child.usedSessions || 0);
 
 if(remainingSessions <= 0){
 
-return {
+return{
 text:"منتهي",
 className:"expired"
 };
@@ -1961,20 +2261,38 @@ className:"expired"
 
 if(remainingSessions === 1){
 
-return {
+return{
 text:"جلسة أخيرة",
 className:"warning"
 };
 
 }
 
-return {
+if(Number(child.packageSessions) === 12){
+
+return{
+text:"12 جلسة",
+className:"orangeSub"
+};
+
+}
+
+if(Number(child.packageSessions) === 22){
+
+return{
+text:"22 جلسة",
+className:"activeSub"
+};
+
+}
+
+return{
 text:"فعال",
 className:"activeSub"
 };
 
 }
-  function updateStats(){
+function updateStats(){
 
 const present =
 children.filter(
@@ -2002,6 +2320,121 @@ document
 )
 .innerText = children.length;
 
+const count12 =
+children.filter(
+c=>Number(c.packageSessions)===12
+).length;
+
+const count22 =
+children.filter(
+c=>Number(c.packageSessions)===22
+).length;
+
+if(document.getElementById("count12")){
+
+document.getElementById(
+"count12"
+).innerText = count12;
+
+}
+
+if(document.getElementById("count22")){
+
+document.getElementById(
+"count22"
+).innerText = count22;
+
+}
+document.getElementById(
+"childrenCount"
+).innerText =
+children.length;
+
+const expiredCount =
+children.filter(c=>
+
+(
+Number(c.packageSessions || 0)
++
+Number(c.extraSessions || 0)
+)
+-
+Number(c.usedSessions || 0)
+
+<=0
+
+).length;
+
+document.getElementById(
+"expiredCount"
+).innerText =
+expiredCount;
+
+document.getElementById(
+"academyCount"
+).innerText =
+academyPlayers.length;
+
+const academyExpiredCount =
+academyPlayers.filter(p=>
+
+(
+Number(p.packageSessions || 0)
++
+Number(p.extraSessions || 0)
+)
+-
+Number(p.usedSessions || 0)
+
+<=0
+
+).length;
+
+document.getElementById(
+"academyExpiredCount"
+).innerText =
+academyExpiredCount;
+
+document.getElementById(
+"privateCount"
+).innerText =
+privatePlayers.length;
+
+const totalFees =
+children.reduce(
+(sum,c)=>
+sum + Number(c.fees || 0),
+0
+);
+
+const totalPaid =
+children.reduce(
+(sum,c)=>
+sum + Number(c.paid || 0),
+0
+);
+
+const totalRemaining =
+children.reduce(
+(sum,c)=>
+sum + Number(c.remaining || 0),
+0
+);
+
+document.getElementById(
+"dashboardTotalFees"
+).innerText =
+totalFees;
+
+document.getElementById(
+"dashboardPaid"
+).innerText =
+totalPaid;
+
+document.getElementById(
+"dashboardRemaining"
+).innerText =
+totalRemaining;
 }
 
 function renderGroups(){
@@ -2405,29 +2838,25 @@ onclick="addPayment('${child.docId}')">
 
 <button
 class="export"
-onclick="renewSubscription('${child.docId}',12)">
+onclick="renewSubscription('${child.docId}',22)">
 
-12 جلسة
+🟢 22 جلسة
+
+</button>
+
+<button
+class="export"
+onclick="renewSubscription('${child.docId}',22)">
+
+🟢 22 جلسة
 
 </button>
 
 <button
 class="reset"
-onclick="renewSubscription('${child.docId}',8)">
+onclick="renewSubscription('${child.docId}',12)">
 
-8 جلسات
-
-</button>
-
-</td>
-
-<td>
-
-<button
-class="export"
-onclick="addExtraSession('${child.docId}')">
-
-➕ جلسة
+🟠 12 جلسة
 
 </button>
 
@@ -2451,6 +2880,128 @@ totalRemainingEl.innerText =
 totalRemaining;
 
 }
+window.searchChildren = function(){
+
+const value =
+document
+.getElementById("searchChild")
+.value
+.toLowerCase();
+
+const filtered =
+children.filter(c=>
+c.name.toLowerCase().includes(value)
+);
+
+renderTable(filtered);
+
+};
+window.fixOldSubscriptions =
+async function(){
+
+if(!requireAdmin())
+return;
+
+if(
+!confirm(
+"سيتم إصلاح جميع الاشتراكات القديمة، هل تريد المتابعة؟"
+)
+)
+return;
+
+let count = 0;
+
+for(const child of children){
+
+if(
+!child.packageSessions ||
+Number(child.packageSessions)===0
+){
+
+await updateDoc(
+doc(
+db,
+"children",
+child.docId
+),
+{
+packageSessions:22,
+usedSessions:0,
+extraSessions:0
+}
+);
+
+count++;
+
+}
+
+}
+
+alert(
+"تم إصلاح "
++
+count
++
+" اشتراك بنجاح"
+);
+
+};
+window.fixOldSubscriptions =
+async function(){
+
+if(!requireAdmin())
+return;
+
+if(
+!confirm(
+"سيتم إصلاح جميع الاشتراكات القديمة، هل تريد المتابعة؟"
+)
+)
+return;
+
+let count = 0;
+
+for(const child of children){
+
+if(
+
+!child.packageSessions ||
+
+Number(child.packageSessions)===0
+
+){
+
+await updateDoc(
+
+doc(
+db,
+"children",
+child.docId
+),
+
+{
+packageSessions:22,
+usedSessions:0,
+extraSessions:0
+}
+
+);
+
+count++;
+
+}
+
+}
+
+alert(
+"تم إصلاح "
++
+count
++
+" اشتراك بنجاح"
+);
+
+};
 window.resetAttendance =
 async function(){
 
@@ -2589,6 +3140,53 @@ extraSessions:0
 );
 
 };
+window.addPrivatePlayer =
+async function(){
+
+const name =
+document.getElementById(
+"privateName"
+).value.trim();
+
+const startDate =
+document.getElementById(
+"privateStartDate"
+).value;
+
+const sessions =
+Number(
+document.getElementById(
+"privateSessions"
+).value
+);
+
+const sessionPrice =
+Number(
+document.getElementById(
+"privateSessionPrice"
+).value
+);
+
+if(!name){
+
+alert("أدخل اسم اللاعب");
+
+return;
+
+}
+
+await addDoc(
+privateCollection,
+{
+name:name,
+startDate:startDate,
+sessions:sessions,
+sessionPrice:sessionPrice,
+total:sessions * sessionPrice
+}
+);
+
+};
 window.addAcademyPlayer =
 async function(){
 
@@ -2624,59 +3222,36 @@ return;
 
 }
 
+const endDate =
+new Date(startDate);
+
+endDate.setDate(
+endDate.getDate()+28
+);
+
+const expiryDate =
+endDate.toISOString()
+.split("T")[0];
+
 await addDoc(
 academyCollection,
 {
 name:name,
+
 startDate:startDate,
-sessions:sessions,
-fees:fees
-}
-);
+expiryDate:expiryDate,
 
-};
-window.addPayment = async function(docId){
+packageSessions:sessions,
 
-const child =
-children.find(
-c => c.docId === docId
-);
+usedSessions:0,
 
-if(!child)
-return;
+extraSessions:0,
 
-const amount =
-Number(
-prompt(
-"أدخل قيمة الدفعة"
-)
-);
+fees:fees,
 
-if(
-!amount ||
-amount <= 0
-)
-return;
+paid:0,
 
-const newPaid =
-Number(child.paid || 0)
-+
-amount;
-
-const newRemaining =
-Number(child.fees || 0)
--
-newPaid;
-
-await updateDoc(
-doc(
-db,
-"children",
-docId
-),
-{
-paid:newPaid,
-remaining:newRemaining
+remaining:fees
 }
 );
 
@@ -2728,6 +3303,55 @@ link.click();
 document.body.removeChild(link);
 
 };
+window.renewAcademy =
+async function(
+docId,
+sessions
+){
+
+const today =
+new Date();
+
+today.setDate(
+today.getDate()+28
+);
+
+const expiryDate =
+today.toISOString().split("T")[0];
+
+const player =
+academyPlayers.find(
+p=>p.docId===docId
+);
+
+await updateDoc(
+doc(
+db,
+"academyPlayers",
+docId
+),
+{
+startDate:
+new Date()
+.toISOString()
+.split("T")[0],
+
+expiryDate:expiryDate,
+
+packageSessions:sessions,
+
+usedSessions:0,
+
+extraSessions:0,
+
+paid:0,
+
+remaining:
+Number(player.fees || 0)
+}
+);
+
+};
 window.deleteAcademyPlayer =
 async function(docId){
 
@@ -2746,11 +3370,30 @@ docId
 );
 
 };
-function renderAcademy(){
+window.deletePrivatePlayer =
+async function(docId){
+
+if(!requireAdmin())
+return;
+
+if(!confirm("حذف اللاعب؟"))
+return;
+
+await deleteDoc(
+doc(
+db,
+"privatePlayers",
+docId
+)
+);
+
+};
+
+function renderPrivate(){
 
 let html = "";
 
-academyPlayers.forEach(player=>{
+privatePlayers.forEach(player=>{
 
 html += `
 
@@ -2762,7 +3405,147 @@ html += `
 
 <td>${player.sessions}</td>
 
-<td>${player.fees}</td>
+<td>${player.sessionPrice}</td>
+
+<td>${player.total}</td>
+
+<td>
+
+<button
+class="delete"
+onclick="deletePrivatePlayer('${player.docId}')">
+
+حذف
+
+</button>
+
+</td>
+
+</tr>
+
+`;
+
+});
+
+const table =
+document.getElementById(
+"privateTable"
+);
+
+if(table){
+
+table.innerHTML = html;
+
+}
+
+}
+function getAcademyStatus(player){
+
+const remainingSessions =
+
+(
+Number(player.packageSessions || 0)
++
+Number(player.extraSessions || 0)
+)
+-
+Number(player.usedSessions || 0);
+
+if(remainingSessions <= 0){
+
+return{
+text:"منتهي",
+className:"expired"
+};
+
+}
+
+if(remainingSessions === 1){
+
+return{
+text:"جلسة أخيرة",
+className:"warning"
+};
+
+}
+
+return{
+text:"فعال",
+className:"activeSub"
+};
+
+}
+
+function renderAcademy(){
+
+let html = "";
+
+academyPlayers.forEach(player=>{
+
+const subscription =
+getAcademyStatus(player);
+
+const remainingSessions =
+
+(
+Number(player.packageSessions || 0)
++
+Number(player.extraSessions || 0)
+)
+-
+Number(player.usedSessions || 0);
+
+html += `
+
+<tr>
+
+<td>${player.name}</td>
+
+<td>${player.startDate || "-"}</td>
+
+<td>${player.expiryDate || "-"}</td>
+
+<td>
+
+<span class="${subscription.className}">
+
+${subscription.text}
+
+</span>
+
+</td>
+
+<td>
+
+${remainingSessions}
+
+</td>
+
+<td>
+
+${player.fees || 0}
+
+</td>
+
+<td>
+
+<button
+class="export"
+onclick="renewAcademy('${player.docId}',12)">
+
+22 جلسة
+
+</button>
+
+<button
+class="reset"
+onclick="renewAcademy('${player.docId}',8)">
+
+12 جلسات
+
+</button>
+
+</td>
 
 <td>
 
@@ -2782,16 +3565,9 @@ onclick="deleteAcademyPlayer('${player.docId}')">
 
 });
 
-const table =
 document.getElementById(
 "academyTable"
-);
-
-if(table){
-
-table.innerHTML = html;
-
-}
+).innerHTML = html;
 
 }  
 onSnapshot(
@@ -2836,6 +3612,27 @@ renderTable(children);
 }
 );
 onSnapshot(
+privateCollection,
+(snapshot)=>{
+
+privatePlayers = [];
+
+snapshot.forEach(docu=>{
+
+privatePlayers.push({
+docId:docu.id,
+...docu.data()
+});
+
+});
+
+renderPrivate();
+
+updateStats();
+
+}
+);
+onSnapshot(
 academyCollection,
 (snapshot)=>{
 
@@ -2851,6 +3648,8 @@ docId:docu.id,
 });
 
 renderAcademy();
+
+updateStats();
 
 }
 );
