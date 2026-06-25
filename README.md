@@ -598,17 +598,17 @@ margin-top:15px;
 <div class="stats">
 
 <div class="stat-card">
-<div class="number" id="totalFees">0</div>
+<div class="number" id="dashboardTotalFees">0</div>
 <div class="label">💰 إجمالي الرسوم</div>
 </div>
 
 <div class="stat-card">
-<div class="number" id="totalPaid">0</div>
+<div class="number" id="dashboardPaid">0</div>
 <div class="label">✅ إجمالي المقبوض</div>
 </div>
 
 <div class="stat-card">
-<div class="number" id="totalRemaining">0</div>
+<div class="number" id="dashboardRemaining">0</div>
 <div class="label">🟠 إجمالي المتبقي</div>
 </div>
 
@@ -698,15 +698,7 @@ style="opacity:1">
 
 </button>
 
-<button
-type="button"
-class="reset packageBtn"
-onclick="selectPackage(12,this)"
-style="opacity:.5">
 
-🟠 12 جلسة
-
-</button>
 
 </div>
 <input
@@ -1103,14 +1095,6 @@ font-weight:bold;
 </div>
 </button>
 
-<button
-type="button"
-class="reset packageBtn"
-onclick="selectPackage(12,this)"
-style="opacity:.5">
-
-
-</button>
 
 </div>
 
@@ -2965,14 +2949,6 @@ onclick="renewSubscription('${child.docId}',22)">
 </button>
 
 <button
-class="export"
-onclick="renewSubscription('${child.docId}',22)">
-
-🟢 22 جلسة
-
-</button>
-
-<button
 class="reset"
 onclick="renewSubscription('${child.docId}',12)">
 
@@ -2980,8 +2956,15 @@ onclick="renewSubscription('${child.docId}',12)">
 
 </button>
 
-</td>
+<button
+class="add"
+onclick="addExtraSession('${child.docId}')">
 
+➕ جلسة
+
+</button>
+
+</td>
 </tr>
 
 `;
@@ -3016,56 +2999,7 @@ c.name.toLowerCase().includes(value)
 renderTable(filtered);
 
 };
-window.fixOldSubscriptions =
-async function(){
 
-if(!requireAdmin())
-return;
-
-if(
-!confirm(
-"سيتم إصلاح جميع الاشتراكات القديمة، هل تريد المتابعة؟"
-)
-)
-return;
-
-let count = 0;
-
-for(const child of children){
-
-if(
-!child.packageSessions ||
-Number(child.packageSessions)===0
-){
-
-await updateDoc(
-doc(
-db,
-"children",
-child.docId
-),
-{
-packageSessions:22,
-usedSessions:0,
-extraSessions:0
-}
-);
-
-count++;
-
-}
-
-}
-
-alert(
-"تم إصلاح "
-+
-count
-+
-" اشتراك بنجاح"
-);
-
-};
 window.fixOldSubscriptions =
 async function(){
 
@@ -3651,7 +3585,7 @@ ${player.fees || 0}
 
 <button
 class="export"
-onclick="renewAcademy('${player.docId}',12)">
+onclick="renewAcademy('${player.docId}',22)">
 
 22 جلسة
 
@@ -3659,7 +3593,7 @@ onclick="renewAcademy('${player.docId}',12)">
 
 <button
 class="reset"
-onclick="renewAcademy('${player.docId}',8)">
+onclick="renewAcademy('${player.docId}',12)">
 
 12 جلسات
 
