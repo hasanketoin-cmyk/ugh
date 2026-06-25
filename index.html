@@ -3120,7 +3120,60 @@ link.click();
 document.body.removeChild(link);
 
 };
+window.addPayment =
+async function(docId){
 
+const child =
+children.find(
+c=>c.docId===docId
+);
+
+if(!child)
+return;
+
+const amount =
+Number(
+prompt("أدخل قيمة الدفعة")
+);
+
+if(
+isNaN(amount) ||
+amount<=0
+){
+return;
+}
+
+const newPaid =
+Number(child.paid || 0)
++
+amount;
+
+const newRemaining =
+Math.max(
+0,
+Number(child.fees || 0)
+-
+newPaid
+);
+
+await updateDoc(
+
+doc(
+db,
+"children",
+docId
+),
+
+{
+paid:newPaid,
+remaining:newRemaining
+}
+
+);
+
+alert("تم إضافة الدفعة بنجاح");
+
+};
 window.addExtraSession =
 async function(docId){
 
