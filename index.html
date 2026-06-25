@@ -1007,8 +1007,10 @@ border-radius:10px;
 
 <button
 class="add"
-onclick="addGeneralPayment()">
+onclick="showAddPaymentWindow()">
+
 💰 إضافة دفعة
+
 </button>
 
 <button
@@ -2861,45 +2863,68 @@ document.getElementById(
 }
 function renderFinance(){
 
-const financeTable = document.getElementById("financeTable");
+const financeTable =
+document.getElementById(
+"financeTable"
+);
 
-if(!financeTable) return;
+const totalFeesEl =
+document.getElementById(
+"totalFees"
+);
 
-let html="";
+const totalPaidEl =
+document.getElementById(
+"totalPaid"
+);
 
-let totalFees=0;
-let totalPaid=0;
-let totalRemaining=0;
+const totalRemainingEl =
+document.getElementById(
+"totalRemaining"
+);
+
+if(
+!financeTable ||
+!totalFeesEl ||
+!totalPaidEl ||
+!totalRemainingEl
+){
+return;
+}
+
+let html = "";
+
+let totalFees = 0;
+let totalPaid = 0;
+let totalRemaining = 0;
 
 children.forEach(child=>{
 
-const fees=Number(child.fees||0);
-const paid=Number(child.paid||0);
-const remaining=fees-paid;
+const fees =
+Number(child.fees || 0);
 
-totalFees+=fees;
-totalPaid+=paid;
-totalRemaining+=remaining;
+const paid =
+Number(child.paid || 0);
 
-html+=`
+const remaining =
+Number(child.remaining || 0);
+
+totalFees += fees;
+totalPaid += paid;
+totalRemaining += remaining;
+  html += `
+
 <tr>
 
 <td>${child.childId}</td>
 
 <td>${child.name}</td>
 
-<td>${fees.toLocaleString()}</td>
+<td>${fees}</td>
 
-<td>${paid.toLocaleString()}</td>
+<td>${paid}</td>
 
-<td style="
-color:${remaining>0?"red":"green"};
-font-weight:bold;
-">
-
-${remaining.toLocaleString()}
-
-</td>
+<td>${remaining}</td>
 
 <td>
 
@@ -2919,7 +2944,7 @@ onclick="addPayment('${child.docId}')">
 class="export"
 onclick="renewSubscription('${child.docId}',22)">
 
-22
+🟢 22 جلسة
 
 </button>
 
@@ -2927,39 +2952,35 @@ onclick="renewSubscription('${child.docId}',22)">
 class="reset"
 onclick="renewSubscription('${child.docId}',12)">
 
-12
+🟠 12 جلسة
 
 </button>
-
-</td>
-
-<td>
 
 <button
 class="add"
 onclick="addExtraSession('${child.docId}')">
 
-➕
+➕ جلسة
 
 </button>
 
 </td>
-
 </tr>
+
 `;
 
 });
 
-financeTable.innerHTML=html;
+financeTable.innerHTML = html;
 
-document.getElementById("totalFees").innerText=
-totalFees.toLocaleString();
+totalFeesEl.innerText =
+totalFees;
 
-document.getElementById("totalPaid").innerText=
-totalPaid.toLocaleString();
+totalPaidEl.innerText =
+totalPaid;
 
-document.getElementById("totalRemaining").innerText=
-totalRemaining.toLocaleString();
+totalRemainingEl.innerText =
+totalRemaining;
 
 }
 window.searchChildren = function(){
@@ -3602,46 +3623,7 @@ document.getElementById(
 "academyTable"
 ).innerHTML = html;
 
-} 
-window.addPayment = async function(docId){
-
-const child =
-children.find(c=>c.docId===docId);
-
-if(!child) return;
-
-const amount =
-Number(prompt("أدخل قيمة الدفعة"));
-
-if(!amount || amount<=0) return;
-
-const paid =
-Number(child.paid||0)+amount;
-
-const remaining =
-Math.max(
-0,
-Number(child.fees||0)-paid
-);
-
-await updateDoc(
-doc(db,"children",docId),
-{
-paid:paid,
-remaining:remaining
-});
-
-alert("تم تسجيل الدفعة");
-
-};
-
-window.addGeneralPayment=function(){
-
-alert(
-"سيتم في المرحلة القادمة إنشاء نافذة مالية متكاملة مع سجل دفعات."
-);
-
-};
+}  
 onSnapshot(
 supervisorsCollection,
 (snapshot)=>{
