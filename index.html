@@ -1787,8 +1787,51 @@ document.getElementById("groupStartDate").value="";
 
 // ===== حذف طفل =====
 
-window.editChild =
-async function(docId){
+window.editChild = async function(docId){
+
+if(!requireAdmin()) return;
+
+const child =
+children.find(c=>c.docId===docId);
+
+if(!child) return;
+
+let message="اختر رقم المجموعة الجديدة\n\n";
+
+supervisors.forEach((s,index)=>{
+message += (index+1)+" - "+s.name+"\n";
+});
+
+const number = prompt(message);
+
+if(!number) return;
+
+const supervisor =
+supervisors[Number(number)-1];
+
+if(!supervisor){
+
+alert("رقم غير صحيح");
+
+return;
+
+}
+
+await updateDoc(
+
+doc(db,"children",docId),
+
+{
+
+supervisorId:supervisor.docId
+
+}
+
+);
+
+alert("تم نقل الطفل إلى "+supervisor.name);
+
+};
 
 if(!requireAdmin())
 return;
@@ -2571,10 +2614,18 @@ onchange="toggleAttendance('${child.docId}')">
 <td>
 
 <button
+class="export"
+onclick="editChild('${child.docId}')">
+
+🔄 نقل
+
+</button>
+
+<button
 class="delete"
 onclick="deleteChild('${child.docId}')">
 
-حذف
+🗑 حذف
 
 </button>
 
@@ -3569,6 +3620,52 @@ document.getElementById(
 ).innerHTML = html;
 
 }  
+function renderAcademy(){
+
+// ...
+
+document.getElementById(
+"academyTable"
+).innerHTML = html;
+
+}
+
+// ===== أضف هنا =====
+
+window.addPayment = async function(docId){
+
+if(!requireAdmin()) return;
+
+const child = children.find(c => c.docId === docId);
+
+if(!child) return;
+
+const amount = Number(prompt("أدخل قيمة الدفعة"));
+
+if(isNaN(amount) || amount <= 0){
+    alert("قيمة غير صحيحة");
+    return;
+}
+
+const paid = Number(child.paid || 0) + amount;
+const remaining = Math.max(0, Number(child.fees || 0) - paid);
+
+await updateDoc(
+    doc(db,"children",docId),
+    {
+        paid:paid,
+        remaining:remaining
+    }
+);
+
+alert("تم تسجيل الدفعة بنجاح");
+};
+
+// ===== ثم يبدأ onSnapshot =====
+
+onSnapshot(
+supervisorsCollection,
+(snapshot)=>{
 onSnapshot(
 supervisorsCollection,
 (snapshot)=>{
