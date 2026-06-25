@@ -595,40 +595,27 @@ margin-top:15px;
 </div>
 </div>
 
-<div class="stats">
-
 <div class="stat-card">
 <div class="number" id="dashboardTotalFees">0</div>
-<div class="label">💰 إجمالي الرسوم</div>
+<div class="label">
+إجمالي الرسوم
+</div>
 </div>
 
 <div class="stat-card">
 <div class="number" id="dashboardPaid">0</div>
-<div class="label">✅ إجمالي المقبوض</div>
+<div class="label">
+إجمالي المقبوض
+</div>
 </div>
 
 <div class="stat-card">
 <div class="number" id="dashboardRemaining">0</div>
-<div class="label">🟠 إجمالي المتبقي</div>
+<div class="label">
+إجمالي المتبقي
 </div>
-
-<div class="stat-card">
-<div class="number" id="todayPayments">0</div>
-<div class="label">📅 دفعات اليوم</div>
 </div>
-
-<div class="stat-card">
-<div class="number" id="monthPayments">0</div>
-<div class="label">📆 دفعات الشهر</div>
 </div>
-
-<div class="stat-card">
-<div class="number" id="expiredSubscriptions">0</div>
-<div class="label">🔴 الاشتراكات المنتهية</div>
-</div>
-
-</div>
-
 </div>
 
 <!-- Supervisors Page -->
@@ -698,7 +685,15 @@ style="opacity:1">
 
 </button>
 
+<button
+type="button"
+class="reset packageBtn"
+onclick="selectPackage(12,this)"
+style="opacity:.5">
 
+🟠 12 جلسة
+
+</button>
 
 </div>
 <input
@@ -964,72 +959,7 @@ id="totalRemaining">
 </div>
 
 <div class="card">
-<div
-style="
-display:flex;
-justify-content:space-between;
-align-items:center;
-flex-wrap:wrap;
-gap:15px;
-margin-bottom:20px;
-">
 
-<div style="display:flex;gap:10px;flex-wrap:wrap;">
-
-<input
-type="text"
-id="financeSearch"
-placeholder="🔍 البحث باسم الطفل"
-style="
-width:260px;
-padding:12px;
-border:2px solid #ddd;
-border-radius:10px;
-">
-
-<select
-id="financeFilter"
-style="
-padding:12px;
-border-radius:10px;
-">
-
-<option value="all">كل الأطفال</option>
-<option value="remaining">يوجد متبقي</option>
-<option value="paid">مدفوع بالكامل</option>
-<option value="expired">الاشتراك منتهي</option>
-
-</select>
-
-</div>
-
-<div style="display:flex;gap:10px;flex-wrap:wrap;">
-
-<button
-class="add"
-onclick="showAddPaymentWindow()">
-
-💰 إضافة دفعة
-
-</button>
-
-<button
-class="export">
-
-📤 Excel
-
-</button>
-
-<button
-class="reset">
-
-🖨 PDF
-
-</button>
-
-</div>
-
-</div>
 <h3>كشف الحساب</h3>
 
 <table>
@@ -1077,10 +1007,6 @@ id="academyName"
 placeholder="اسم اللاعب">
 
 <input
-type="date"
-id="academyStartDate">
-  
-<input
 type="number"
 id="academySessions"
 placeholder="عدد الجلسات"
@@ -1097,7 +1023,16 @@ font-weight:bold;
 
 
 </div>
+</button>
 
+<button
+type="button"
+class="reset packageBtn"
+onclick="selectPackage(12,this)"
+style="opacity:.5">
+
+
+</button>
 
 </div>
 
@@ -1925,24 +1860,6 @@ selectedSupervisor.name
 
 };
 
-window.deleteChild =
-async function(docId){
-
-if(!requireAdmin())
-return;
-
-if(!confirm("حذف الطفل؟"))
-return;
-
-await deleteDoc(
-doc(
-db,
-"children",
-docId
-)
-);
-
-};
 window.toggleAttendance = async function(docId){
 
 const child =
@@ -2001,10 +1918,10 @@ child.docId
 ),
 {
 present:true,
-attendanceDate:new Date().toLocaleDateString("en-CA"),
-usedSessions:Number(child.usedSessions||0)+1
+attendanceDate:new Date().toLocaleDateString('en-CA')
 }
 );
+
 }
 
 };
@@ -2079,8 +1996,7 @@ child.docId
 ),
 {
 present:true,
-attendanceDate:new Date().toLocaleDateString("en-CA"),
-usedSessions:Number(child.usedSessions||0)+1
+attendanceDate:new Date().toLocaleDateString('en-CA')
 }
 );
 
@@ -2216,23 +2132,11 @@ html += `
 
 <td>${supervisor ? supervisor.name : "-"}</td>
 
-<td>${Number(child.fees || 0).toLocaleString(
-'de-DE',
-{
-minimumFractionDigits:3,
-maximumFractionDigits:3
-}
-)}</td>
+<td>${child.fees || 0}</td>
 
-<td>${Number(child.paid || 0).toLocaleString(
-'de-DE',
-{
-minimumFractionDigits:3,
-maximumFractionDigits:3
-}
-)}</td>
+<td>${child.paid || 0}</td>
 
-<td>${Number(child.remaining || 0).toLocaleString( 'de-DE', { minimumFractionDigits:3, maximumFractionDigits:3 } )}</td>
+<td>${child.remaining || 0}</td>
 <td>
 
 <span
@@ -2632,13 +2536,7 @@ ${child.expiryDate || "-"}
 
 <td>${child.paid || 0}</td>
 
-<td>${Number(child.remaining || 0).toLocaleString(
-'de-DE',
-{
-minimumFractionDigits:3,
-maximumFractionDigits:3
-}
-)}</td>
+<td>${child.remaining || 0}</td>
 <td>
 
 <span
@@ -2673,20 +2571,13 @@ onchange="toggleAttendance('${child.docId}')">
 <td>
 
 <button
-class="export"
-onclick="editChild('${child.docId}')">
-
-🔄 نقل
-
-</button>
-
-<button
 class="delete"
 onclick="deleteChild('${child.docId}')">
 
-🗑 حذف
+حذف
 
 </button>
+
 </td>
 
 </tr>
@@ -2953,6 +2844,14 @@ onclick="renewSubscription('${child.docId}',22)">
 </button>
 
 <button
+class="export"
+onclick="renewSubscription('${child.docId}',22)">
+
+🟢 22 جلسة
+
+</button>
+
+<button
 class="reset"
 onclick="renewSubscription('${child.docId}',12)">
 
@@ -2960,15 +2859,8 @@ onclick="renewSubscription('${child.docId}',12)">
 
 </button>
 
-<button
-class="add"
-onclick="addExtraSession('${child.docId}')">
-
-➕ جلسة
-
-</button>
-
 </td>
+
 </tr>
 
 `;
@@ -3003,7 +2895,56 @@ c.name.toLowerCase().includes(value)
 renderTable(filtered);
 
 };
+window.fixOldSubscriptions =
+async function(){
 
+if(!requireAdmin())
+return;
+
+if(
+!confirm(
+"سيتم إصلاح جميع الاشتراكات القديمة، هل تريد المتابعة؟"
+)
+)
+return;
+
+let count = 0;
+
+for(const child of children){
+
+if(
+!child.packageSessions ||
+Number(child.packageSessions)===0
+){
+
+await updateDoc(
+doc(
+db,
+"children",
+child.docId
+),
+{
+packageSessions:22,
+usedSessions:0,
+extraSessions:0
+}
+);
+
+count++;
+
+}
+
+}
+
+alert(
+"تم إصلاح "
++
+count
++
+" اشتراك بنجاح"
+);
+
+};
 window.fixOldSubscriptions =
 async function(){
 
@@ -3589,7 +3530,7 @@ ${player.fees || 0}
 
 <button
 class="export"
-onclick="renewAcademy('${player.docId}',22)">
+onclick="renewAcademy('${player.docId}',12)">
 
 22 جلسة
 
@@ -3597,7 +3538,7 @@ onclick="renewAcademy('${player.docId}',22)">
 
 <button
 class="reset"
-onclick="renewAcademy('${player.docId}',12)">
+onclick="renewAcademy('${player.docId}',8)">
 
 12 جلسات
 
