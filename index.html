@@ -1077,6 +1077,10 @@ id="academyName"
 placeholder="اسم اللاعب">
 
 <input
+type="date"
+id="academyStartDate">
+  
+<input
 type="number"
 id="academySessions"
 placeholder="عدد الجلسات"
@@ -1093,7 +1097,6 @@ font-weight:bold;
 
 
 </div>
-</button>
 
 
 </div>
@@ -1998,10 +2001,10 @@ child.docId
 ),
 {
 present:true,
-attendanceDate:new Date().toLocaleDateString('en-CA')
+attendanceDate:new Date().toLocaleDateString("en-CA"),
+usedSessions:Number(child.usedSessions||0)+1
 }
 );
-
 }
 
 };
@@ -2076,7 +2079,8 @@ child.docId
 ),
 {
 present:true,
-attendanceDate:new Date().toLocaleDateString('en-CA')
+attendanceDate:new Date().toLocaleDateString("en-CA"),
+usedSessions:Number(child.usedSessions||0)+1
 }
 );
 
