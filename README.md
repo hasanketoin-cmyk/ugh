@@ -595,27 +595,40 @@ margin-top:15px;
 </div>
 </div>
 
+<div class="stats">
+
 <div class="stat-card">
-<div class="number" id="dashboardTotalFees">0</div>
-<div class="label">
-إجمالي الرسوم
-</div>
+<div class="number" id="totalFees">0</div>
+<div class="label">💰 إجمالي الرسوم</div>
 </div>
 
 <div class="stat-card">
-<div class="number" id="dashboardPaid">0</div>
-<div class="label">
-إجمالي المقبوض
-</div>
+<div class="number" id="totalPaid">0</div>
+<div class="label">✅ إجمالي المقبوض</div>
 </div>
 
 <div class="stat-card">
-<div class="number" id="dashboardRemaining">0</div>
-<div class="label">
-إجمالي المتبقي
+<div class="number" id="totalRemaining">0</div>
+<div class="label">🟠 إجمالي المتبقي</div>
 </div>
+
+<div class="stat-card">
+<div class="number" id="todayPayments">0</div>
+<div class="label">📅 دفعات اليوم</div>
 </div>
+
+<div class="stat-card">
+<div class="number" id="monthPayments">0</div>
+<div class="label">📆 دفعات الشهر</div>
 </div>
+
+<div class="stat-card">
+<div class="number" id="expiredSubscriptions">0</div>
+<div class="label">🔴 الاشتراكات المنتهية</div>
+</div>
+
+</div>
+
 </div>
 
 <!-- Supervisors Page -->
@@ -959,7 +972,72 @@ id="totalRemaining">
 </div>
 
 <div class="card">
+<div
+style="
+display:flex;
+justify-content:space-between;
+align-items:center;
+flex-wrap:wrap;
+gap:15px;
+margin-bottom:20px;
+">
 
+<div style="display:flex;gap:10px;flex-wrap:wrap;">
+
+<input
+type="text"
+id="financeSearch"
+placeholder="🔍 البحث باسم الطفل"
+style="
+width:260px;
+padding:12px;
+border:2px solid #ddd;
+border-radius:10px;
+">
+
+<select
+id="financeFilter"
+style="
+padding:12px;
+border-radius:10px;
+">
+
+<option value="all">كل الأطفال</option>
+<option value="remaining">يوجد متبقي</option>
+<option value="paid">مدفوع بالكامل</option>
+<option value="expired">الاشتراك منتهي</option>
+
+</select>
+
+</div>
+
+<div style="display:flex;gap:10px;flex-wrap:wrap;">
+
+<button
+class="add"
+onclick="showAddPaymentWindow()">
+
+💰 إضافة دفعة
+
+</button>
+
+<button
+class="export">
+
+📤 Excel
+
+</button>
+
+<button
+class="reset">
+
+🖨 PDF
+
+</button>
+
+</div>
+
+</div>
 <h3>كشف الحساب</h3>
 
 <table>
