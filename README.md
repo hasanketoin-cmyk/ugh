@@ -2889,25 +2889,19 @@ onclick="addPayment('${child.docId}')">
 <button
 class="export"
 onclick="renewSubscription('${child.docId}',22)">
-
 🟢 22 جلسة
-
-</button>
-
-<button
-class="export"
-onclick="renewSubscription('${child.docId}',22)">
-
-🟢 22 جلسة
-
 </button>
 
 <button
 class="reset"
 onclick="renewSubscription('${child.docId}',12)">
-
 🟠 12 جلسة
+</button>
 
+<button
+class="add"
+onclick="addExtraSession('${child.docId}')">
+➕ جلسة
 </button>
 
 </td>
@@ -3620,15 +3614,7 @@ document.getElementById(
 ).innerHTML = html;
 
 }  
-function renderAcademy(){
 
-// ...
-
-document.getElementById(
-"academyTable"
-).innerHTML = html;
-
-}
 
 // ===== أضف هنا =====
 
@@ -3664,11 +3650,26 @@ alert("تم تسجيل الدفعة بنجاح");
 // ===== ثم يبدأ onSnapshot =====
 
 onSnapshot(
-supervisorsCollection,
-(snapshot)=>{
-onSnapshot(
-supervisorsCollection,
-(snapshot)=>{
+  supervisorsCollection,
+  (snapshot) => {
+
+    supervisors = [];
+
+    snapshot.forEach(docu => {
+
+      supervisors.push({
+        docId: docu.id,
+        ...docu.data()
+      });
+
+    });
+
+    fillSupervisorSelect();
+    renderSupervisors();
+    renderTable(children);
+
+  }
+);
 
 supervisors = [];
 
@@ -3791,34 +3792,24 @@ renderFinance();
 }
 );
 
-document
-.getElementById(
-"qrInput"
-)
-.addEventListener(
+document.getElementById("qrInput").addEventListener(
 "change",
 async function(){
 
-const qr =
-this.value.trim();
+const qr=this.value.trim();
 
-const child =
-children.find(
-c =>
-String(c.childId) === qr
+const child=children.find(
+c=>String(c.childId)===qr
 );
 
 if(child){
 
 await updateDoc(
-doc(
-db,
-"children",
-child.docId
-),
+doc(db,"children",child.docId),
 {
 present:true,
-attendanceDate:new Date().toLocaleDateString('en-CA')
+attendanceDate:new Date().toLocaleDateString("en-CA"),
+usedSessions:Number(child.usedSessions||0)+1
 }
 );
 
