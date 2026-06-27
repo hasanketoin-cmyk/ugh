@@ -1796,9 +1796,7 @@ const startDate =
 document.getElementById("startDate").value;
 const sessionPackage =
 Number(
-document.getElementById(
-"sessionPackage"
-).value
+document.getElementById("packageSessions").value
 );
 const endDate =
 new Date(startDate);
@@ -2890,16 +2888,6 @@ endingSoon;
 
 renderRevenueChart();  
 }
-function renderDashboard(){
-
-// ...
-
-document.getElementById("dashboardEnding").innerText =
-endingSoon;
-
-renderRevenueChart();
-
-}
 
 // ===== رسم الإيرادات الشهرية =====
 
@@ -3622,9 +3610,9 @@ html += `
 
 <td>${player.sessions}</td>
 
-${money(player.sessionPrice)}
+<td>${money(player.sessionPrice)}</td>
 
-${money(player.total)}
+<td>${money(player.total)}</td>
 <td>
 
 <button
