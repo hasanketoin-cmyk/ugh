@@ -1023,7 +1023,6 @@ font-weight:bold;
 
 
 </div>
-</button>
 
 <button
 type="button"
@@ -1031,9 +1030,9 @@ class="reset packageBtn"
 onclick="selectPackage(12,this)"
 style="opacity:.5">
 
+🟠 12 جلسة
 
 </button>
-
 </div>
 
 <input
@@ -1101,6 +1100,10 @@ placeholder="اسم اللاعب">
 <input
 type="date"
 id="privateStartDate">
+
+<input
+type="date"
+id="academyStartDate">
 
 <input
 type="number"
@@ -1856,6 +1859,18 @@ alert(
 "تم نقل الطفل إلى مجموعة " +
 selectedSupervisor.name
 );
+
+};
+
+window.deleteChild = async function(docId){
+
+    if(!requireAdmin()) return;
+
+    if(!confirm("حذف الطفل؟")) return;
+
+    await deleteDoc(
+        doc(db,"children",docId)
+    );
 
 };
 
@@ -3626,29 +3641,7 @@ onSnapshot(
 
   }
 );
-supervisors = [];
 
-onSnapshot(
-  supervisorsCollection,
-  (snapshot) => {
-
-    supervisors = [];
-
-    snapshot.forEach(docu => {
-
-      supervisors.push({
-        docId: docu.id,
-        ...docu.data()
-      });
-
-    });
-
-    fillSupervisorSelect();
-    renderSupervisors();
-    renderTable(children);
-
-  }
-);
 onSnapshot(
 childrenCollection,
 (snapshot)=>{
