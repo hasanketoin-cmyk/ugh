@@ -2078,8 +2078,11 @@ function renderTable(data){
 
 let html = "";
 
-data.forEach(child=>{
-
+data
+.sort((a,b)=>
+Number(b.childId) - Number(a.childId)
+)
+.forEach(child=>{
 const subscription =
 getSubscriptionStatus(child);
   
@@ -2667,6 +2670,27 @@ let totalRemaining = 0;
 
 children
 .filter(child=>{
+
+if(search==="")
+return true;
+
+return (
+
+String(child.childId).includes(search)
+
+||
+
+(child.name || "")
+.toLowerCase()
+.includes(search)
+
+);
+
+})
+.sort((a,b)=>
+Number(b.childId) - Number(a.childId)
+)
+.forEach(child=>{
 
 if(search==="")
 return true;
