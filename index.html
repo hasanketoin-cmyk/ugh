@@ -1455,6 +1455,7 @@ db,
 let children = [];
 let supervisors = [];
 let revenueChart = null;
+let groupsChart = null;
 let busLines = [];
 let busChildren = [];
   
@@ -2896,72 +2897,85 @@ renderRevenueChart();
 
 // ===== رسم الإيرادات الشهرية =====
 
-function renderRevenueChart(){
+function renderDashboard(){
 
-const months = [
-"كانون الثاني",
-"شباط",
-"آذار",
-"نيسان",
-"أيار",
-"حزيران",
-"تموز",
-"آب",
-"أيلول",
-"تشرين الأول",
-"تشرين الثاني",
-"كانون الأول"
-];
+...
 
-const totals =
-Array(12).fill(0);
-
-children.forEach(child=>{
-
-if(!child.startDate) return;
-
-const date =
-new Date(child.startDate);
-
-const month =
-date.getMonth();
-
-totals[month] +=
-Number(child.paid || 0);
-
-});
-
-const ctx =
-document.getElementById("revenueChart");
-
-if(!ctx) return;
-
-if(revenueChart){
-
-revenueChart.destroy();
+renderRevenueChart();
+renderGroupsChart();
 
 }
 
-revenueChart =
+// ============================
+// رسم الإيرادات
+// ============================
+
+function renderRevenueChart(){
+
+...
+
+}   // ← تنتهي هنا
+
+// ============================
+// رسم المجموعات
+// ============================
+
+function renderGroupsChart(){
+
+const groups = {};
+
+children.forEach(child=>{
+
+const supervisor =
+supervisors.find(
+s=>s.docId===child.supervisorId
+);
+
+const name =
+supervisor
+?
+supervisor.name
+:
+"بدون مجموعة";
+
+groups[name] =
+(groups[name] || 0)+1;
+
+});
+
+const labels =
+Object.keys(groups);
+
+const values =
+Object.values(groups);
+
+const ctx =
+document.getElementById("groupsChart");
+
+if(!ctx) return;
+
+if(groupsChart){
+
+groupsChart.destroy();
+
+}
+
+groupsChart =
 new Chart(ctx,{
 
-type:"line",
+type:"bar",
 
 data:{
 
-labels:months,
+labels:labels,
 
 datasets:[{
 
-label:"الإيرادات",
+label:"عدد الأطفال",
 
-data:totals,
+data:values,
 
-fill:true,
-
-tension:.3,
-
-borderWidth:3
+borderWidth:1
 
 }]
 
@@ -2979,7 +2993,10 @@ display:false
 
 scales:{
 y:{
-beginAtZero:true
+beginAtZero:true,
+ticks:{
+precision:0
+}
 }
 }
 
@@ -2991,7 +3008,7 @@ beginAtZero:true
 
 function renderFinance(search=""){
 
-  
+
 const financeTable =
 document.getElementById(
 "financeTable"
