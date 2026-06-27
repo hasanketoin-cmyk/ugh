@@ -260,15 +260,16 @@ box-shadow:0 4px 12px rgba(0,0,0,0.15);
 .export{background:linear-gradient(135deg, #8b5cf6, #7c3aed);}
 
 .stats{
-display:flex;
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
 gap:20px;
 margin-top:25px;
-flex-wrap:wrap;
 }
 
 .stat-card{
-flex:1;
-min-width:180px;
+min-width:0;
+padding:25px;
+}
 background:linear-gradient(135deg, var(--light), #dbeafe);
 padding:25px;
 border-radius:16px;
@@ -277,8 +278,12 @@ box-shadow:0 4px 12px rgba(0,0,0,0.05);
 }
 
 .stat-card .number{
-font-size:36px;
+font-size:32px;
 font-weight:700;
+line-height:1.2;
+word-break:break-word;
+overflow-wrap:anywhere;
+}
 color:var(--primary);
 margin-bottom:5px;
 }
