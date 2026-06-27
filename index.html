@@ -1390,7 +1390,14 @@ let academyPlayers = [];
 let privatePlayers = [];
 
 let adminMode = false;
-  
+
+function money(value){
+
+return Number(value || 0)
+.toLocaleString("en-US")
+.replace(/,/g,".");
+
+}
 window.toggleAdminMode = function(){
 
 if(adminMode){
@@ -2173,11 +2180,11 @@ html += `
 
 <td>${supervisor ? supervisor.name : "-"}</td>
 
-<td>${child.fees || 0}</td>
+<td>${money(child.fees)}</td>
 
-<td>${child.paid || 0}</td>
+<td>${money(child.paid)}</td>
 
-<td>${child.remaining || 0}</td>
+<td>${money(child.remaining)}</td>
 <td>
 
 <span
@@ -2473,11 +2480,11 @@ ${child.expiryDate || "-"}
 
 <td>${child.attendanceDate || "-"}</td>
 
-<td>${child.fees || 0}</td>
+<td>${money(child.fees)}</td>
 
-<td>${child.paid || 0}</td>
+<td>${money(child.paid)}</td>
 
-<td>${child.remaining || 0}</td>
+<td>${money(child.remaining)}</td>
 <td>
 
 <span
@@ -2787,11 +2794,11 @@ totalRemaining += remaining;
 
 <td>${child.name}</td>
 
-<td>${fees}</td>
+<td>${money(fees)}</td>
 
-<td>${paid}</td>
+<td>${money(paid)}</td>
 
-<td>${remaining}</td>
+<td>${money(remaining)}</td>
 
 <td>
 
@@ -2837,13 +2844,13 @@ onclick="addExtraSession('${child.docId}')">
 financeTable.innerHTML = html;
 
 totalFeesEl.innerText =
-totalFees;
+Number(totalFees).toLocaleString("en-US");
 
 totalPaidEl.innerText =
-totalPaid;
+Number(totalPaid).toLocaleString("en-US");
 
 totalRemainingEl.innerText =
-totalRemaining;
+Number(totalRemaining).toLocaleString("en-US");
 
 }
 window.resetAttendance =
@@ -3334,10 +3341,9 @@ html += `
 
 <td>${player.sessions}</td>
 
-<td>${player.sessionPrice}</td>
+${money(player.sessionPrice)}
 
-<td>${player.total}</td>
-
+${money(player.total)}
 <td>
 
 <button
@@ -3463,8 +3469,7 @@ ${remainingSessions}
 
 <td>
 
-${player.fees || 0}
-
+${money(player.fees)}
 </td>
 
 <td>
