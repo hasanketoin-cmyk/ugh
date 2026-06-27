@@ -3628,22 +3628,27 @@ onSnapshot(
 );
 supervisors = [];
 
-snapshot.forEach(docu=>{
+onSnapshot(
+  supervisorsCollection,
+  (snapshot) => {
 
-supervisors.push({
-docId:docu.id,
-...docu.data()
-});
+    supervisors = [];
 
-});
+    snapshot.forEach(docu => {
 
-fillSupervisorSelect();
-renderSupervisors();
-renderTable(children);
+      supervisors.push({
+        docId: docu.id,
+        ...docu.data()
+      });
 
-}
+    });
+
+    fillSupervisorSelect();
+    renderSupervisors();
+    renderTable(children);
+
+  }
 );
-
 onSnapshot(
 childrenCollection,
 (snapshot)=>{
