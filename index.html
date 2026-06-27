@@ -2683,20 +2683,11 @@ onclick="addPayment('${child.docId}')">
 
 <button
 class="export"
-onclick="renewSubscription('${child.docId}',12)">
+onclick="openRenewModal('${child.docId}')">
 
-12 جلسة
-
-</button>
-
-<button
-class="reset"
-onclick="renewSubscription('${child.docId}',8)">
-
-8 جلسات
+🔄 تجديد الاشتراك
 
 </button>
-
 </td>
 
 <td>
@@ -2823,6 +2814,61 @@ child.extraSessions || 0
 )+1
 }
 );
+
+};
+window.openRenewModal = function(docId){
+
+const child =
+children.find(
+c=>c.docId===docId
+);
+
+if(!child) return;
+
+document.getElementById("renewDocId").value =
+child.docId;
+
+document.getElementById("renewName").value =
+child.name;
+
+document.getElementById("renewSessions").value =
+child.packageSessions || 12;
+
+document.getElementById("renewFees").value =
+child.fees || 0;
+
+document.getElementById("renewPaid").value =
+child.paid || 0;
+
+document.getElementById("renewStartDate").value =
+new Date().toISOString().split("T")[0];
+
+calculateRemaining();
+
+document.getElementById("renewModal").style.display =
+"flex";
+
+};
+window.closeRenewModal = function(){
+
+document.getElementById("renewModal").style.display =
+"none";
+
+};
+window.calculateRemaining = function(){
+
+const fees =
+Number(
+document.getElementById("renewFees").value || 0
+);
+
+const paid =
+Number(
+document.getElementById("renewPaid").value || 0
+);
+
+document.getElementById("renewRemaining").value =
+fees - paid;
 
 };
 window.renewSubscription =
