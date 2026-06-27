@@ -2676,26 +2676,6 @@ return true;
 
 return (
 
-String(child.childId).includes(search)
-
-||
-
-(child.name || "")
-.toLowerCase()
-.includes(search)
-
-);
-
-})
-.sort((a,b)=>
-Number(b.childId) - Number(a.childId)
-)
-.forEach(child=>{
-
-if(search==="")
-return true;
-
-return (
 
 String(child.childId).includes(search)
 
