@@ -3609,6 +3609,72 @@ endDate.toISOString().split("T")[0]
 closeEditChild();
 
 };
+window.openTransferModal = function(docId){
+
+const child =
+children.find(c=>c.docId===docId);
+
+if(!child) return;
+
+document.getElementById("transferDocId").value =
+child.docId;
+
+document.getElementById("transferName").value =
+child.name;
+
+let html = "";
+
+supervisors.forEach(s=>{
+
+html += `
+<option value="${s.docId}"
+${s.docId===child.supervisorId ? "selected" : ""}>
+${s.name}
+</option>
+`;
+
+});
+
+document.getElementById("transferSupervisor").innerHTML =
+html;
+
+document.getElementById("transferModal").style.display =
+"flex";
+
+};
+
+window.closeTransferModal = function(){
+
+document.getElementById("transferModal").style.display =
+"none";
+
+};
+
+window.saveTransfer = async function(){
+
+const docId =
+document.getElementById("transferDocId").value;
+
+const supervisorId =
+document.getElementById("transferSupervisor").value;
+
+await updateDoc(
+
+doc(
+db,
+"children",
+docId
+),
+
+{
+supervisorId:supervisorId
+}
+
+);
+
+closeTransferModal();
+
+};
 onSnapshot(
 supervisorsCollection,
 (snapshot)=>{
