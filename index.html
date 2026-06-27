@@ -2708,31 +2708,22 @@ total:sessions * sessionPrice
 );
 
 };
-window.addAcademyPlayer =
-async function(){
+window.addAcademyPlayer = async function(){
 
 const name =
-document.getElementById(
-"academyName"
-).value.trim();
+document.getElementById("academyName").value.trim();
 
 const startDate =
-document.getElementById(
-"academyStartDate"
-).value;
+document.getElementById("academyStartDate").value;
 
 const sessions =
 Number(
-document.getElementById(
-"academySessions"
-).value
+document.getElementById("academySessions").value
 );
 
 const fees =
 Number(
-document.getElementById(
-"academyFees"
-).value || 0
+document.getElementById("academyFees").value || 0
 );
 
 if(!name){
@@ -2743,8 +2734,31 @@ return;
 
 }
 
-sessions:sessions,
+const endDate = new Date(startDate);
 
+endDate.setDate(endDate.getDate()+28);
+
+const expiryDate =
+endDate.toISOString().split("T")[0];
+
+await addDoc(
+academyCollection,
+{
+name:name,
+startDate:startDate,
+expiryDate:expiryDate,
+packageSessions:sessions,
+usedSessions:0,
+extraSessions:0,
+fees:fees,
+paid:0,
+remaining:fees
+}
+);
+
+document.getElementById("academyName").value="";
+document.getElementById("academyStartDate").value="";
+document.getElementById("academyFees").value="";
 
 };
 window.addPayment = async function(docId){
@@ -3044,10 +3058,21 @@ html += `
 
 <td>
 
+${
+(
+Number(player.packageSessions || 0)
++
+Number(player.extraSessions || 0)
+)
+-
+Number(player.usedSessions || 0)
+}
+
+</td>
+<td>
+
 <span class="${subscription.className}">
-
 ${subscription.text}
-
 </span>
 
 </td>
@@ -3108,13 +3133,6 @@ document.getElementById(
 
 }
 
-if(table){
-
-table.innerHTML = html;
-
-}
-
-}  
 onSnapshot(
 supervisorsCollection,
 (snapshot)=>{
