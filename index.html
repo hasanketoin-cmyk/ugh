@@ -1166,6 +1166,76 @@ onclick="closeRenewModal()">
 </div>
 
 </div>
+<!-- نافذة نقل الطفل -->
+
+<div id="transferModal"
+style="
+display:none;
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background:rgba(0,0,0,.45);
+z-index:9999;
+justify-content:center;
+align-items:center;
+">
+
+<div style="
+background:white;
+width:450px;
+max-width:95%;
+padding:25px;
+border-radius:18px;
+">
+
+<h2 style="text-align:center;margin-bottom:20px;">
+🔄 نقل الطفل
+</h2>
+
+<input
+type="hidden"
+id="transferDocId">
+
+<label>اسم الطفل</label>
+
+<input
+type="text"
+id="transferName"
+readonly
+style="width:100%;margin-bottom:15px;">
+
+<label>المجموعة الجديدة</label>
+
+<select
+id="transferSupervisor"
+style="width:100%;margin-bottom:20px;">
+</select>
+
+<div style="display:flex;gap:10px;justify-content:center;">
+
+<button
+class="add"
+onclick="saveTransfer()">
+
+💾 حفظ
+
+</button>
+
+<button
+class="delete"
+onclick="closeTransferModal()">
+
+إلغاء
+
+</button>
+
+</div>
+
+</div>
+
+</div>
 </main>
 
 <script>
@@ -2203,10 +2273,18 @@ onchange="toggleAttendance('${child.docId}')">
 <td>
 
 <button
+class="export"
+onclick="openTransferModal('${child.docId}')">
+
+🔄 نقل
+
+</button>
+
+<button
 class="delete"
 onclick="deleteChild('${child.docId}')">
 
-حذف
+🗑 حذف
 
 </button>
 
@@ -3432,7 +3510,105 @@ document.getElementById(
 ).innerHTML = html;
 
 }
+window.openEditChild=function(docId){
 
+const child=
+children.find(c=>c.docId===docId);
+
+if(!child)return;
+
+document.getElementById("editDocId").value=child.docId;
+
+document.getElementById("editName").value=child.name;
+
+document.getElementById("editSessions").value=
+child.packageSessions||12;
+
+document.getElementById("editFees").value=
+child.fees||0;
+
+document.getElementById("editPaid").value=
+child.paid||0;
+
+document.getElementById("editStartDate").value=
+child.startDate||"";
+
+let html="";
+
+supervisors.forEach(s=>{
+
+html+=`
+<option
+value="${s.docId}"
+${s.docId===child.supervisorId?"selected":""}>
+${s.name}
+</option>
+`;
+
+});
+
+document.getElementById("editSupervisor").innerHTML=html;
+
+document.getElementById("editChildModal").style.display="flex";
+
+};
+
+window.closeEditChild=function(){
+
+document.getElementById("editChildModal").style.display="none";
+
+};
+
+window.saveChildEdit=async function(){
+
+const docId=
+document.getElementById("editDocId").value;
+
+const startDate=
+document.getElementById("editStartDate").value;
+
+const endDate=new Date(startDate);
+
+endDate.setDate(endDate.getDate()+28);
+
+await updateDoc(
+
+doc(db,"children",docId),
+
+{
+
+name:
+document.getElementById("editName").value,
+
+supervisorId:
+document.getElementById("editSupervisor").value,
+
+packageSessions:
+Number(document.getElementById("editSessions").value),
+
+fees:
+Number(document.getElementById("editFees").value),
+
+paid:
+Number(document.getElementById("editPaid").value),
+
+remaining:
+Number(document.getElementById("editFees").value)
+-
+Number(document.getElementById("editPaid").value),
+
+startDate:startDate,
+
+expiryDate:
+endDate.toISOString().split("T")[0]
+
+}
+
+);
+
+closeEditChild();
+
+};
 onSnapshot(
 supervisorsCollection,
 (snapshot)=>{
