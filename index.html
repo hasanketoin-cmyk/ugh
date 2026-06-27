@@ -589,17 +589,13 @@ margin-top:15px;
 <option value="">اختر المشرف</option>
 </select>
 <input type="date" id="startDate">
-<select id="sessionPackage">
-
-<option value="12">
-12 جلسة
-</option>
-
-<option value="8">
-8 جلسات
-</option>
-
-</select>
+<input
+type="number"
+id="packageSessions"
+class="form-control"
+min="1"
+value="30"
+placeholder="عدد الجلسات">
 <input
 type="number"
 id="childFees"
@@ -1821,7 +1817,7 @@ childId:getNextChildId(),
 supervisorId:supervisorId,
 startDate:startDate,
 
-packageSessions:12,
+packageSessions:sessionPackage,
 usedSessions:0,
 extraSessions:0,
 
