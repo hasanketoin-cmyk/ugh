@@ -861,7 +861,21 @@ id="totalRemaining">
 <div class="card">
 
 <h3>كشف الحساب</h3>
+<div style="margin:15px 0;">
 
+<input
+type="text"
+id="financeSearch"
+placeholder="🔍 ابحث برقم الطفل أو الاسم..."
+oninput="searchFinance()"
+style="
+width:100%;
+padding:12px;
+border:2px solid #3b82f6;
+border-radius:12px;
+font-size:16px;">
+
+</div>
 <table>
 
 <thead>
@@ -1082,16 +1096,16 @@ style="width:100%;margin-bottom:15px;">
 
 <label>عدد الجلسات</label>
 
-<select
+<label>عدد الجلسات</label>
+
+<input
+type="number"
 id="renewSessions"
-style="width:100%;margin-bottom:15px;">
-
-<option value="8">8 جلسات</option>
-
-<option value="12">12 جلسة</option>
-
-</select>
-
+min="1"
+placeholder="أدخل عدد الجلسات"
+style="
+width:100%;
+margin-bottom:15px;">
 <label>الرسوم</label>
 
 <input
@@ -2602,8 +2616,20 @@ document.getElementById(
 ).innerHTML = html;
 
 }
-function renderFinance(){
+window.searchFinance = function(){
 
+const text =
+document
+.getElementById("financeSearch")
+.value
+.toLowerCase()
+.trim();
+
+renderFinance(text);
+
+};
+function renderFinance(search=""){
+  
 const financeTable =
 document.getElementById(
 "financeTable"
@@ -2639,8 +2665,26 @@ let totalFees = 0;
 let totalPaid = 0;
 let totalRemaining = 0;
 
-children.forEach(child=>{
+children
+.filter(child=>{
 
+if(search==="")
+return true;
+
+return (
+
+String(child.childId).includes(search)
+
+||
+
+(child.name || "")
+.toLowerCase()
+.includes(search)
+
+);
+
+})
+.forEach(child=>{
 const fees =
 Number(child.fees || 0);
 
