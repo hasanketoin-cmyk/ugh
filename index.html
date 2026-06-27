@@ -2023,30 +2023,22 @@ attendanceDate:""
 }
 
 };
-window.editBusLine =
-async function(docId){
+window.editBusSupervisor = async function(docId){
 
 const line =
 busLines.find(
-b => b.docId === docId
+b => b.docId===docId
 );
 
 if(!line) return;
 
-const newLineName =
-prompt(
-"اسم الخط الجديد",
-line.name
-);
-
-if(!newLineName)
-return;
-
 const newSupervisor =
 prompt(
-"اسم مشرف الباص",
+"اسم مشرف الباص الجديد",
 line.supervisor || ""
 );
+
+if(!newSupervisor) return;
 
 await updateDoc(
 doc(
@@ -2055,11 +2047,11 @@ db,
 docId
 ),
 {
-name:newLineName.trim(),
 supervisor:newSupervisor.trim()
 }
 );
 
+};
 };
 window.deleteBusLine = async function(docId){
 
@@ -2580,12 +2572,11 @@ ${line.supervisor || "-"}
 
 <button
 class="export"
-onclick="editBusLine('${line.docId}')">
+onclick="editBusSupervisor('${line.docId}')">
 
-✏️ تعديل الخط
+👤 تعديل مشرف الباص
 
 </button>
-
 <button
 class="delete"
 onclick="deleteBusLine('${line.docId}')">
