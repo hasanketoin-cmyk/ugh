@@ -2894,20 +2894,37 @@ renderGroupsChart();
 
 }
 
-const totals = Array(12).fill(0);
+function renderRevenueChart(){
+
+const months=[
+"كانون الثاني",
+"شباط",
+"آذار",
+"نيسان",
+"أيار",
+"حزيران",
+"تموز",
+"آب",
+"أيلول",
+"تشرين الأول",
+"تشرين الثاني",
+"كانون الأول"
+];
+
+const totals=Array(12).fill(0);
 
 children.forEach(child=>{
 
 if(!child.startDate) return;
 
-const month =
+const month=
 new Date(child.startDate).getMonth();
 
-totals[month] += Number(child.paid || 0);
+totals[month]+=Number(child.paid||0);
 
 });
 
-const ctx =
+const ctx=
 document.getElementById("revenueChart");
 
 if(!ctx) return;
@@ -2918,7 +2935,7 @@ revenueChart.destroy();
 
 }
 
-revenueChart = new Chart(ctx,{
+revenueChart=new Chart(ctx,{
 
 type:"line",
 
@@ -2951,9 +2968,7 @@ legend:{display:false}
 },
 
 scales:{
-y:{
-beginAtZero:true
-}
+y:{beginAtZero:true}
 }
 
 }
@@ -2962,11 +2977,6 @@ beginAtZero:true
 
 }
 
-function renderRevenueChart(){
-
-...
-
-}
 
 function renderGroupsChart(){
 
@@ -3173,7 +3183,6 @@ money(totalRemaining);
 
 }
 
-}
 window.resetAttendance =
 async function(){
 
