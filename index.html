@@ -2892,33 +2892,112 @@ endingSoon++;
 document.getElementById("dashboardEnding").innerText =
 endingSoon;
 
-renderRevenueChart();  
+renderRevenueChart();
+renderGroupsChart();
+
 }
 
 // ===== رسم الإيرادات الشهرية =====
-
-function renderDashboard(){
-
-...
+document.getElementById("dashboardEnding").innerText =
+endingSoon;
 
 renderRevenueChart();
 renderGroupsChart();
 
 }
 
-// ============================
-// رسم الإيرادات
-// ============================
+// ===== رسم الإيرادات الشهرية =====
+
+function renderRevenueChart(){
+
+const months = [
+"كانون الثاني",
+"شباط",
+"آذار",
+"نيسان",
+"أيار",
+"حزيران",
+"تموز",
+"آب",
+"أيلول",
+"تشرين الأول",
+"تشرين الثاني",
+"كانون الأول"
+];
+
+const totals = Array(12).fill(0);
+
+children.forEach(child=>{
+
+if(!child.startDate) return;
+
+const month =
+new Date(child.startDate).getMonth();
+
+totals[month] += Number(child.paid || 0);
+
+});
+
+const ctx =
+document.getElementById("revenueChart");
+
+if(!ctx) return;
+
+if(revenueChart){
+
+revenueChart.destroy();
+
+}
+
+revenueChart = new Chart(ctx,{
+
+type:"line",
+
+data:{
+
+labels:months,
+
+datasets:[{
+
+label:"الإيرادات",
+
+data:totals,
+
+fill:true,
+
+tension:.3,
+
+borderWidth:3
+
+}]
+
+},
+
+options:{
+
+responsive:true,
+
+plugins:{
+legend:{display:false}
+},
+
+scales:{
+y:{
+beginAtZero:true
+}
+}
+
+}
+
+});
+
+}
 
 function renderRevenueChart(){
 
 ...
 
-}   // ← تنتهي هنا
-
-// ============================
-// رسم المجموعات
-// ============================
+}
 
 function renderGroupsChart(){
 
@@ -2931,23 +3010,20 @@ supervisors.find(
 s=>s.docId===child.supervisorId
 );
 
-const name =
+const groupName =
 supervisor
 ?
 supervisor.name
 :
 "بدون مجموعة";
 
-groups[name] =
-(groups[name] || 0)+1;
+groups[groupName] =
+(groups[groupName] || 0) + 1;
 
 });
 
-const labels =
-Object.keys(groups);
-
-const values =
-Object.values(groups);
+const labels = Object.keys(groups);
+const values = Object.values(groups);
 
 const ctx =
 document.getElementById("groupsChart");
@@ -2966,48 +3042,30 @@ new Chart(ctx,{
 type:"bar",
 
 data:{
-
 labels:labels,
-
 datasets:[{
-
 label:"عدد الأطفال",
-
-data:values,
-
-borderWidth:1
-
+data:values
 }]
-
 },
 
 options:{
-
 responsive:true,
-
 plugins:{
 legend:{
 display:false
 }
 },
-
 scales:{
 y:{
-beginAtZero:true,
-ticks:{
-precision:0
+beginAtZero:true
 }
 }
-}
-
 }
 
 });
 
 }
-
-function renderFinance(search=""){
-
 
 const financeTable =
 document.getElementById(
