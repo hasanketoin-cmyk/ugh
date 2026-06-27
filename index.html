@@ -1449,7 +1449,7 @@ db,
 );
 let children = [];
 let supervisors = [];
-
+let revenueChart = null;
 let busLines = [];
 let busChildren = [];
   
@@ -2177,7 +2177,7 @@ document
 if(text === ""){
 
 renderTable(children);
-
+renderDashboard();
 return;
 
 }
@@ -2378,7 +2378,7 @@ updateStats();
 renderGroups();
 
 renderSupervisors();
-
+renderDashboard();
 renderFinance();
 
 }
@@ -2779,7 +2779,225 @@ document
 renderFinance(text);
 
 };
+function renderDashboard(){
+
+// إجمالي أطفال النادي الصيفي
+document.getElementById("dashboardChildren").innerText =
+children.length;
+
+// إجمالي لاعبي الأكاديمية
+document.getElementById("dashboardAcademy").innerText =
+academyPlayers.length;
+
+// إجمالي لاعبي البرايفت
+document.getElementById("dashboardPrivate").innerText =
+privatePlayers.length;
+
+// عدد المجموعات
+document.getElementById("dashboardGroups").innerText =
+supervisors.length;
+
+// عدد خطوط الباصات
+document.getElementById("dashboardBusLines").innerText =
+busLines.length;
+
+
+// =========================
+// المالية
+// =========================
+
+const totalRevenue =
+children.reduce(
+(sum,c)=>sum+Number(c.fees||0),
+0);
+
+const totalPaid =
+children.reduce(
+(sum,c)=>sum+Number(c.paid||0),
+0);
+
+const totalRemaining =
+children.reduce(
+(sum,c)=>sum+Number(c.remaining||0),
+0);
+
+document.getElementById("dashboardRevenue").innerText =
+money(totalRevenue);
+
+document.getElementById("dashboardPaid").innerText =
+money(totalPaid);
+
+document.getElementById("dashboardRemaining").innerText =
+money(totalRemaining);
+
+
+// =========================
+// نسبة التحصيل
+// =========================
+
+let percent = 0;
+
+if(totalRevenue>0){
+
+percent =
+(
+totalPaid
+/
+totalRevenue
+*
+100
+).toFixed(1);
+
+}
+
+document.getElementById("dashboardPercent").innerText =
+percent+"%";
+
+
+// =========================
+// الاشتراكات التي تنتهي خلال أسبوع
+// =========================
+
+const today =
+new Date();
+
+let endingSoon = 0;
+
+children.forEach(child=>{
+
+if(!child.expiryDate)
+return;
+
+const end =
+new Date(child.expiryDate);
+
+const diff =
+Math.ceil(
+(end-today)
+/86400000
+);
+
+if(diff>=0 && diff<=7){
+
+endingSoon++;
+
+}
+
+});
+
+document.getElementById("dashboardEnding").innerText =
+endingSoon;
+
+renderRevenueChart();  
+}
+function renderDashboard(){
+
+// ...
+
+document.getElementById("dashboardEnding").innerText =
+endingSoon;
+
+renderRevenueChart();
+
+}
+
+// ===== رسم الإيرادات الشهرية =====
+
+function renderRevenueChart(){
+
+const months = [
+"كانون الثاني",
+"شباط",
+"آذار",
+"نيسان",
+"أيار",
+"حزيران",
+"تموز",
+"آب",
+"أيلول",
+"تشرين الأول",
+"تشرين الثاني",
+"كانون الأول"
+];
+
+const totals =
+Array(12).fill(0);
+
+children.forEach(child=>{
+
+if(!child.startDate) return;
+
+const date =
+new Date(child.startDate);
+
+const month =
+date.getMonth();
+
+totals[month] +=
+Number(child.paid || 0);
+
+});
+
+const ctx =
+document.getElementById("revenueChart");
+
+if(!ctx) return;
+
+if(revenueChart){
+
+revenueChart.destroy();
+
+}
+
+revenueChart =
+new Chart(ctx,{
+
+type:"line",
+
+data:{
+
+labels:months,
+
+datasets:[{
+
+label:"الإيرادات",
+
+data:totals,
+
+fill:true,
+
+tension:.3,
+
+borderWidth:3
+
+}]
+
+},
+
+options:{
+
+responsive:true,
+
+plugins:{
+legend:{
+display:false
+}
+},
+
+scales:{
+y:{
+beginAtZero:true
+}
+}
+
+}
+
+});
+
+}
+
 function renderFinance(search=""){
+
   
 const financeTable =
 document.getElementById(
@@ -3781,7 +3999,7 @@ docId:docu.id,
 });
 
 renderTable(children);
-
+renderDashboard();
 }
 );
 onSnapshot(
@@ -3800,7 +4018,7 @@ docId:docu.id,
 });
 
 renderPrivate();
-
+renderDashboard();
 }
 );
 onSnapshot(
@@ -3819,7 +4037,7 @@ docId:docu.id,
 });
 
 renderAcademy();
-
+renderDashboard();
 }
 );
 onSnapshot(
@@ -3839,7 +4057,7 @@ docId:docu.id,
 
 fillBusLines();
 renderBusLines();
-
+renderDashboard();
 }
 );
 
@@ -3860,7 +4078,7 @@ docId:docu.id,
 
 renderBusLines();
 renderFinance();
-
+renderDashboard();
 }
 );
 
