@@ -1,1 +1,540 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+<title>SCORE Summer Camp</title>
+
+<style>
+
+:root{
+--primary:#102847;
+--secondary:#2196f3;
+--accent:#cddc39;
+--white:#fff;
+--bg:#f4f7fb;
+}
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Tahoma,sans-serif;
+}
+
+body{
+background:var(--bg);
+}
+
+.header{
+background:var(--primary);
+color:white;
+padding:20px;
+text-align:center;
+}
+
+.logo{
+width:120px;
+margin:auto;
+display:block;
+}
+
+.container{
+max-width:1200px;
+margin:auto;
+padding:20px;
+}
+
+.card{
+background:white;
+padding:20px;
+border-radius:12px;
+box-shadow:0 2px 10px rgba(0,0,0,.1);
+margin-bottom:20px;
+}
+
+input{
+width:100%;
+padding:12px;
+margin-top:10px;
+margin-bottom:10px;
+border:1px solid #ddd;
+border-radius:8px;
+}
+
+button{
+background:var(--secondary);
+color:white;
+border:none;
+padding:12px 20px;
+border-radius:8px;
+cursor:pointer;
+}
+
+button:hover{
+opacity:.9;
+}
+
+.stats{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+gap:15px;
+}
+
+.stat{
+background:white;
+padding:20px;
+border-radius:12px;
+text-align:center;
+box-shadow:0 2px 10px rgba(0,0,0,.1);
+}
+
+.hidden{
+display:none;
+}
+
+.admin-panel{
+border-top:5px solid #4caf50;
+}
+
+.supervisor-panel{
+border-top:5px solid #ff9800;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="header">
+
+<h1>SCORE SUMMER CAMP</h1>
+<p>نظام إدارة النادي الصيفي</p>
+
+</div>
+
+<div class="container">
+
+<!-- LOGIN -->
+
+<div id="loginBox" class="card">
+
+<h2>تسجيل الدخول</h2>
+
+<input type="email" id="email" placeholder="البريد الإلكتروني">
+
+<input type="password" id="password" placeholder="كلمة المرور">
+
+<button onclick="login()">
+دخول
+</button>
+
+</div>
+
+<!-- ADMIN -->
+
+<div id="adminPanel" class="hidden">
+
+<div class="card admin-panel">
+
+<h2>لوحة المدير</h2>
+
+<p id="adminName"></p>
+
+<button onclick="logout()">
+تسجيل خروج
+</button>
+
+</div>
+
+<div class="stats">
+
+<div class="stat">
+<h3 id="childrenCount">0</h3>
+<p>الأطفال</p>
+</div>
+
+<div class="stat">
+<h3 id="supervisorCount">0</h3>
+<p>المشرفون</p>
+</div>
+
+<div class="stat">
+<h3 id="busCount">0</h3>
+<p>الباصات</p>
+</div>
+
+<div class="stat">
+<h3 id="attendanceCount">0</h3>
+<p>الحضور اليوم</p>
+</div>
+
+</div>
+
+</div>
+
+<div class="card">
+
+<h2>إدارة المجموعات</h2>
+
+<input
+type="text"
+id="groupName"
+placeholder="اسم المجموعة">
+<input
+type="text"
+id="groupSupervisor"
+placeholder="اسم المشرف">
+  
+<button onclick="addGroup()">
+إضافة مجموعة
+</button>
+
+<hr style="margin:15px 0;">
+
+<div id="groupsList"></div>
+
+</div>
+
+<div class="card">
+
+<h2>إدارة الأطفال</h2>
+
+<input
+type="text"
+id="childName"
+placeholder="اسم الطفل">
+
+<button onclick="addChild()">
+إضافة طفل
+</button>
+
+<hr style="margin:15px 0;">
+
+<div id="childrenList"></div>
+
+</div>
+  
+<!-- SUPERVISOR -->
+<!-- SUPERVISOR -->
+
+<div id="supervisorPanel" class="hidden">
+
+<div class="card supervisor-panel">
+
+<h2>لوحة المشرف</h2>
+
+<p id="supervisorName"></p>
+
+<button onclick="logout()">
+تسجيل خروج
+</button>
+
+</div>
+
+<div class="card">
+
+<p>
+يمكنك تفقد الأطفال التابعين لك فقط.
+</p>
+
+</div>
+
+</div>
+
+</div>
+
+<script type="module">
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+
+import {
+getAuth,
+signInWithEmailAndPassword,
+signOut,
+onAuthStateChanged
+}
+from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+import {
+getFirestore,
+doc,
+getDoc,
+collection,
+addDoc,
+getDocs,
+deleteDoc
+}
+from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+const firebaseConfig = {
+
+apiKey: "AIzaSyA-aV5qGj27Vj0e8dtrXkz9Ckt5Tp-reyY",
+
+authDomain: "score-summer-camp.firebaseapp.com",
+
+projectId: "score-summer-camp",
+
+storageBucket: "score-summer-camp.firebasestorage.app",
+
+messagingSenderId: "836117896870",
+
+appId: "1:836117896870:web:730a652b3a8ab015105e67"
+
+};
+
+const app = initializeApp(firebaseConfig);
+
+const auth = getAuth(app);
+
+const db = getFirestore(app);
+
+window.login = async () => {
+
+const email =
+document.getElementById("email").value;
+
+const password =
+document.getElementById("password").value;
+
+try{
+
+await signInWithEmailAndPassword(
+auth,
+email,
+password
+);
+
+}catch(error){
+
+alert(error.message);
+
+}
+
+};
+
+window.logout = async () => {
+
+await signOut(auth);
+
+};
+window.addGroup = async () => {
+
+const name =
+document.getElementById("groupName").value;
+const supervisor =
+document.getElementById("groupSupervisor").value;
+  
+if(!name){
+alert("أدخل اسم المجموعة");
+return;
+}
+
+await addDoc(
+collection(db,"groups"),
+{
+name:name,
+supervisor:supervisor
+}
+);
+
+document.getElementById("groupName").value="";
+
+loadGroups();
+
+};
+
+async function loadGroups(){
+
+const container =
+document.getElementById("groupsList");
+
+container.innerHTML="";
+
+const snapshot =
+await getDocs(collection(db,"groups"));
+
+snapshot.forEach((docSnap)=>{
+
+const data = docSnap.data();
+
+container.innerHTML += `
+<div style="
+padding:10px;
+margin:10px 0;
+background:#f5f5f5;
+border-radius:8px;
+display:flex;
+justify-content:space-between;
+align-items:center;
+">
+
+<div>
+<b>${data.name}</b><br>
+المشرف: ${data.supervisor || "غير محدد"}
+</div>
+
+<button
+onclick="deleteGroup('${docSnap.id}')">
+حذف
+</button>
+
+</div>
+`;
+
+});
+
+}
+
+window.deleteGroup = async(id)=>{
+
+if(!confirm("حذف المجموعة؟"))
+return;
+
+await deleteDoc(
+doc(db,"groups",id)
+);
+
+loadGroups();
+
+};
+
+/* ضع كود الأطفال هنا */
+
+window.addChild = async () => {
+
+const name =
+document.getElementById("childName").value;
+
+if(!name){
+alert("أدخل اسم الطفل");
+return;
+}
+
+await addDoc(
+collection(db,"children"),
+{
+name:name,
+groupId:""
+}
+);
+
+document.getElementById("childName").value="";
+
+loadChildren();
+
+};
+async function loadChildren(){
+
+const container =
+document.getElementById("childrenList");
+
+container.innerHTML="";
+
+const snapshot =
+await getDocs(collection(db,"children"));
+
+snapshot.forEach((docSnap)=>{
+
+const data = docSnap.data();
+
+container.innerHTML += `
+<div style="
+padding:10px;
+margin:10px 0;
+background:#f5f5f5;
+border-radius:8px;
+display:flex;
+justify-content:space-between;
+align-items:center;
+">
+
+<span>${data.name}</span>
+
+<button onclick="deleteChild('${docSnap.id}')">
+حذف
+</button>
+
+</div>
+`;
+
+});
+
+}
+
+window.deleteChild = async(id)=>{
+
+if(!confirm("حذف الطفل؟"))
+return;
+
+await deleteDoc(
+doc(db,"children",id)
+);
+
+loadChildren();
+
+};
+
+
+onAuthStateChanged(auth, async(user)=>{
+
+if(!user){
+
+document.getElementById("loginBox").classList.remove("hidden");
+
+document.getElementById("adminPanel").classList.add("hidden");
+
+document.getElementById("supervisorPanel").classList.add("hidden");
+
+return;
+
+}
+
+document.getElementById("loginBox").classList.add("hidden");
+
+const query = await getDoc(
+doc(db,"users",user.uid)
+);
+
+if(!query.exists()){
+
+alert("المستخدم غير مسجل");
+
+await signOut(auth);
+
+return;
+
+}
+
+const data = query.data();
+
+if(data.role==="admin"){
+
+document.getElementById("adminPanel").classList.remove("hidden");
+
+document.getElementById("supervisorPanel").classList.add("hidden");
+
+document.getElementById("adminName").innerText =
+"مرحباً " + data.name;
+
+loadGroups();
+loadChildren();
+
+}else{
+
+document.getElementById("supervisorPanel").classList.remove("hidden");
+
+document.getElementById("adminPanel").classList.add("hidden");
+
+document.getElementById("supervisorName").innerText =
+"مرحباً " + data.name;
+
+}
+
+});
+
+</script>
+
+</body>
+</html>
