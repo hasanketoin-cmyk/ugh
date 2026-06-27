@@ -696,6 +696,13 @@ placeholder="اسم الطفل">
 type="date"
 id="groupStartDate">
 
+<input
+type="number"
+id="groupSessionPackage"
+placeholder="عدد الجلسات"
+min="1"
+value="30">
+
 <button
 class="add"
 onclick="addChildFromGroups()">
@@ -1800,6 +1807,12 @@ document.getElementById("groupChildSupervisor").value;
 
 const startDate =
 document.getElementById("groupStartDate").value;
+const sessionPackage =
+Number(
+document.getElementById(
+"groupSessionPackage"
+).value || 30
+);
 
 if(!name || !supervisorId){
 
@@ -2051,7 +2064,6 @@ supervisor:newSupervisor.trim()
 }
 );
 
-};
 };
 window.deleteBusLine = async function(docId){
 
