@@ -2419,36 +2419,20 @@ className:"activeSub"
 };
 
 }
-  function updateStats(){
+function updateStats(){
 
-const present =
-children.filter(
-c=>c.present
-).length;
+    const present = children.filter(c => c.present).length;
+    const absent = children.length - present;
 
-const absent =
-children.length - present;
+    const presentEl = document.getElementById("presentCount");
+    const absentEl = document.getElementById("absentCount");
+    const totalEl = document.getElementById("totalCount");
 
-document
-.getElementById(
-"presentCount"
-)
-.innerText = present;
-
-document
-.getElementById(
-"absentCount"
-)
-.innerText = absent;
-
-document
-.getElementById(
-"totalCount"
-)
-.innerText = children.length;
+    if (presentEl) presentEl.innerText = present;
+    if (absentEl) absentEl.innerText = absent;
+    if (totalEl) totalEl.innerText = children.length;
 
 }
-
 function renderGroups(){
 
 let html = "";
@@ -2552,12 +2536,15 @@ ${child.expiryDate || "-"}
 <td>${money(child.remaining)}</td>
 <td>
 
-<span
-class="${subscription.className}">
-
-${subscription.text}
-
-</span>
+<td>
+${
+(
+Number(child.packageSessions || 0) +
+Number(child.extraSessions || 0)
+) -
+Number(child.usedSessions || 0)
+}
+</td>
 
 </td>
 
