@@ -628,6 +628,21 @@ placeholder="المدفوع">
 </button>
 </div>
 <h3>قائمة الأطفال</h3>
+<div style="margin:15px 0;">
+
+<input
+type="text"
+id="childrenSearch"
+placeholder="🔍 ابحث برقم الطفل أو الاسم أو المشرف..."
+oninput="searchChildren()"
+style="
+width:100%;
+padding:12px;
+border:2px solid #3b82f6;
+border-radius:12px;
+font-size:16px;">
+
+</div>
 
 <div style="overflow-x:auto;">
 
@@ -1884,7 +1899,56 @@ docId
 
 };
 // ===== يكمل الكود القديم =====
+window.searchChildren = function(){
 
+const text =
+document
+.getElementById("childrenSearch")
+.value
+.toLowerCase()
+.trim();
+
+if(text === ""){
+
+renderTable(children);
+
+return;
+
+}
+
+const result =
+children.filter(child=>{
+
+const supervisor =
+supervisors.find(
+s=>s.docId===child.supervisorId
+);
+
+return (
+
+String(child.childId)
+.includes(text)
+
+||
+
+(child.name || "")
+.toLowerCase()
+.includes(text)
+
+||
+
+(supervisor?.name || "")
+.toLowerCase()
+.includes(text)
+
+);
+
+});
+
+renderTable(result);
+
+};
+  
 function renderTable(data){
 
 let html = "";
