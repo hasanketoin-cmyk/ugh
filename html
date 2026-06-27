@@ -1789,50 +1789,6 @@ document.getElementById("groupStartDate").value="";
 
 window.editChild = async function(docId){
 
-if(!requireAdmin()) return;
-
-const child =
-children.find(c=>c.docId===docId);
-
-if(!child) return;
-
-let message="اختر رقم المجموعة الجديدة\n\n";
-
-supervisors.forEach((s,index)=>{
-message += (index+1)+" - "+s.name+"\n";
-});
-
-const number = prompt(message);
-
-if(!number) return;
-
-const supervisor =
-supervisors[Number(number)-1];
-
-if(!supervisor){
-
-alert("رقم غير صحيح");
-
-return;
-
-}
-
-await updateDoc(
-
-doc(db,"children",docId),
-
-{
-
-supervisorId:supervisor.docId
-
-}
-
-);
-
-alert("تم نقل الطفل إلى "+supervisor.name);
-
-};
-
 if(!requireAdmin())
 return;
 
@@ -3670,7 +3626,6 @@ onSnapshot(
 
   }
 );
-
 supervisors = [];
 
 snapshot.forEach(docu=>{
