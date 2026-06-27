@@ -1927,17 +1927,48 @@ ${subscription.text}
 
 </td>
 <td>
-${
-(
+
+${(() => {
+
+const total =
 Number(child.packageSessions || 0)
 +
-Number(child.extraSessions || 0)
-)
--
-Number(child.usedSessions || 0)
-}
-</td>
+Number(child.extraSessions || 0);
 
+const remaining =
+total -
+Number(child.usedSessions || 0);
+
+let color = "green";
+
+if(remaining <= 1){
+
+color = "red";
+
+}else if(remaining <= 3){
+
+color = "orange";
+
+}
+
+return `
+<span style="
+display:inline-block;
+padding:6px 12px;
+border-radius:20px;
+font-weight:bold;
+background:${color};
+color:white;
+">
+
+${remaining} / ${total}
+
+</span>
+`;
+
+})()}
+
+</td>
 <td>${child.startDate || "-"}</td>
 <td>
 ${child.expiryDate || "-"}
