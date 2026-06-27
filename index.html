@@ -267,10 +267,8 @@ margin-top:25px;
 }
 
 .stat-card{
-min-width:0;
-padding:25px;
-}
 background:linear-gradient(135deg, var(--light), #dbeafe);
+min-width:0;
 padding:25px;
 border-radius:16px;
 text-align:center;
@@ -283,7 +281,6 @@ font-weight:700;
 line-height:1.2;
 word-break:break-word;
 overflow-wrap:anywhere;
-}
 color:var(--primary);
 margin-bottom:5px;
 }
@@ -2897,34 +2894,6 @@ renderGroupsChart();
 
 }
 
-// ===== رسم الإيرادات الشهرية =====
-document.getElementById("dashboardEnding").innerText =
-endingSoon;
-
-renderRevenueChart();
-renderGroupsChart();
-
-}
-
-// ===== رسم الإيرادات الشهرية =====
-
-function renderRevenueChart(){
-
-const months = [
-"كانون الثاني",
-"شباط",
-"آذار",
-"نيسان",
-"أيار",
-"حزيران",
-"تموز",
-"آب",
-"أيلول",
-"تشرين الأول",
-"تشرين الثاني",
-"كانون الأول"
-];
-
 const totals = Array(12).fill(0);
 
 children.forEach(child=>{
@@ -3066,7 +3035,8 @@ beginAtZero:true
 });
 
 }
-
+function renderFinance(search=""){
+  
 const financeTable =
 document.getElementById(
 "financeTable"
@@ -3193,13 +3163,15 @@ onclick="addExtraSession('${child.docId}')">
 financeTable.innerHTML = html;
 
 totalFeesEl.innerText =
-Number(totalFees).toLocaleString("en-US");
+money(totalFees);
 
 totalPaidEl.innerText =
-Number(totalPaid).toLocaleString("en-US");
+money(totalPaid);
 
 totalRemainingEl.innerText =
-Number(totalRemaining).toLocaleString("en-US");
+money(totalRemaining);
+
+}
 
 }
 window.resetAttendance =
