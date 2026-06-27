@@ -526,17 +526,81 @@ margin-top:15px;
 </div>
 
 <div class="stats">
+
 <div class="stat-card">
-<div class="number" id="presentCount">0</div>
-<div class="label">الحضور</div>
+<div class="number" id="dashboardChildren">0</div>
+<div class="label">👦 أطفال النادي الصيفي</div>
 </div>
+
 <div class="stat-card">
-<div class="number" id="absentCount">0</div>
-<div class="label">الغياب</div>
+<div class="number" id="dashboardAcademy">0</div>
+<div class="label">⚽ لاعبو الأكاديمية</div>
 </div>
+
 <div class="stat-card">
-<div class="number" id="totalCount">0</div>
-<div class="label">الإجمالي</div>
+<div class="number" id="dashboardPrivate">0</div>
+<div class="label">🏃 لاعبو البرايفت</div>
+</div>
+
+<div class="stat-card">
+<div class="number" id="dashboardGroups">0</div>
+<div class="label">👨‍🏫 عدد المجموعات</div>
+</div>
+
+<div class="stat-card">
+<div class="number" id="dashboardBusLines">0</div>
+<div class="label">🚌 خطوط الباصات</div>
+</div>
+
+<div class="stat-card">
+<div class="number" id="dashboardRevenue">0</div>
+<div class="label">💰 إجمالي الإيرادات</div>
+</div>
+
+<div class="stat-card">
+<div class="number" id="dashboardPaid">0</div>
+<div class="label">💵 إجمالي المقبوض</div>
+</div>
+
+<div class="stat-card">
+<div class="number" id="dashboardRemaining">0</div>
+<div class="label">📄 إجمالي المتبقي</div>
+</div>
+
+<div class="stat-card">
+<div class="number" id="dashboardPercent">0%</div>
+<div class="label">📈 نسبة التحصيل</div>
+</div>
+
+<div class="stat-card">
+<div class="number" id="dashboardEnding">0</div>
+<div class="label">📅 تنتهي خلال 7 أيام</div>
+</div>
+
+</div>
+
+<div class="card">
+
+<h3>📈 الإيرادات الشهرية</h3>
+
+<canvas
+id="revenueChart"
+height="120">
+</canvas>
+
+</div>
+
+<div class="card">
+
+<h3>📊 عدد الأطفال في كل مجموعة</h3>
+
+<canvas
+id="groupsChart"
+height="120">
+</canvas>
+
+</div>
+
 </div>
 </div>
 </div>
@@ -1305,7 +1369,7 @@ page.classList.add('active');
 }
 );
 </script>
-
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script type="module">
 
 import { initializeApp }
