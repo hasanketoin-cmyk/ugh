@@ -4034,6 +4034,10 @@ window.saveRenewSubscription = async function () {
 
 };
 };
+console.log("saveRenewSubscription loaded");
+window.saveRenewSubscription = async function () {
+    alert("وصلنا للدالة");
+};
 onSnapshot(
 supervisorsCollection,
 (snapshot)=>{
