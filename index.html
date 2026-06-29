@@ -3986,61 +3986,47 @@ window.saveTransfer = async function(){
             supervisorId: supervisorId
         }
     );
-    alert("تم تجديد الاشتراك بنجاح");
-
+alert("تم تجديد الاشتراك بنجاح");
     closeTransferModal();
 
 };
 
 
-console.log("saveRenewSubscription loaded");
 window.saveRenewSubscription = async function () {
 
-    try {
+    const docId = document.getElementById("renewDocId").value;
 
-        const docId = document.getElementById("renewDocId").value;
+    const sessions = Number(document.getElementById("renewSessions").value);
 
-        const sessions = Number(document.getElementById("renewSessions").value);
+    const fees = Number(document.getElementById("renewFees").value);
 
-        const fees = Number(document.getElementById("renewFees").value);
+    const paid = Number(document.getElementById("renewPaid").value);
 
-        const paid = Number(document.getElementById("renewPaid").value);
+    const startDate = document.getElementById("renewStartDate").value;
 
-        const startDate = document.getElementById("renewStartDate").value;
+    const expiryDate = new Date(startDate);
+    expiryDate.setDate(expiryDate.getDate() + 28);
 
-        const expiryDate = new Date(startDate);
-        expiryDate.setDate(expiryDate.getDate() + 28);
+    await updateDoc(
+        doc(db, "children", docId),
+        {
+            startDate: startDate,
+            expiryDate: expiryDate.toISOString().split("T")[0],
+            packageSessions: sessions,
+            usedSessions: 0,
+            extraSessions: 0,
+            fees: fees,
+            paid: paid,
+            remaining: fees - paid
+        }
+    );
 
-        await updateDoc(
-            doc(db, "children", docId),
-            {
-                startDate: startDate,
-                expiryDate: expiryDate.toISOString().split("T")[0],
+    alert("تم تجديد الاشتراك بنجاح");
 
-                packageSessions: sessions,
-                usedSessions: 0,
-                extraSessions: 0,
-
-                fees: fees,
-                paid: paid,
-                remaining: fees - paid
-            }
-        );
-
-        closeRenewModal();
-
-        alert("تم تجديد الاشتراك بنجاح");
-
-    } catch (error) {
-
-        console.error(error);
-
-        alert(error.message);
-
-    }
+    closeRenewModal();
 
 };
-
+  
 onSnapshot(
 childrenCollection,
 (snapshot)=>{
