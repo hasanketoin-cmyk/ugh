@@ -3974,63 +3974,24 @@ document.getElementById("transferModal").style.display =
 
 window.saveTransfer = async function(){
 
-const docId =
-document.getElementById("transferDocId").value;
+    const docId =
+    document.getElementById("transferDocId").value;
 
-const supervisorId =
-document.getElementById("transferSupervisor").value;
-
-await updateDoc(
-
-doc(
-db,
-"children",
-docId
-),
-
-{
-supervisorId:supervisorId
-}
-
-);
-
-closeTransferModal();
-window.saveRenewSubscription = async function () {
-
-    const docId = document.getElementById("renewDocId").value;
-
-    const sessions = Number(document.getElementById("renewSessions").value);
-
-    const fees = Number(document.getElementById("renewFees").value);
-
-    const paid = Number(document.getElementById("renewPaid").value);
-
-    const startDate = document.getElementById("renewStartDate").value;
-
-    const remaining = fees - paid;
-
-    const expiryDate = new Date(startDate);
-    expiryDate.setDate(expiryDate.getDate() + 28);
+    const supervisorId =
+    document.getElementById("transferSupervisor").value;
 
     await updateDoc(
-        doc(db, "children", docId),
+        doc(db,"children",docId),
         {
-            startDate: startDate,
-            expiryDate: expiryDate.toISOString().split("T")[0],
-
-            packageSessions: sessions,
-            usedSessions: 0,
-            extraSessions: 0,
-
-            fees: fees,
-            paid: paid,
-            remaining: remaining
+            supervisorId: supervisorId
         }
     );
-
-    document.getElementById("renewModal").style.display = "none";
-
     alert("تم تجديد الاشتراك بنجاح");
+
+    closeTransferModal();
+
+};
+
 
 };
 };
