@@ -4036,29 +4036,51 @@ window.saveRenewSubscription = async function () {
 };
 console.log("saveRenewSubscription loaded");
 window.saveRenewSubscription = async function () {
-    alert("وصلنا للدالة");
+
+    try {
+
+        const docId = document.getElementById("renewDocId").value;
+
+        const sessions = Number(document.getElementById("renewSessions").value);
+
+        const fees = Number(document.getElementById("renewFees").value);
+
+        const paid = Number(document.getElementById("renewPaid").value);
+
+        const startDate = document.getElementById("renewStartDate").value;
+
+        const expiryDate = new Date(startDate);
+        expiryDate.setDate(expiryDate.getDate() + 28);
+
+        await updateDoc(
+            doc(db, "children", docId),
+            {
+                startDate: startDate,
+                expiryDate: expiryDate.toISOString().split("T")[0],
+
+                packageSessions: sessions,
+                usedSessions: 0,
+                extraSessions: 0,
+
+                fees: fees,
+                paid: paid,
+                remaining: fees - paid
+            }
+        );
+
+        closeRenewModal();
+
+        alert("تم تجديد الاشتراك بنجاح");
+
+    } catch (error) {
+
+        console.error(error);
+
+        alert(error.message);
+
+    }
+
 };
-onSnapshot(
-supervisorsCollection,
-(snapshot)=>{
-
-supervisors = [];
-
-snapshot.forEach(docu=>{
-
-supervisors.push({
-docId:docu.id,
-...docu.data()
-});
-
-});
-
-fillSupervisorSelect();
-renderSupervisors();
-renderTable(children);
-
-}
-);
 
 onSnapshot(
 childrenCollection,
