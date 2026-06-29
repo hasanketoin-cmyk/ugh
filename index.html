@@ -3986,14 +3986,16 @@ window.saveTransfer = async function(){
             supervisorId: supervisorId
         }
     );
-alert("تم تجديد الاشتراك بنجاح");
+
+    alert("تم نقل الطفل بنجاح");
+
     closeTransferModal();
 
 };
 
 
 window.saveRenewSubscription = async function () {
-
+  
     const docId = document.getElementById("renewDocId").value;
 
     const sessions = Number(document.getElementById("renewSessions").value);
@@ -4026,7 +4028,26 @@ window.saveRenewSubscription = async function () {
     closeRenewModal();
 
 };
-  
+ onSnapshot(
+supervisorsCollection,
+(snapshot)=>{
+
+    supervisors = [];
+
+    snapshot.forEach(docu=>{
+
+        supervisors.push({
+            docId: docu.id,
+            ...docu.data()
+        });
+
+    });
+
+    fillSupervisorSelect();
+    renderSupervisors();
+    renderTable(children);
+
+}); 
 onSnapshot(
 childrenCollection,
 (snapshot)=>{
